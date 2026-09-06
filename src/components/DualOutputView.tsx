@@ -62,7 +62,7 @@ export function stripAllBracketTags(text: string): string {
 }
 
 export const DualOutputView: React.FC<DualOutputViewProps> = ({
-  data,
+  data: rawData,
   target,
   modelUsed,
   onRunSimulation,
@@ -70,6 +70,15 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
   onTranspose,
   onSelectManualSurvivor,
 }) => {
+  // Guard against malformed/partial synthesis responses (e.g. a model reply
+  // that omits [LITERAL] or [SLOP]) so a missing field never crashes the
+  // whole app down to a blank screen - it degrades to empty output instead.
+  const data: SynthesisPayload = {
+    ...rawData,
+    literal: rawData.literal || { prompt: '', tokenWeights: [], targetParameters: '' },
+    slop: rawData.slop || { prompt: '', entropyScore: 0, hallucinationTriggers: [] },
+  };
+
   const [copiedLiteral, setCopiedLiteral] = useState(false);
   const [copiedLiteralClean, setCopiedLiteralClean] = useState(false);
   const [copiedLiteralStyle, setCopiedLiteralStyle] = useState(false);
@@ -99,8 +108,8 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
     return isSuno ? rawPrompt : stripSunoArtifacts(rawPrompt);
   };
 
-  const literalPrompt = getCleanPrompt(data.literal.prompt);
-  const slopPrompt = getCleanPrompt(data.slop.prompt);
+  const literalPrompt = getCleanPrompt(data.literal?.prompt || '');
+  const slopPrompt = getCleanPrompt(data.slop?.prompt || '');
 
   const getSunoCombinedCopy = (mode: 'literal' | 'slop') => {
     const item = mode === 'literal' ? data.literal : data.slop;
