@@ -24,8 +24,13 @@ export class MissingApiKeyError extends Error {
   }
 }
 
+/** Resolves the Gemini API key from the environment, or null when unset. */
+export function resolveApiKey(): string | null {
+  return process.env.GEMINI_API_KEY || process.env.API_KEY || null;
+}
+
 export function getGenAI(): GoogleGenAI {
-  const key = process.env.GEMINI_API_KEY || process.env.API_KEY;
+  const key = resolveApiKey();
   if (!key) {
     throw new MissingApiKeyError();
   }
@@ -211,7 +216,10 @@ Format the output strictly as JSON.`;
       config,
     });
   } catch (modelErr: any) {
-    console.warn(`Attempt with ${selectedModel} failed, falling back to gemini-3.8-flash:`, modelErr?.message);
+    console.warn('Model attempt failed, falling back to gemini-3.8-flash:', {
+      model: selectedModel,
+      message: modelErr?.message,
+    });
     // Fallback to gemini-3.8-flash without thinkingConfig
     const fallbackConfig = {
       systemInstruction: DAVID_SYSTEM_INSTRUCTION,

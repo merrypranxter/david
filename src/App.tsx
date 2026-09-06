@@ -28,9 +28,8 @@ async function readJsonResponse(res: Response): Promise<any> {
   try {
     return JSON.parse(raw);
   } catch {
-    throw new Error(
-      `The /api endpoint did not return JSON (HTTP ${res.status}). The backend is not reachable — check that the serverless functions are deployed and GEMINI_API_KEY is set.`
-    );
+    console.error('Non-JSON API response', { status: res.status, url: res.url, body: raw.slice(0, 500) });
+    throw new Error(`The synthesis service is unavailable (HTTP ${res.status}). Please try again later.`);
   }
 }
 

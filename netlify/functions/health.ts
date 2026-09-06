@@ -1,3 +1,5 @@
+import { resolveApiKey } from '../../lib/david';
+
 /**
  * Netlify Function backing GET /api/health.
  * Also reports whether the Gemini API key is configured in the deploy environment,
@@ -9,7 +11,7 @@ export default async (): Promise<Response> => {
     entity: 'DAVID',
     vibeCodeVersion: '1.1',
     runtime: 'netlify-function',
-    apiKeyConfigured: Boolean(process.env.GEMINI_API_KEY || process.env.API_KEY),
+    apiKeyConfigured: Boolean(resolveApiKey()),
   };
   return new Response(JSON.stringify(body), {
     status: 200,

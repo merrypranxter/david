@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
-import { MissingApiKeyError, simulateTarget, synthesize } from './lib/david';
+import { MissingApiKeyError, resolveApiKey, simulateTarget, synthesize } from './lib/david';
 
 dotenv.config();
 
@@ -48,7 +48,7 @@ app.get('/api/health', (req, res) => {
     entity: 'DAVID',
     vibeCodeVersion: '1.1',
     runtime: 'express',
-    apiKeyConfigured: Boolean(process.env.GEMINI_API_KEY || process.env.API_KEY),
+    apiKeyConfigured: Boolean(resolveApiKey()),
   });
 });
 
