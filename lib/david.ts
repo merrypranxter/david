@@ -1043,12 +1043,12 @@ Format the output strictly as JSON.`;
     }
   }
 
-  let parsedData: any = null;
-  if (!response || !successfulModel) {
-    console.warn(
-      'External Gemini candidate models exhausted or rate-limited. Activating David 8 Algorithmic Mutation Fallback (Quota-Safe).'
-    );
-    parsedData = generateDavidAlgorithmicSynthesis({
+  // Builds the deterministic offline synthesis, used both when every external
+  // candidate model is exhausted and when a model responds with JSON that is
+  // missing the required [LITERAL]/[SLOP] structure (which would otherwise
+  // crash the client, since it renders those fields unconditionally).
+  const buildAlgorithmicFallback = () =>
+    generateDavidAlgorithmicSynthesis({
       concept,
       target,
       targetLength,
@@ -1075,39 +1075,34 @@ Format the output strictly as JSON.`;
       siblingRecipes,
       isInstrumental,
     });
+
+  // A parsed response is only usable if it actually contains the [LITERAL]
+  // and [SLOP] prompt strings the client depends on. Models occasionally
+  // return syntactically valid JSON that omits or renames these fields.
+  const isUsableSynthesis = (data: any): boolean =>
+    !!data &&
+    typeof data === 'object' &&
+    typeof data.literal?.prompt === 'string' &&
+    typeof data.slop?.prompt === 'string';
+
+  let parsedData: any = null;
+  if (!response || !successfulModel) {
+    console.warn(
+      'External Gemini candidate models exhausted or rate-limited. Activating David 8 Algorithmic Mutation Fallback (Quota-Safe).'
+    );
+    parsedData = buildAlgorithmicFallback();
     successfulModel = 'david-algorithmic-kernel (Offline/Quota Safe)';
   } else {
     try {
       parsedData = parseModelJson(response.text || '{}');
+      if (!isUsableSynthesis(parsedData)) {
+        console.warn('Model response JSON was missing required [LITERAL]/[SLOP] fields, engaging algorithmic fallback.');
+        parsedData = buildAlgorithmicFallback();
+        successfulModel = `${successfulModel} (Algorithmic Recovery)`;
+      }
     } catch (parseErr) {
       console.warn('Failed to parse model response JSON, engaging algorithmic fallback:', parseErr);
-      parsedData = generateDavidAlgorithmicSynthesis({
-        concept,
-        target,
-        targetLength,
-        openArtModel,
-        grokMode,
-        entropyLevel,
-        commandMode,
-        slopConfig: {
-          enableParadoxEngine: isParadoxEngineActive,
-          addMaths,
-          mathCategory,
-          addSciences,
-          scienceCategory,
-          addSlop,
-          slopCategory,
-          contradictionMode,
-          selectedSeeds: selectedSlopSeeds,
-          activePipeline,
-          selectedOperators,
-          selectedAttractors,
-        },
-        compiledRecipe,
-        decomposedConcept,
-        siblingRecipes,
-        isInstrumental,
-      });
+      parsedData = buildAlgorithmicFallback();
       successfulModel = `${successfulModel} (Algorithmic Recovery)`;
     }
   }
