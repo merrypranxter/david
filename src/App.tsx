@@ -29,7 +29,7 @@ async function readJsonResponse(res: Response): Promise<any> {
     return JSON.parse(raw);
   } catch {
     console.error('Non-JSON API response', { status: res.status, url: res.url, body: raw.slice(0, 500) });
-    throw new Error(`The synthesis service is unavailable (HTTP ${res.status}). Please try again later.`);
+    throw new Error(`The API returned an unexpected response (HTTP ${res.status}). Please try again later.`);
   }
 }
 
