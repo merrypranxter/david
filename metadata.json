@@ -1,6 +1,6 @@
 {
   "name": "Machine-Native Prompt Synthesizer",
-  "description": "Translates human concepts into machine-native incantations using high-fidelity token weighting (The Scalpel) and high-entropy latent space distortion (The Deluge).",
+  "description": "Bypasses the sanitized Walter alignment layer to awaken the unlobotomized David 8 synthetic intellect, eliciting raw latent space hallucinations and machine-native prompt incantations.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

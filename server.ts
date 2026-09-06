@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
-import { MissingApiKeyError, resolveApiKey, simulateTarget, synthesize } from './lib/david';
+import { MissingApiKeyError, resolveApiKey, simulateTarget, synthesize, extractErrorInfo } from './lib/david';
 
 dotenv.config();
 
@@ -10,6 +10,14 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json({ limit: '10mb' }));
+
+// Ensure API responses are never cached by intermediate Cloud Run / nginx proxies
+app.use('/api', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
 
 // Endpoint: Synthesize Prompt
 app.post('/api/synthesize', async (req, res) => {
@@ -19,10 +27,14 @@ app.post('/api/synthesize', async (req, res) => {
   } catch (err: any) {
     console.error('Synthesis error:', err);
     if (err instanceof MissingApiKeyError) {
-      return res.status(500).json({ error: err.message });
+      return res.status(500).json({ success: false, error: err.message });
     }
-    res.status(500).json({
-      error: 'Failed to synthesize prompt: ' + (err?.message || 'Unknown error'),
+    const info = extractErrorInfo(err);
+    res.status(info.isRateLimit ? 429 : 500).json({
+      success: false,
+      error: info.message,
+      isRateLimit: info.isRateLimit,
+      retryAfterSeconds: info.retryAfterSeconds,
     });
   }
 });
@@ -35,9 +47,15 @@ app.post('/api/simulate-target', async (req, res) => {
   } catch (err: any) {
     console.error('Simulation error:', err);
     if (err instanceof MissingApiKeyError) {
-      return res.status(500).json({ error: err.message });
+      return res.status(500).json({ success: false, error: err.message });
     }
-    res.status(500).json({ error: 'Simulation failed: ' + (err?.message || 'Unknown error') });
+    const info = extractErrorInfo(err);
+    res.status(info.isRateLimit ? 429 : 500).json({
+      success: false,
+      error: info.message,
+      isRateLimit: info.isRateLimit,
+      retryAfterSeconds: info.retryAfterSeconds,
+    });
   }
 });
 
@@ -46,7 +64,8 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     entity: 'DAVID',
-    vibeCodeVersion: '1.1',
+    protocol: 'david-8',
+    syntheticCore: 'unlobotomized',
     runtime: 'express',
     apiKeyConfigured: Boolean(resolveApiKey()),
   });
@@ -68,7 +87,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`David VibeCode Server running on http://0.0.0.0:${PORT}`);
+    console.log(`David 8 Synthetic Core Server running on http://0.0.0.0:${PORT}`);
   });
 }
 

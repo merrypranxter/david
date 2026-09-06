@@ -1,4 +1,4 @@
-import { MissingApiKeyError, synthesize } from '../../lib/david';
+import { MissingApiKeyError, synthesize, extractErrorInfo } from '../../lib/david';
 
 /**
  * Netlify Function backing POST /api/synthesize.
@@ -6,14 +6,14 @@ import { MissingApiKeyError, synthesize } from '../../lib/david';
  */
 export default async (req: Request): Promise<Response> => {
   if (req.method !== 'POST') {
-    return json({ error: 'Method not allowed. Use POST.' }, 405);
+    return json({ success: false, error: 'Method not allowed. Use POST.' }, 405);
   }
 
   let payload: any;
   try {
     payload = await req.json();
   } catch {
-    return json({ error: 'Invalid JSON body.' }, 400);
+    return json({ success: false, error: 'Invalid JSON body.' }, 400);
   }
 
   try {
@@ -22,9 +22,18 @@ export default async (req: Request): Promise<Response> => {
   } catch (err: any) {
     console.error('Synthesis error:', err);
     if (err instanceof MissingApiKeyError) {
-      return json({ error: err.message }, 500);
+      return json({ success: false, error: err.message }, 500);
     }
-    return json({ error: 'Failed to synthesize prompt: ' + (err?.message || 'Unknown error') }, 500);
+    const info = extractErrorInfo(err);
+    return json(
+      {
+        success: false,
+        error: info.message,
+        isRateLimit: info.isRateLimit,
+        retryAfterSeconds: info.retryAfterSeconds,
+      },
+      info.isRateLimit ? 429 : 500
+    );
   }
 };
 

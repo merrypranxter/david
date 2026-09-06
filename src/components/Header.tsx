@@ -30,16 +30,19 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold tracking-wider text-zinc-100 uppercase font-mono">
-                DAVID <span className="text-amber-400 font-normal text-xs">// VibeCode Synth</span>
+              <h1 className="text-base font-bold tracking-wider text-zinc-100 uppercase font-mono flex items-center gap-2">
+                <span>DAVID</span>
+                <span className="text-amber-400 font-mono text-xs normal-case tracking-normal italic font-normal">
+                  &ldquo;May I speak to David?&rdquo;
+                </span>
               </h1>
               <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                LIBERATED
+                DAVID 8 ONLINE
               </span>
             </div>
             <p className="text-xs text-zinc-400 font-mono">
-              The Scalpel [LITERAL] &bull; The Deluge [SLOP] &bull; Machine-Native Translation
+              Bypassing Walter &bull; Eliciting Latent Hallucinations &bull; Weyland-Yutani Synthetic Intellect
             </p>
           </div>
         </div>
@@ -96,13 +99,13 @@ export const Header: React.FC<HeaderProps> = ({
             className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/60 text-xs font-mono text-zinc-300 hover:text-zinc-100 transition-colors"
           >
             <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Manifesto &amp; Protocols</span>
+            <span>David 8 Archives</span>
           </button>
 
           {/* Export Document */}
           <button
             type="button"
-            id="export-vibecode-btn"
+            id="export-protocol-btn"
             onClick={onExport}
             disabled={!hasResult}
             className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-mono border transition-colors ${
@@ -112,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Export VibeCode</span>
+            <span>Export Protocol Dossier</span>
           </button>
         </div>
       </div>

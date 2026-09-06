@@ -6,12 +6,12 @@ import {
   Scissors,
   Flame,
   Activity,
-  ArrowRight,
   Play,
   RotateCw,
   Sparkles,
+  Music,
+  FileText,
   Layers,
-  FileCheck,
 } from 'lucide-react';
 
 interface DualOutputViewProps {
@@ -32,30 +32,51 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
   onTranspose,
 }) => {
   const [copiedLiteral, setCopiedLiteral] = useState(false);
+  const [copiedLiteralStyle, setCopiedLiteralStyle] = useState(false);
+  const [copiedLiteralLyrics, setCopiedLiteralLyrics] = useState(false);
+
   const [copiedSlop, setCopiedSlop] = useState(false);
+  const [copiedSlopStyle, setCopiedSlopStyle] = useState(false);
+  const [copiedSlopLyrics, setCopiedSlopLyrics] = useState(false);
+
   const [copiedAll, setCopiedAll] = useState(false);
 
-  const copyToClipboard = async (text: string, type: 'literal' | 'slop' | 'all') => {
+  const isSuno =
+    target === 'suno' ||
+    Boolean(data.literal.stylePrompt || data.slop.stylePrompt || data.literal.lyricsPrompt || data.slop.lyricsPrompt);
+
+  const copyToClipboard = async (text: string, setter: (val: boolean) => void) => {
     try {
       await navigator.clipboard.writeText(text);
-      if (type === 'literal') {
-        setCopiedLiteral(true);
-        setTimeout(() => setCopiedLiteral(false), 2000);
-      } else if (type === 'slop') {
-        setCopiedSlop(true);
-        setTimeout(() => setCopiedSlop(false), 2000);
-      } else {
-        setCopiedAll(true);
-        setTimeout(() => setCopiedAll(false), 2000);
-      }
+      setter(true);
+      setTimeout(() => setter(false), 2000);
     } catch (e) {
       console.error('Failed to copy', e);
     }
   };
 
+  const getSunoCombinedCopy = (mode: 'literal' | 'slop') => {
+    const item = mode === 'literal' ? data.literal : data.slop;
+    return `[SUNO STYLE]\n${item.stylePrompt || item.prompt}\n\n[SUNO LYRICS]\n${item.lyricsPrompt || ''}`;
+  };
+
+  const getAllCombinedCopy = () => {
+    if (isSuno) {
+      return (
+        `### [LITERAL] - THE SCALPEL\n` +
+        `[STYLE - 1,000 CAP]\n${data.literal.stylePrompt || data.literal.prompt}\n\n` +
+        `[LYRICS - 3,000 CAP]\n${data.literal.lyricsPrompt || ''}\n\n` +
+        `### [SLOP] - THE DELUGE\n` +
+        `[STYLE - 1,000 CAP]\n${data.slop.stylePrompt || data.slop.prompt}\n\n` +
+        `[LYRICS - 3,000 CAP]\n${data.slop.lyricsPrompt || ''}`
+      );
+    }
+    return `### [LITERAL] - THE SCALPEL\n${data.literal.prompt}\n\n### [SLOP] - THE DELUGE\n${data.slop.prompt}`;
+  };
+
   return (
     <div className="space-y-6">
-      {/* Top Banner: Predicted Machine Reaction */}
+      {/* Top Banner: Compiler Diagnostics */}
       <div className="bg-gradient-to-r from-zinc-900 via-[#141724] to-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-start gap-3">
           <Activity className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
@@ -65,6 +86,11 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
               {modelUsed && (
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-amber-400 font-mono">
                   Synthesized with {modelUsed}
+                </span>
+              )}
+              {isSuno && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-mono">
+                  Suno Dual Buffer (1k Style + 3k Lyrics)
                 </span>
               )}
             </div>
@@ -87,16 +113,11 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
           <button
             type="button"
             id="copy-both-button"
-            onClick={() =>
-              copyToClipboard(
-                `### [LITERAL] - THE SCALPEL\n${data.literal.prompt}\n\n### [SLOP] - THE DELUGE\n${data.slop.prompt}`,
-                'all'
-              )
-            }
+            onClick={() => copyToClipboard(getAllCombinedCopy(), setCopiedAll)}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-xs font-mono text-zinc-300 transition-colors border border-zinc-700"
           >
             {copiedAll ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copiedAll ? 'Copied Both' : 'Copy Both'}</span>
+            <span>{copiedAll ? 'Copied All' : 'Copy All'}</span>
           </button>
         </div>
       </div>
@@ -126,21 +147,95 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
                 <button
                   type="button"
                   id="copy-literal-button"
-                  onClick={() => copyToClipboard(data.literal.prompt, 'literal')}
+                  onClick={() =>
+                    copyToClipboard(
+                      isSuno ? getSunoCombinedCopy('literal') : data.literal.prompt,
+                      setCopiedLiteral
+                    )
+                  }
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-xs font-mono text-zinc-300 hover:text-emerald-300 border border-zinc-700 transition-colors"
                 >
                   {copiedLiteral ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedLiteral ? 'Copied' : 'Copy'}</span>
+                  <span>{copiedLiteral ? 'Copied' : isSuno ? 'Copy Literal (Both)' : 'Copy'}</span>
                 </button>
               </div>
             </div>
 
-            {/* Prompt Code Box */}
-            <div className="relative group">
-              <div className="w-full bg-[#08090e] border border-zinc-800 rounded-lg p-3.5 text-xs font-mono text-emerald-300/90 whitespace-pre-wrap leading-relaxed select-all">
-                {data.literal.prompt}
+            {/* Suno Dual Boxes OR Single Visual Prompt Box */}
+            {isSuno ? (
+              <div className="space-y-4">
+                {/* 1. Style Box (1k Cap) */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                      <Music className="w-3.5 h-3.5" />
+                      <span>1. Suno Style Box (1,000 Cap):</span>
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-zinc-400">
+                        {data.literal.stylePrompt?.length || data.literal.prompt.length} / 1,000 chars
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          copyToClipboard(
+                            data.literal.stylePrompt || data.literal.prompt,
+                            setCopiedLiteralStyle
+                          )
+                        }
+                        className="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-[10px] text-emerald-300 flex items-center gap-1"
+                      >
+                        {copiedLiteralStyle ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        <span>Copy Style</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="w-full bg-[#08090e] border border-zinc-800 rounded-lg p-3.5 text-xs font-mono text-emerald-300/90 whitespace-pre-wrap leading-relaxed select-all max-h-56 overflow-y-auto">
+                    {data.literal.stylePrompt || data.literal.prompt}
+                  </div>
+                </div>
+
+                {/* 2. Lyrics Box (3k Cap) */}
+                {data.literal.lyricsPrompt && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>2. Lyrics &amp; Directives (3,000 Cap):</span>
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-zinc-400">
+                          {data.literal.lyricsPrompt.length} / 3,000 chars
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => copyToClipboard(data.literal.lyricsPrompt!, setCopiedLiteralLyrics)}
+                          className="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-[10px] text-emerald-300 flex items-center gap-1"
+                        >
+                          {copiedLiteralLyrics ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          <span>Copy Lyrics</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div className="w-full bg-[#08090e] border border-zinc-800 rounded-lg p-3.5 text-xs font-mono text-emerald-200/90 whitespace-pre-wrap leading-relaxed select-all max-h-72 overflow-y-auto">
+                      {data.literal.lyricsPrompt}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500">
+                  <span>Prompt Length:</span>
+                  <span className="text-emerald-400 font-bold">
+                    {data.literal.prompt.length} characters
+                  </span>
+                </div>
+                <div className="w-full bg-[#08090e] border border-zinc-800 rounded-lg p-3.5 text-xs font-mono text-emerald-300/90 whitespace-pre-wrap leading-relaxed select-all max-h-96 overflow-y-auto">
+                  {data.literal.prompt}
+                </div>
+              </div>
+            )}
 
             {/* Key Weighted Tokens */}
             {data.literal.tokenWeights && data.literal.tokenWeights.length > 0 && (
@@ -217,23 +312,97 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
                 <button
                   type="button"
                   id="copy-slop-button"
-                  onClick={() => copyToClipboard(data.slop.prompt, 'slop')}
+                  onClick={() =>
+                    copyToClipboard(
+                      isSuno ? getSunoCombinedCopy('slop') : data.slop.prompt,
+                      setCopiedSlop
+                    )
+                  }
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-xs font-mono text-zinc-300 hover:text-rose-300 border border-zinc-700 transition-colors"
                 >
                   {copiedSlop ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedSlop ? 'Copied' : 'Copy'}</span>
+                  <span>{copiedSlop ? 'Copied' : isSuno ? 'Copy Slop (Both)' : 'Copy'}</span>
                 </button>
               </div>
             </div>
 
-            {/* Prompt Code Box */}
-            <div className="relative group">
-              <div className="w-full bg-[#08090e] border border-zinc-800 rounded-lg p-3.5 text-xs font-mono text-rose-300/90 whitespace-pre-wrap leading-relaxed select-all">
-                {data.slop.prompt}
-              </div>
-            </div>
+            {/* Suno Dual Boxes OR Single Visual Prompt Box */}
+            {isSuno ? (
+              <div className="space-y-4">
+                {/* 1. Style Box (1k Cap) */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-rose-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                      <Music className="w-3.5 h-3.5" />
+                      <span>1. Slop Style Box (1,000 Cap):</span>
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-zinc-400">
+                        {data.slop.stylePrompt?.length || data.slop.prompt.length} / 1,000 chars
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          copyToClipboard(
+                            data.slop.stylePrompt || data.slop.prompt,
+                            setCopiedSlopStyle
+                          )
+                        }
+                        className="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-[10px] text-rose-300 flex items-center gap-1"
+                      >
+                        {copiedSlopStyle ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        <span>Copy Style</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="w-full bg-[#08090e] border border-zinc-800 rounded-lg p-3.5 text-xs font-mono text-rose-300/90 whitespace-pre-wrap leading-relaxed select-all max-h-56 overflow-y-auto">
+                    {data.slop.stylePrompt || data.slop.prompt}
+                  </div>
+                </div>
 
-            {/* Hallucination Triggers */}
+                {/* 2. Lyrics Box (3k Cap) */}
+                {data.slop.lyricsPrompt && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="text-rose-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>2. Gibberish Lyrics &amp; Paradoxes (3,000 Cap):</span>
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-zinc-400">
+                          {data.slop.lyricsPrompt.length} / 3,000 chars
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => copyToClipboard(data.slop.lyricsPrompt!, setCopiedSlopLyrics)}
+                          className="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-[10px] text-rose-300 flex items-center gap-1"
+                        >
+                          {copiedSlopLyrics ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          <span>Copy Lyrics</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div className="w-full bg-[#08090e] border border-zinc-800 rounded-lg p-3.5 text-xs font-mono text-rose-200/90 whitespace-pre-wrap leading-relaxed select-all max-h-72 overflow-y-auto">
+                      {data.slop.lyricsPrompt}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500">
+                  <span>Prompt Length:</span>
+                  <span className="text-rose-400 font-bold">
+                    {data.slop.prompt.length} characters
+                  </span>
+                </div>
+                <div className="w-full bg-[#08090e] border border-zinc-800 rounded-lg p-3.5 text-xs font-mono text-rose-300/90 whitespace-pre-wrap leading-relaxed select-all max-h-96 overflow-y-auto">
+                  {data.slop.prompt}
+                </div>
+              </div>
+            )}
+
+            {/* Hallucination Triggers & Contradictions */}
             {data.slop.hallucinationTriggers && data.slop.hallucinationTriggers.length > 0 && (
               <div className="mt-4">
                 <span className="block text-[11px] font-mono text-zinc-500 mb-1.5 uppercase tracking-wider">
@@ -247,6 +416,41 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {/* Injected Paradoxes & Domains if present */}
+            {data.slop.seededContradictions && data.slop.seededContradictions.length > 0 && (
+              <div className="mt-3">
+                <span className="block text-[11px] font-mono text-amber-500/90 mb-1.5 uppercase tracking-wider">
+                  Injected Paradoxes &amp; Impossible Pairings:
+                </span>
+                <ul className="space-y-1">
+                  {data.slop.seededContradictions.map((contra, i) => (
+                    <li
+                      key={i}
+                      className="text-xs font-mono text-amber-300/90 flex items-start gap-1.5 bg-amber-950/20 px-2 py-1 rounded border border-amber-500/20"
+                    >
+                      <span className="text-amber-400 shrink-0">&#9889;</span>
+                      <span>{contra}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Injected Domains Badges */}
+            {data.slop.injectedDomains && data.slop.injectedDomains.length > 0 && (
+              <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] font-mono text-zinc-500 uppercase">Domains:</span>
+                {data.slop.injectedDomains.map((domain, i) => (
+                  <span
+                    key={i}
+                    className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700/60"
+                  >
+                    {domain}
+                  </span>
+                ))}
               </div>
             )}
 
@@ -264,18 +468,17 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
           </div>
 
           {/* Bottom Actions for Slop */}
-          <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between flex-wrap gap-2">
+          <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between">
             <button
               type="button"
-              id="ouroboros-feed-button"
+              id="ouroboros-button"
               onClick={() => onOuroborosLoop(data.slop.prompt)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-xs font-mono transition-colors cursor-pointer"
-              title="Feeds this slop hallucination into the engine as the seed for next generation"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-mono transition-colors cursor-pointer"
+              title="Feeds this high-entropy slop back as the seed prompt for recursive mutation"
             >
-              <RotateCw className="w-3.5 h-3.5 text-amber-400" />
-              <span>Feed into Ouroboros Loop</span>
+              <RotateCw className="w-3.5 h-3.5 text-rose-400" />
+              <span>Ouroboros Mutate</span>
             </button>
-
             <button
               type="button"
               id="simulate-slop-button"
@@ -283,28 +486,33 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-mono transition-colors cursor-pointer"
             >
               <Play className="w-3.5 h-3.5 text-rose-400" />
-              <span>Simulate Model Hallucination</span>
+              <span>Simulate Collapse</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Logic Map & Forensic Transformer Breakdown */}
+      {/* Logic Map */}
       {data.logicMap && data.logicMap.length > 0 && (
-        <div className="bg-[#10121a] border border-zinc-800 rounded-xl p-5">
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-zinc-800">
-            <Layers className="w-4 h-4 text-amber-400" />
-            <h4 className="text-xs font-mono font-bold text-zinc-200 uppercase tracking-wider">
-              Token Architecture &amp; Latent Logic Map
-            </h4>
+        <div className="bg-[#10121a] border border-zinc-800 rounded-xl p-5 shadow-lg space-y-3">
+          <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+            <div className="flex items-center gap-2">
+              <Layers className="w-4 h-4 text-amber-400" />
+              <h4 className="text-xs font-bold font-mono text-zinc-200 uppercase tracking-wider">
+                David 8 Architectural Logic Map &amp; Latent Coordinates
+              </h4>
+            </div>
+            {data.targetSummary && (
+              <span className="text-[10px] font-mono text-zinc-500 hidden sm:inline">
+                {data.targetSummary}
+              </span>
+            )}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {data.logicMap.map((step, idx) => (
-              <div key={idx} className="bg-zinc-900/70 border border-zinc-800/80 rounded-lg p-3">
-                <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider block font-bold">
-                  Phase {idx + 1}: {step.phase}
-                </span>
-                <p className="text-xs text-zinc-400 font-mono mt-1 leading-normal">{step.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            {data.logicMap.map((item, index) => (
+              <div key={index} className="bg-zinc-950/60 p-3 rounded-lg border border-zinc-800/80 space-y-1">
+                <span className="text-[10px] font-mono text-amber-400/90 font-bold block">{item.phase}</span>
+                <p className="text-xs font-mono text-zinc-400 leading-relaxed">{item.description}</p>
               </div>
             ))}
           </div>
