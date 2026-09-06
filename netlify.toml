@@ -1,0 +1,41 @@
+# Netlify deployment configuration.
+#
+# The app is a Vite SPA that talks to /api/* endpoints. On AI Studio those endpoints
+# are served by the Express app in server.ts, but Netlify only hosts static assets +
+# serverless functions, so /api/* is routed to the Netlify Functions in netlify/functions.
+#
+# Required environment variable (Site configuration -> Environment variables):
+#   GEMINI_API_KEY
+
+[build]
+  command = "vite build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Map the app's /api/* calls onto the serverless functions.
+[[redirects]]
+  from = "/api/synthesize"
+  to = "/.netlify/functions/synthesize"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/simulate-target"
+  to = "/.netlify/functions/simulate-target"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+  force = true
+
+# SPA fallback - must stay last so it does not swallow the /api/* rules above.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

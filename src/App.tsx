@@ -18,6 +18,22 @@ import { generateVibeCodeDocument, downloadMarkdownFile } from './utils/exporter
 import { PRESET_INCANTATIONS } from './data/presets';
 import { AlertCircle, Terminal, Flame, Info, CheckCircle2 } from 'lucide-react';
 
+/**
+ * Reads a JSON response defensively. If the backend is missing (e.g. the site is
+ * deployed as static-only and /api/* falls through to index.html), the response is
+ * HTML and JSON.parse would throw an opaque syntax error, making the UI look dead.
+ */
+async function readJsonResponse(res: Response): Promise<any> {
+  const raw = await res.text();
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new Error(
+      `The /api endpoint did not return JSON (HTTP ${res.status}). The backend is not reachable — check that the serverless functions are deployed and GEMINI_API_KEY is set.`
+    );
+  }
+}
+
 export default function App() {
   const [concept, setConcept] = useState<string>(
     'A high-bpm speedcore track performed in a massive Gothic cathedral with long reverb decay, but muffled by underwater acoustic filters and whispered ASMR vocals.'
@@ -76,7 +92,7 @@ export default function App() {
         }),
       });
 
-      const data = await res.json();
+      const data = await readJsonResponse(res);
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Failed to synthesize');
       }
@@ -134,7 +150,7 @@ export default function App() {
         }),
       });
 
-      const json = await res.json();
+      const json = await readJsonResponse(res);
       if (!res.ok || !json.success) {
         throw new Error(json.error || 'Simulation failed');
       }
