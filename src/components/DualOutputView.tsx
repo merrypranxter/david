@@ -75,8 +75,8 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
   // whole app down to a blank screen - it degrades to empty output instead.
   const data: SynthesisPayload = {
     ...rawData,
-    literal: rawData.literal || ({ prompt: '' } as SynthesisPayload['literal']),
-    slop: rawData.slop || ({ prompt: '' } as SynthesisPayload['slop']),
+    literal: rawData.literal || { prompt: '', tokenWeights: [], targetParameters: '' },
+    slop: rawData.slop || { prompt: '', entropyScore: 0, hallucinationTriggers: [] },
   };
 
   const [copiedLiteral, setCopiedLiteral] = useState(false);
