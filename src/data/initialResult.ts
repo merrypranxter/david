@@ -104,3 +104,60 @@ export const INITIAL_SYNTHESIS_RESULT: SynthesisPayload = {
   previewImpact:
     '[MODEL RESPONSE PREDICTION]: Literal prompt generates a muddy, fast techno beat with quiet vocals. Slop prompt destabilizes the neural vocoder into haunting oceanic choir screeches and glitch-pulsing percussion.',
 };
+
+export const INITIAL_GROK_RESULT: SynthesisPayload = {
+  literal: {
+    prompt:
+      'Cinematic camera tracking shot through a colossal brutalist architectural labyrinth floating in deep space, illuminated by polarized neon luminescence and stark directional key light. Sharp volumetric shadows, anamorphic 35mm lens, realistic depth of field, 8k resolution, photorealistic industrial design. [SUBJECT: Brutalist space architecture] [LIGHTING: Polarized cold neon and deep volumetric shadows] [COMPOSITION: Low-angle continuous tracking shot, slow cinematic parallax] [PHYSICS: Zero-gravity particulate drift, realistic optical lens dispersion].',
+    tokenWeights: [
+      '[SUBJECT: Brutalist space architecture]',
+      '[LIGHTING: Polarized cold neon]',
+      '[CAMERA: Low-angle anamorphic tracking]',
+      '[PHYSICS: Zero-gravity particulate drift]',
+    ],
+    targetParameters: '--mode grok_video --motion 7 --fps 24 --lens 35mm-anamorphic --lighting polarized --resolution 8k',
+  },
+  slop: {
+    prompt:
+      'Anamorphic 35mm tracking shot penetrating an impossible cathedral constructed from liquid granite and vitrified bone filaments. The camera accelerates past non-Euclidean arches where shadows cast brighter light than the neon filament suns. Floating glass obelisks shatter and reconstitute in reverse [Möbius: Phase 180° Inversion]. Heavy atmospheric particulate haze, chromatic aberration at the extreme frame boundaries, volumetric dust illuminated by fluctuating phosphor radiation, impossible physical momentum.',
+    entropyScore: 8,
+    hallucinationTriggers: [
+      'Impossible Material: Liquid granite fused with vitrified bone filaments',
+      'Optical Inversion: Shadows projecting luminescent photons brighter than light sources',
+      'Non-Euclidean Topology: Interior spatial volume exponentially expanding beyond exterior bounds',
+    ],
+    glitchAnchors: 'Möbius: [Phase: 180° Inversion] // [GEOM: NON-EUCLIDEAN_VOID]',
+    seededContradictions: [
+      'Topological Paradox: Interior architectural volume expanding beyond exterior geometry',
+      'Physical Paradox: Liquid granite retaining sharp brutalist edges under zero gravity',
+    ],
+    injectedDomains: ['Advanced Topology', 'Optics & Phase States', 'Brutalist Organicism'],
+  },
+  logicMap: [
+    {
+      phase: 'Phase 1: Lateral Token Extraction',
+      description: 'Extracted spatial, kinematic, and lens vectors tailored for Grok video physics.',
+    },
+    {
+      phase: 'Phase 2: Direct Interlink Protocol (The Scalpel)',
+      description: 'Encapsulated structured camera direction, subject definitions, and lighting angles.',
+    },
+    {
+      phase: 'Phase 3: Slop Manifest Protocol (The Deluge)',
+      description: 'Injected impossible optical phenomena, reverse causality, and liquid granite topologies.',
+    },
+    {
+      phase: 'Phase 4: Parameter Lock & Calibration',
+      description: 'Optimized for Grok 2,000-character temporal video generation window.',
+    },
+  ],
+  targetSummary: 'Grok Video/Image Engine: Optimized for temporal cinematic dynamics and high-entropy physical realism.',
+  previewImpact: '[MODEL RESPONSE PREDICTION]: Literal prompt renders smooth, photorealistic zero-g camera motion. Slop prompt destabilizes motion blur and produces striking surreal geometric phase shifts.',
+};
+
+export function getInitialResultForTarget(target: string): SynthesisPayload {
+  if (target === 'suno') {
+    return INITIAL_SYNTHESIS_RESULT;
+  }
+  return INITIAL_GROK_RESULT;
+}

@@ -1,10 +1,11 @@
 import React from 'react';
-import { Terminal, ShieldAlert, BookOpen, Sparkles, Download, Cpu, Flame } from 'lucide-react';
+import { Terminal, ShieldAlert, BookOpen, Sparkles, Download, Cpu, Flame, Bookmark } from 'lucide-react';
 
 interface HeaderProps {
   onOpenManifesto: () => void;
   onOpenZalgo: () => void;
   onExport: () => void;
+  onOpenRecipes?: () => void;
   hasResult: boolean;
   ouroborosCount: number;
   highThinking: boolean;
@@ -15,6 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenManifesto,
   onOpenZalgo,
   onExport,
+  onOpenRecipes,
   hasResult,
   ouroborosCount,
   highThinking,
@@ -49,6 +51,20 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Controls & Badges */}
         <div className="flex items-center flex-wrap gap-2">
+          {/* Saved Slop Recipes Vault */}
+          {onOpenRecipes && (
+            <button
+              type="button"
+              id="open-recipes-btn"
+              onClick={onOpenRecipes}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-xs font-mono text-amber-300 transition-colors shadow-sm"
+              title="Save, load, and manage your custom Slop Recipes and setup configurations"
+            >
+              <Bookmark className="w-3.5 h-3.5 text-amber-400 fill-amber-400/20" />
+              <span>Slop Recipes</span>
+            </button>
+          )}
+
           {/* High Thinking Mode Toggle */}
           <button
             type="button"
@@ -59,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-purple-950/60 border-purple-500/50 text-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.2)]'
                 : 'bg-zinc-900 border-zinc-700/60 text-zinc-400 hover:text-zinc-200'
             }`}
-            title="Uses gemini-3.1-pro-preview with ThinkingLevel.HIGH for deep latent space reasoning"
+            title="Uses Gemini 3.8 Flash with ThinkingLevel.HIGH for deep latent space reasoning"
           >
             <Sparkles className={`w-3.5 h-3.5 ${highThinking ? 'text-purple-400' : 'text-zinc-500'}`} />
             <span>High Thinking</span>

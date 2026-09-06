@@ -33,7 +33,10 @@ import {
   Infinity,
   Check,
   Plus,
+  Bookmark,
+  FolderHeart,
 } from 'lucide-react';
+import { ModularPipelineSection } from './ModularPipelineSection';
 
 interface PromptInputAreaProps {
   concept: string;
@@ -59,6 +62,8 @@ interface PromptInputAreaProps {
   slopConfig: SlopSeedingConfig;
   setSlopConfig: React.Dispatch<React.SetStateAction<SlopSeedingConfig>>;
   onOpenSlopVault: () => void;
+  onSaveRecipe?: () => void;
+  onOpenRecipes?: () => void;
 }
 
 export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
@@ -85,6 +90,8 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
   slopConfig,
   setSlopConfig,
   onOpenSlopVault,
+  onSaveRecipe,
+  onOpenRecipes,
 }) => {
   const [selectedPresetId, setSelectedPresetId] = useState<string>('');
   const [activeParadoxNotes, setActiveParadoxNotes] = useState<string[]>([]);
@@ -146,9 +153,11 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
   };
 
   const getEntropyLabel = (lvl: number) => {
-    if (lvl <= 3) return { text: 'Subtle Drift', color: 'text-sky-400', desc: 'Poetic, grounded token shifts' };
-    if (lvl <= 7) return { text: 'Heavy Distortion', color: 'text-amber-400', desc: 'Contradictory imagery & frequency clash' };
-    return { text: 'Total Epistemic Collapse', color: 'text-rose-400', desc: 'Non-linear, raw machine data-scream' };
+    if (lvl <= 2) return { text: 'Subtle Drift', color: 'text-sky-400', desc: 'Small semantic shifts; strong anchor preservation' };
+    if (lvl <= 4) return { text: 'Mutation', color: 'text-emerald-400', desc: 'A few structural transformations; mild attractor influence' };
+    if (lvl <= 6) return { text: 'Structural Distortion', color: 'text-amber-400', desc: 'Multiple operators; ontology changes become possible' };
+    if (lvl <= 8) return { text: 'Deep Reinterpretation', color: 'text-orange-400', desc: 'Competing systems, recursive reversal and strong conceptual drift' };
+    return { text: 'Epistemic Collapse', color: 'text-rose-400', desc: 'Aggressive representational mutation while protected anchors survive' };
   };
 
   const entropyMeta = getEntropyLabel(entropyLevel);
@@ -273,15 +282,35 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
             <div className="flex items-center gap-2 text-amber-300">
               <Music className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="font-bold uppercase tracking-wider">Suno AI Dual Buffer Protocol Active:</span>
+              <span className="font-bold uppercase tracking-wider">Suno AI Audio Phenotype Protocol:</span>
             </div>
             <div className="flex items-center gap-2 text-zinc-400 flex-wrap">
               <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700/80 text-amber-300">
-                1. Style Box: ~1,000 chars cap (Filled)
+                Style Box: ~1,000 chars cap
               </span>
               <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700/80 text-rose-300">
-                2. Lyrics Box: ~3,000 chars (Gibberish + Contradictory Brackets)
+                Lyrics Box: ~3,000 chars
               </span>
+              <button
+                type="button"
+                id="toggle-instrumental-btn"
+                onClick={() => {
+                  if (concept.toLowerCase().includes('instrumental')) {
+                    setConcept(concept.replace(/\b(?:instrumental|no vocals)\b/gi, '').trim());
+                  } else {
+                    setConcept(concept ? `${concept.trim()} (Instrumental)` : 'Instrumental acoustic piece');
+                  }
+                }}
+                className={`px-2 py-0.5 rounded border text-[11px] font-mono transition-colors ${
+                  concept.toLowerCase().includes('instrumental') || concept.toLowerCase().includes('no vocals')
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/60 font-bold'
+                    : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                }`}
+              >
+                {concept.toLowerCase().includes('instrumental') || concept.toLowerCase().includes('no vocals')
+                  ? '✓ Instrumental Mode Active'
+                  : '+ Force Instrumental'}
+              </button>
             </div>
           </div>
         ) : (
@@ -318,7 +347,19 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
                   </div>
                 </div>
                 <span className="text-[10px] font-mono text-zinc-400">
-                  OpenArt character ceiling: <strong>3,200 chars</strong>
+                  {openArtModel === 'seadream' ? 'SeaDream dense visual prose (cap 3,200 chars)' : 'Natural observable phenomena (cap 3,200 chars)'}
+                </span>
+              </div>
+            )}
+
+            {target === 'midjourney_flux' && (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-2 text-xs font-mono">
+                <div className="flex items-center gap-2 text-emerald-300">
+                  <Eye className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Compact visual hierarchy (Subject → structural transformation → spatial → optics)</span>
+                </div>
+                <span className="text-[10px] font-mono text-zinc-400">
+                  Parameters appended: <code className="text-zinc-300">--ar 16:9 --v 6.1 --style raw</code> (cap 2,000 chars)
                 </span>
               </div>
             )}
@@ -459,16 +500,79 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            id="open-slop-vault-btn"
-            onClick={onOpenSlopVault}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-amber-300 border border-amber-500/40 text-xs font-mono transition-colors self-start sm:self-auto"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Browse Vault (300+ Terms)</span>
-          </button>
+          
+          <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+            {/* Mutant Selection Mode Toggle (Job 8, Part 34) */}
+            <div className="flex items-center gap-1 bg-zinc-900 border border-zinc-700/80 rounded-lg p-0.5 text-[11px] font-mono">
+              <span className="text-zinc-500 px-1.5 hidden md:inline">QD Engine:</span>
+              <button
+                type="button"
+                onClick={() =>
+                  setSlopConfig((prev) => ({
+                    ...prev,
+                    mutantSelectionMode: prev.mutantSelectionMode === 'off' ? 'auto' : 'off',
+                  }))
+                }
+                className={`px-2 py-0.5 rounded transition-colors ${
+                  slopConfig.mutantSelectionMode !== 'off'
+                    ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+                title="Toggle Quality-Diversity multi-candidate mutant selection at high entropy"
+              >
+                {slopConfig.mutantSelectionMode !== 'off' ? 'QD AUTO' : 'QD OFF'}
+              </button>
+            </div>
+
+            <button
+              type="button"
+              id="open-slop-vault-btn"
+              onClick={onOpenSlopVault}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-amber-300 border border-amber-500/40 text-xs font-mono transition-colors"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Mutation Lab &amp; Vault</span>
+              {((slopConfig.selectedOperators?.length || 0) > 0 || (slopConfig.selectedAttractors?.length || 0) > 0) && (
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Active Mutation Strip (Job 7) */}
+        {((slopConfig.selectedOperators?.length || 0) > 0 ||
+          (slopConfig.selectedAttractors?.length || 0) > 0 ||
+          (slopConfig.selectedPressures?.length || 0) > 0 ||
+          (slopConfig.protectedAnchors?.length || 0) > 0) && (
+          <div className="flex items-center gap-2 flex-wrap py-1.5 px-3 bg-zinc-950/70 rounded-lg border border-zinc-800 text-[11px] font-mono">
+            <span className="text-zinc-500 uppercase font-bold">Active Mutation:</span>
+            {slopConfig.mutationMode === 'curated' && (
+              <span className="px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                CURATED MODE
+              </span>
+            )}
+            {(slopConfig.selectedOperators?.length || 0) > 0 && (
+              <span className="px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                {slopConfig.selectedOperators?.length} Operators
+              </span>
+            )}
+            {(slopConfig.selectedAttractors?.length || 0) > 0 && (
+              <span className="px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                {slopConfig.selectedAttractors?.length} Fauna
+              </span>
+            )}
+            {(slopConfig.selectedPressures?.length || 0) > 0 && (
+              <span className="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                {slopConfig.selectedPressures?.length} Pressures
+              </span>
+            )}
+            {(slopConfig.protectedAnchors?.length || 0) > 0 && (
+              <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                Anchors: {slopConfig.protectedAnchors?.join(', ')}
+              </span>
+            )}
+          </div>
+        )}
 
         {/* PARADOX ENGINE TOGGLE CARD */}
         <div
@@ -799,6 +903,19 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
         )}
       </div>
 
+      {/* Modular Injection Pipeline (The Slop Matrix Synthesis Engine) */}
+      <ModularPipelineSection
+        slopConfig={slopConfig}
+        setSlopConfig={setSlopConfig}
+        activeConcept={concept}
+        onReplaceConcept={(fullText) => {
+          setConcept(fullText);
+        }}
+        onInjectConcept={(token) => {
+          setConcept(concept ? `${concept} ${token}` : token);
+        }}
+      />
+
       {/* Bottom Controls: Entropy Slider & Compile Button */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2 border-t border-zinc-800/80">
         {/* Entropy Slider */}
@@ -828,8 +945,37 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
           </div>
         </div>
 
-        {/* Right side: Search Grounding & Compile Button */}
-        <div className="flex items-center gap-3 self-end sm:self-center">
+        {/* Right side: Search Grounding, Recipe Presets & Compile Button */}
+        <div className="flex flex-wrap items-center gap-2.5 self-end sm:self-center">
+          {/* Save Recipe Button */}
+          {onSaveRecipe && (
+            <button
+              type="button"
+              id="save-recipe-trigger-btn"
+              onClick={onSaveRecipe}
+              disabled={!concept.trim()}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-mono font-medium border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+              title="Save current setup, seeds, matrices, and targets into a reusable Slop Recipe"
+            >
+              <Bookmark className="w-3.5 h-3.5 text-amber-400" />
+              <span>Save Slop Recipe</span>
+            </button>
+          )}
+
+          {/* Open Recipes Vault Button */}
+          {onOpenRecipes && (
+            <button
+              type="button"
+              id="open-recipes-trigger-btn"
+              onClick={onOpenRecipes}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-mono font-medium border border-zinc-700/80 bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 transition-colors shadow-sm"
+              title="View, load, or export saved Slop Recipes"
+            >
+              <FolderHeart className="w-3.5 h-3.5 text-rose-400" />
+              <span>Recipes Vault</span>
+            </button>
+          )}
+
           {/* Search Grounding toggle */}
           <label className="flex items-center gap-1.5 text-xs font-mono text-zinc-400 cursor-pointer select-none">
             <input

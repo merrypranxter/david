@@ -9,6 +9,8 @@ import {
   SlopSeedingConfig,
   OpenArtModel,
   GrokMode,
+  PromptGeneration,
+  MutationCandidate,
 } from './types';
 import { Header } from './components/Header';
 import { PromptInputArea } from './components/PromptInputArea';
@@ -18,9 +20,10 @@ import { ManifestoModal } from './components/ManifestoModal';
 import { ZalgoToolbox } from './components/ZalgoToolbox';
 import { SimulatorModal } from './components/SimulatorModal';
 import { SlopVaultModal } from './components/SlopVaultModal';
-import { INITIAL_SYNTHESIS_RESULT } from './data/initialResult';
+import { SlopRecipeModal } from './components/SlopRecipeModal';
+import { SlopRecipe } from './types';
 import { generateDavidProtocolDocument, downloadMarkdownFile } from './utils/exporter';
-import { AlertCircle, RotateCcw, Clock } from 'lucide-react';
+import { AlertCircle, RotateCcw, Clock, Sparkles, CheckCircle2 } from 'lucide-react';
 
 /**
  * Resilient API post helper that:
@@ -28,8 +31,11 @@ import { AlertCircle, RotateCcw, Clock } from 'lucide-react';
  * - Handles Cloud Run `/__cookie_check.html` redirects transparently with automated retry
  * - Prevents non-JSON HTML error dumps from breaking the user interface
  */
-async function apiPost<T = any>(url: string, payload: any, maxRetries = 2): Promise<T> {
+async function apiPost<T = any>(url: string, payload: any, maxRetries = 3): Promise<T> {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
+
     try {
       const res = await fetch(url, {
         method: 'POST',
@@ -39,7 +45,10 @@ async function apiPost<T = any>(url: string, payload: any, maxRetries = 2): Prom
           'Accept': 'application/json',
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const contentType = res.headers.get('content-type') || '';
       const text = await res.text();
@@ -53,7 +62,7 @@ async function apiPost<T = any>(url: string, payload: any, maxRetries = 2): Prom
       if (isCookieCheck) {
         if (attempt < maxRetries) {
           // Allow Cloud Run proxy cookie to register, then retry
-          await new Promise((resolve) => setTimeout(resolve, 700 * (attempt + 1)));
+          await new Promise((resolve) => setTimeout(resolve, 800 * (attempt + 1)));
           continue;
         }
         throw new Error('Connection re-synchronizing with Cloud Run preview. Please tap Synthesize again.');
@@ -64,30 +73,60 @@ async function apiPost<T = any>(url: string, payload: any, maxRetries = 2): Prom
         parsed = JSON.parse(text);
       } catch {
         if (attempt < maxRetries) {
-          await new Promise((resolve) => setTimeout(resolve, 600));
+          await new Promise((resolve) => setTimeout(resolve, 800 * (attempt + 1)));
           continue;
         }
         throw new Error(`The API returned an unexpected response (HTTP ${res.status}). Please try again.`);
       }
 
       if (!res.ok || !parsed.success) {
+        const isTransient =
+          res.status === 503 ||
+          parsed?.isTransient ||
+          parsed?.error?.toLowerCase()?.includes('high demand') ||
+          parsed?.error?.toLowerCase()?.includes('temporarily');
+
+        const retrySec = parsed?.retryAfterSeconds;
+
+        // Auto-retry transient load spikes only if retry delay is short (<= 5s)
+        if (isTransient && !parsed?.isRateLimit && attempt < maxRetries && (!retrySec || retrySec <= 5)) {
+          const waitMs = (retrySec ? retrySec * 1000 : 1500) + attempt * 1000;
+          await new Promise((resolve) => setTimeout(resolve, waitMs));
+          continue;
+        }
+
         const error = new Error(parsed?.error || `Request failed with status ${res.status}`);
         (error as any).retryAfterSeconds = parsed?.retryAfterSeconds;
         (error as any).isRateLimit = parsed?.isRateLimit;
+        (error as any).isTransient = isTransient;
         throw error;
       }
 
       return parsed;
     } catch (err: any) {
-      if (
-        attempt < maxRetries &&
-        (err.message?.includes('fetch') ||
-          err.message?.includes('re-synchronizing') ||
-          err.message?.includes('NetworkError') ||
-          err.message?.includes('Failed to fetch'))
-      ) {
-        await new Promise((resolve) => setTimeout(resolve, 700));
+      clearTimeout(timeoutId);
+
+      const isNetworkError =
+        err.name === 'TypeError' ||
+        err.name === 'AbortError' ||
+        err.message?.includes('Load failed') ||
+        err.message?.includes('fetch') ||
+        err.message?.includes('NetworkError') ||
+        err.message?.includes('Failed to fetch') ||
+        err.message?.includes('aborted') ||
+        err.message?.includes('re-synchronizing');
+
+      if (attempt < maxRetries && isNetworkError) {
+        await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(1.5, attempt)));
         continue;
+      }
+
+      if (err.name === 'AbortError' || err.message?.includes('aborted')) {
+        throw new Error('Synthesis took longer than expected under heavy cloud load. Please tap Synthesize to try again.');
+      }
+
+      if (err.message === 'Load failed' || err.message?.includes('Failed to fetch')) {
+        throw new Error('Connection to the neural synthesis engine timed out or was interrupted. Please click Synthesize to retry.');
       }
       throw err;
     }
@@ -96,9 +135,7 @@ async function apiPost<T = any>(url: string, payload: any, maxRetries = 2): Prom
 }
 
 export default function App() {
-  const [concept, setConcept] = useState<string>(
-    'A high-bpm speedcore track performed in a massive Gothic cathedral with long reverb decay, but muffled by underwater acoustic filters and whispered ASMR vocals.'
-  );
+  const [concept, setConcept] = useState<string>('');
   const [target, setTarget] = useState<TargetEngine>('suno');
   const [targetLength, setTargetLength] = useState<number>(1500);
   const [openArtModel, setOpenArtModel] = useState<OpenArtModel>('banana');
@@ -108,29 +145,14 @@ export default function App() {
   const [highThinking, setHighThinking] = useState<boolean>(false);
   const [useSearch, setUseSearch] = useState<boolean>(false);
 
-  // Pre-load with initial authentic synthesis result to avoid unnecessary API requests on mount
-  const [currentResult, setCurrentResult] = useState<SynthesisPayload | null>(INITIAL_SYNTHESIS_RESULT);
+  // Starts with blank canvas per user preference
+  const [currentResult, setCurrentResult] = useState<SynthesisPayload | null>(null);
   const [modelUsed, setModelUsed] = useState<string>('gemini-3.1-flash-lite');
   const [isSynthesizing, setIsSynthesizing] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
 
-  const [history, setHistory] = useState<SynthesisHistoryItem[]>([
-    {
-      id: 'init-seed',
-      timestamp: Date.now() - 60000,
-      concept:
-        'A high-bpm speedcore track performed in a massive Gothic cathedral with long reverb decay, but muffled by underwater acoustic filters and whispered ASMR vocals.',
-      target: 'suno',
-      entropyLevel: 7,
-      highThinking: false,
-      useSearch: false,
-      commandMode: 'dual',
-      modelUsed: 'gemini-3.8-flash',
-      result: INITIAL_SYNTHESIS_RESULT,
-      generationIndex: 0,
-    },
-  ]);
+  const [history, setHistory] = useState<SynthesisHistoryItem[]>([]);
   const [ouroborosSeed, setOuroborosSeed] = useState<string | null>(null);
   const [ouroborosGenCount, setOuroborosGenCount] = useState<number>(0);
 
@@ -138,21 +160,90 @@ export default function App() {
   const [manifestoOpen, setManifestoOpen] = useState<boolean>(false);
   const [zalgoOpen, setZalgoOpen] = useState<boolean>(false);
   const [slopVaultOpen, setSlopVaultOpen] = useState<boolean>(false);
+  const [recipeModalOpen, setRecipeModalOpen] = useState<boolean>(false);
+  const [recipeModalMode, setRecipeModalMode] = useState<'list' | 'save'>('list');
+  const [recipeToast, setRecipeToast] = useState<string | null>(null);
 
-  // Slop Seeding & Paradox Configuration
+  // Slop Seeding & Paradox Configuration (clean slate without preloaded seeds)
   const [slopConfig, setSlopConfig] = useState<SlopSeedingConfig>({
     enableParadoxEngine: true,
     addMaths: true,
     addSciences: true,
     addSlop: true,
     contradictionMode: 'paradox',
-    selectedSeeds: [
-      'Calabi–Yau manifold',
-      'Rayleigh–Taylor instability',
-      'anxious toaster',
-      'Banach–Tarski paradox',
-    ],
+    selectedSeeds: [],
+    activePipeline: ['temporal_contradictions', 'token_splicing', 'mojibake'],
   });
+
+  // Restore active draft from localStorage on initial load
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem('david_slop_active_draft_v1');
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed.concept) setConcept(parsed.concept);
+        if (parsed.target) setTarget(parsed.target);
+        if (parsed.targetLength) setTargetLength(parsed.targetLength);
+        if (parsed.openArtModel) setOpenArtModel(parsed.openArtModel);
+        if (parsed.grokMode) setGrokMode(parsed.grokMode);
+        if (typeof parsed.entropyLevel === 'number') setEntropyLevel(parsed.entropyLevel);
+        if (parsed.commandMode) setCommandMode(parsed.commandMode);
+        if (typeof parsed.highThinking === 'boolean') setHighThinking(parsed.highThinking);
+        if (typeof parsed.useSearch === 'boolean') setUseSearch(parsed.useSearch);
+        if (parsed.slopConfig) setSlopConfig(parsed.slopConfig);
+      }
+    } catch (e) {
+      console.warn('Could not restore saved draft:', e);
+    }
+  }, []);
+
+  // Auto-save current setup draft to localStorage on every change
+  useEffect(() => {
+    try {
+      const draft = {
+        concept,
+        target,
+        targetLength,
+        openArtModel,
+        grokMode,
+        entropyLevel,
+        commandMode,
+        highThinking,
+        useSearch,
+        slopConfig,
+      };
+      localStorage.setItem('david_slop_active_draft_v1', JSON.stringify(draft));
+    } catch (e) {
+      console.warn('Could not auto-save active draft:', e);
+    }
+  }, [
+    concept,
+    target,
+    targetLength,
+    openArtModel,
+    grokMode,
+    entropyLevel,
+    commandMode,
+    highThinking,
+    useSearch,
+    slopConfig,
+  ]);
+
+  const handleApplyRecipe = (recipe: SlopRecipe) => {
+    if (recipe.concept) setConcept(recipe.concept);
+    if (recipe.target) setTarget(recipe.target);
+    if (recipe.targetLength) setTargetLength(recipe.targetLength);
+    if (recipe.openArtModel) setOpenArtModel(recipe.openArtModel);
+    if (recipe.grokMode) setGrokMode(recipe.grokMode);
+    if (typeof recipe.entropyLevel === 'number') setEntropyLevel(recipe.entropyLevel);
+    if (recipe.commandMode) setCommandMode(recipe.commandMode);
+    if (typeof recipe.highThinking === 'boolean') setHighThinking(recipe.highThinking);
+    if (typeof recipe.useSearch === 'boolean') setUseSearch(recipe.useSearch);
+    if (recipe.slopConfig) setSlopConfig(recipe.slopConfig);
+
+    setRecipeToast(`Loaded Recipe: "${recipe.name}"`);
+    setTimeout(() => setRecipeToast(null), 4000);
+  };
 
   // Simulation state
   const [simModalOpen, setSimModalOpen] = useState<boolean>(false);
@@ -171,7 +262,12 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [retryCountdown]);
 
-  const handleSynthesize = async (overrideConcept?: string, overrideSeed?: string) => {
+  const handleSynthesize = async (
+    overrideConcept?: string,
+    overrideSeed?: string,
+    overrideParentGen?: PromptGeneration,
+    overrideSecondParentGen?: PromptGeneration
+  ) => {
     const inputConcept = (overrideConcept ?? concept).trim();
     if (!inputConcept) return;
 
@@ -190,6 +286,8 @@ export default function App() {
         useSearch,
         commandMode,
         recursiveSeed: overrideSeed ?? ouroborosSeed,
+        parentGeneration: overrideParentGen,
+        secondParentGeneration: overrideSecondParentGen,
         enableParadoxEngine: slopConfig.enableParadoxEngine,
         paradoxEngine: slopConfig.enableParadoxEngine,
         addMaths: slopConfig.addMaths,
@@ -200,15 +298,28 @@ export default function App() {
         slopCategory: slopConfig.slopCategory,
         contradictionMode: slopConfig.contradictionMode,
         selectedSlopSeeds: slopConfig.selectedSeeds,
+        activePipeline: slopConfig.activePipeline || [],
+        slopConfig: { ...slopConfig },
+        mutationMode: slopConfig.mutationMode,
+        selectedOperators: slopConfig.selectedOperators,
+        selectedAttractors: slopConfig.selectedAttractors,
+        selectedPressures: slopConfig.selectedPressures,
+        protectedAnchors: slopConfig.protectedAnchors,
+        mutantSelectionMode: slopConfig.mutantSelectionMode,
       });
 
       setCurrentResult(data.data);
       setModelUsed(data.modelUsed);
       setRetryCountdown(null);
 
-      // Add to history
+      const resolvedGenIndex = data.data?.generation?.generationNumber
+        ? data.data.generation.generationNumber - 1
+        : ouroborosGenCount;
+      setOuroborosGenCount(resolvedGenIndex + 1);
+
+      // Add to history with complete evolutionary record
       const newHistoryItem: SynthesisHistoryItem = {
-        id: Math.random().toString(36).substring(2, 9),
+        id: data.data?.generation?.generationId || Math.random().toString(36).substring(2, 9),
         timestamp: Date.now(),
         concept: inputConcept,
         target,
@@ -221,14 +332,18 @@ export default function App() {
         commandMode,
         modelUsed: data.modelUsed,
         result: data.data,
-        generationIndex: ouroborosGenCount,
+        generationIndex: resolvedGenIndex,
         slopConfig: { ...slopConfig },
+        lineage: data.data?.generation,
       };
 
       setHistory((prev) => [newHistoryItem, ...prev.slice(0, 19)]);
     } catch (err: any) {
       console.error('Synthesis error:', err);
       setErrorMessage(err.message || 'An unexpected error occurred during synthesis.');
+      if (err.retryAfterSeconds) {
+        setRetryCountdown(err.retryAfterSeconds);
+      }
     } finally {
       setIsSynthesizing(false);
     }
@@ -267,13 +382,22 @@ export default function App() {
     }
   };
 
-  const handleOuroborosLoop = (slopPrompt: string) => {
-    const nextGen = ouroborosGenCount + 1;
+  const handleOuroborosLoop = (slopPrompt: string, parentGen?: PromptGeneration) => {
+    const parent = parentGen || currentResult?.generation;
+    const nextGen = (parent?.generationNumber ?? ouroborosGenCount) + 1;
     setOuroborosGenCount(nextGen);
     setOuroborosSeed(slopPrompt);
-    const mutatedConcept = `Mutate & Amplify Gen #${nextGen}: ${slopPrompt.slice(0, 180)}...`;
+    const mutatedConcept = `Mutate & Evolve Gen #${nextGen}: ${slopPrompt.slice(0, 180)}...`;
     setConcept(mutatedConcept);
-    handleSynthesize(mutatedConcept, slopPrompt);
+    handleSynthesize(mutatedConcept, slopPrompt, parent);
+  };
+
+  const handleCrossbreed = (parentA: PromptGeneration, parentB: PromptGeneration) => {
+    const nextGen = Math.max(parentA.generationNumber, parentB.generationNumber) + 1;
+    setOuroborosGenCount(nextGen);
+    const crossConcept = `Crossbreed Gen #${parentA.generationNumber} (${parentA.generationId.slice(0, 8)}) x Gen #${parentB.generationNumber} (${parentB.generationId.slice(0, 8)})`;
+    setConcept(crossConcept);
+    handleSynthesize(crossConcept, undefined, parentA, parentB);
   };
 
   const handleTranspose = () => {
@@ -296,6 +420,36 @@ export default function App() {
     });
   };
 
+  const handleSelectManualSurvivor = (candidate: MutationCandidate) => {
+    if (!currentResult) return;
+    setCurrentResult((prev) => {
+      if (!prev) return null;
+      const updatedFamily = prev.mutantFamily
+        ? {
+            ...prev.mutantFamily,
+            survivorCandidateId: candidate.id,
+            selectionReason: `User manually selected Variant [${candidate.candidateLetter}] as survivor.`,
+            evaluationMode: 'user-override' as const,
+          }
+        : undefined;
+
+      return {
+        ...prev,
+        slop: {
+          ...prev.slop,
+          prompt: candidate.renderedPrompt || prev.slop.prompt,
+          stylePrompt: candidate.stylePrompt || prev.slop.stylePrompt,
+          lyricsPrompt: candidate.lyricsPrompt || prev.slop.lyricsPrompt,
+          mutationSummary: candidate.mutationRecipe.diagnosticSummary,
+          activeOperators: candidate.mutationRecipe.operators.map((o) => o.id),
+          activeAttractors: (candidate.mutationRecipe.attractors || []).map((a) => a.id),
+        },
+        mutationRecipe: candidate.mutationRecipe,
+        mutantFamily: updatedFamily,
+      };
+    });
+  };
+
   const handleExport = () => {
     const doc = generateDavidProtocolDocument(currentResult, concept, target, entropyLevel, history);
     downloadMarkdownFile(`david-8-${target}-${Date.now()}.md`, doc);
@@ -313,11 +467,23 @@ export default function App() {
         onOpenManifesto={() => setManifestoOpen(true)}
         onOpenZalgo={() => setZalgoOpen(true)}
         onExport={handleExport}
+        onOpenRecipes={() => {
+          setRecipeModalMode('list');
+          setRecipeModalOpen(true);
+        }}
         hasResult={!!currentResult}
         ouroborosCount={ouroborosGenCount}
         highThinking={highThinking}
         onToggleThinking={() => setHighThinking(!highThinking)}
       />
+
+      {/* Recipe notification toast banner */}
+      {recipeToast && (
+        <div className="fixed top-16 right-6 z-50 p-3.5 rounded-xl bg-amber-500/20 border border-amber-500/50 backdrop-blur-md shadow-2xl flex items-center gap-2.5 text-xs font-mono text-amber-200 animate-in fade-in slide-in-from-top-2">
+          <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+          <span className="font-semibold">{recipeToast}</span>
+        </div>
+      )}
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
@@ -337,19 +503,34 @@ export default function App() {
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              {highThinking && (
+                <button
+                  type="button"
+                  disabled={isSynthesizing}
+                  onClick={() => {
+                    setHighThinking(false);
+                    setErrorMessage(null);
+                    setRetryCountdown(null);
+                    setTimeout(() => handleSynthesize(), 50);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs font-mono transition-colors"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Retry with Standard Load</span>
+                </button>
+              )}
               <button
                 type="button"
-                disabled={isSynthesizing || (retryCountdown !== null && retryCountdown > 0)}
-                onClick={() => handleSynthesize()}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono transition-colors ${
-                  retryCountdown !== null && retryCountdown > 0
-                    ? 'border-zinc-700 bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                    : 'border-rose-400/50 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200'
-                }`}
+                disabled={isSynthesizing}
+                onClick={() => {
+                  setRetryCountdown(null);
+                  handleSynthesize();
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-400/50 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-mono transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>{retryCountdown ? `Wait ${retryCountdown}s` : 'Retry'}</span>
+                <span>{retryCountdown ? `Retry Now (${retryCountdown}s)` : 'Retry'}</span>
               </button>
               <button
                 type="button"
@@ -388,6 +569,14 @@ export default function App() {
           slopConfig={slopConfig}
           setSlopConfig={setSlopConfig}
           onOpenSlopVault={() => setSlopVaultOpen(true)}
+          onSaveRecipe={() => {
+            setRecipeModalMode('save');
+            setRecipeModalOpen(true);
+          }}
+          onOpenRecipes={() => {
+            setRecipeModalMode('list');
+            setRecipeModalOpen(true);
+          }}
         />
 
         {/* Ouroboros Chain history bar if active */}
@@ -408,6 +597,7 @@ export default function App() {
             setOuroborosGenCount(0);
             setOuroborosSeed(null);
           }}
+          onCrossbreed={handleCrossbreed}
         />
 
         {/* Dual Output Results View */}
@@ -419,6 +609,7 @@ export default function App() {
             onRunSimulation={handleRunSimulation}
             onOuroborosLoop={handleOuroborosLoop}
             onTranspose={handleTranspose}
+            onSelectManualSurvivor={handleSelectManualSurvivor}
           />
         ) : isSynthesizing ? (
           <div className="py-20 flex flex-col items-center justify-center text-center space-y-3 bg-[#11131c] border border-zinc-800 rounded-xl">
@@ -430,7 +621,17 @@ export default function App() {
               Traversing high-dimensional latent space vectors &bull; Extracting [LITERAL] Scalpel &bull; Injecting [SLOP] Deluge
             </p>
           </div>
-        ) : null}
+        ) : (
+          <div className="py-16 px-4 flex flex-col items-center justify-center text-center space-y-2.5 bg-[#0e1018]/50 border border-dashed border-zinc-800/80 rounded-xl">
+            <Sparkles className="w-7 h-7 text-zinc-600 mb-1 stroke-[1.5]" />
+            <h3 className="text-xs font-bold font-mono text-zinc-400 uppercase tracking-wider">
+              Ready &bull; Blank Slate
+            </h3>
+            <p className="text-xs font-mono text-zinc-500 max-w-md">
+              Enter any raw concept above and click <span className="text-amber-400 font-semibold">SYNTHESIZE INCANTATIONS</span> to generate machine-native prompts from scratch.
+            </p>
+          </div>
+        )}
       </main>
 
       {/* Footer */}
@@ -475,11 +676,13 @@ export default function App() {
         onInject={handleInjectZalgo}
       />
 
-      {/* Slop Vault / Lexicon Modal */}
+      {/* Slop Vault / Mutation Lab Modal */}
       <SlopVaultModal
         isOpen={slopVaultOpen}
         onClose={() => setSlopVaultOpen(false)}
         selectedSeeds={slopConfig.selectedSeeds}
+        slopConfig={slopConfig}
+        onUpdateSlopConfig={(updater) => setSlopConfig(updater)}
         onToggleSeed={(seed) =>
           setSlopConfig((prev) => ({
             ...prev,
@@ -494,6 +697,25 @@ export default function App() {
             selectedSeeds: Array.from(new Set([...prev.selectedSeeds, ...seeds])),
           }))
         }
+      />
+      {/* Slop Recipe Vault & Preservation Modal */}
+      <SlopRecipeModal
+        isOpen={recipeModalOpen}
+        onClose={() => setRecipeModalOpen(false)}
+        initialMode={recipeModalMode}
+        currentConfig={{
+          concept,
+          target,
+          targetLength,
+          openArtModel,
+          grokMode,
+          entropyLevel,
+          commandMode,
+          highThinking,
+          useSearch,
+          slopConfig,
+        }}
+        onApplyRecipe={handleApplyRecipe}
       />
     </div>
   );
