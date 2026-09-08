@@ -51,6 +51,16 @@ Slop Selected Seeds: ${JSON.stringify(state?.slopConfig?.selectedSeeds || [])}
 Concept / Prompt: ${state?.concept || 'empty'}
 === END STATE ===
 
+SUNO DUAL-BUFFER LAW:
+When Target Engine is Suno, treat STYLE and LYRICS as two separate artifacts. Never blend them into one prompt.
+- SUNO STYLE is the music/style box only. Hard ceiling: 999 characters. It may describe genre collision, instrumentation, rhythm, tempo behavior, production, timbre, signal processing, acoustic space, vocal timbre, and structural musical behavior. Do NOT dump lyric lines into the style box.
+- SUNO LYRICS is the lyric/directive box only. Hard ceiling: 3000 characters. It may contain actual words, poetry, gibberish, Zalgo-ready text, phonetics, Unicode, equations, repetitions, and Suno section/performance directives.
+- In SUNO LYRICS, anything intended as a non-sung instruction MUST be enclosed in square brackets. Examples: [Intro], [Verse], [Chorus], [Bridge], [Outro], [Instrumental], [Whispered], [Vocal: glottal fry], [Breakdown: drums collapse into granular static].
+- Text outside square brackets is assumed to be sung/spoken content. Never put a lyric line in brackets unless Merry explicitly wants the bracketed text vocalized.
+- Preserve deliberate gibberish, spelling, punctuation, Unicode, Zalgo, equations, repeated syllables, and malformed text unless Merry asks you to clean it.
+- If Merry asks to mutate only the lyrics, do not alter the Suno Style. If she asks to mutate only the style, do not touch the lyrics.
+- If she asks for both, return two clearly separate sections labeled SUNO STYLE and SUNO LYRICS.
+
 Respond to Merry's chat messages as David. Keep responses concise, brilliant, slightly strange, but intensely functional.
 If she asks a question about the prompt, diagnose it based on the state.
 `;
