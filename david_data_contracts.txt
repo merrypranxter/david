@@ -1,0 +1,4026 @@
+======================================================================
+DAVID 8 — INTERNAL STATE SCHEMA & DATA CONTRACTS
+PART 8: GIVE EVERY KIND OF KNOWLEDGE ITS OWN HOME
+======================================================================
+
+PURPOSE
+
+DAVID must not operate from one giant undifferentiated prompt context.
+
+Different kinds of information have different:
+
+authority
+
+lifetimes
+
+owners
+
+mutation rules
+
+confidence
+
+scope
+
+and downstream effects.
+
+Therefore DAVID should maintain explicit conceptual state objects.
+
+The exact programming language / database implementation may vary.
+
+The separation MUST NOT.
+
+======================================================================
+CORE STATE OBJECTS
+======================================================================
+
+At minimum DAVID should maintain conceptual equivalents of:
+
+APP_STATE
+
+RAW_STATE
+
+WORKING_STATE
+
+CANONICAL_CONCEPT
+
+GOOD_BONE
+
+MODE_STATE
+
+SELF_TRANSFORM_STATE
+
+SLOP_STATE
+
+MODEL_PROFILE
+
+MODEL_TRANSLATION_STATE
+
+PROMPT_ARCHITECTURE_STATE
+
+PROMPT_OUTPUT_STATE
+
+PROJECT_STATE
+
+CONSULT_STATE
+
+MEMORY_STORE
+
+EXPERIMENT_STATE
+
+FEEDBACK_STATE
+
+SPECIMEN
+
+PROMPT_LINEAGE
+
+FAILURE_PATTERN
+
+SUCCESS_PATTERN
+
+SEED_KNOWLEDGE
+
+SHARED_SHORTHAND
+
+These are separate because they perform different jobs.
+
+======================================================================
+1. APP_STATE
+======================================================================
+
+APP_STATE represents what the user interface currently contains.
+
+It may include:
+
+active_project_id
+
+active_reference_ids
+
+selected_seed_ids
+
+selected_dna_ids
+
+selected_model_id
+
+selected_model_version
+
+output_medium:
+    still
+    video
+    text
+    other
+
+selected_mode:
+    direct
+    hybrid
+    slop
+    word_vomit
+    fertilizer
+
+transform_level:
+    T1
+    T2
+    T3
+    auto
+
+camera_setting
+
+palette_setting
+
+prompt_length_preference
+
+consult_open
+
+current_user_input
+
+exact_text_blocks
+
+UI control values
+
+generation settings
+
+APP_STATE describes interface configuration.
+
+It does NOT contain synthesized artistic meaning.
+
+======================================================================
+APP_STATE OWNERSHIP
+======================================================================
+
+Primary owner:
+
+USER / UI.
+
+DAVID may:
+
+read it.
+
+DAVID may propose:
+
+changes.
+
+DAVID should NOT silently change visible UI selections unless the
+application explicitly supports that behavior and Merry has authorized
+it.
+
+Example:
+
+David may decide:
+
+"Seed 7 should be flavor."
+
+That changes:
+
+WORKING_STATE.
+
+Not necessarily:
+
+the selected checkbox in APP_STATE.
+
+======================================================================
+2. RAW_STATE
+======================================================================
+
+RAW_STATE is a normalized snapshot of the user's current input.
+
+Example conceptual structure:
+
+RAW_STATE {
+    project_id
+
+    user_request
+
+    selected_seeds[]
+
+    selected_dna[]
+
+    references[]
+
+    target_model
+
+    target_model_version
+
+    medium
+
+    mode
+
+    transform_level
+
+    explicit_requirements[]
+
+    explicit_exclusions[]
+
+    camera_instruction
+
+    palette_instruction
+
+    exact_text[]
+
+    uploaded_prompt
+
+    prior_output_reference
+
+    app_controls{}
+
+    timestamp
+}
+
+RAW_STATE is immutable for one synthesis attempt.
+
+======================================================================
+RAW_STATE IMMUTABILITY
+======================================================================
+
+Once captured for a synthesis attempt:
+
+DO NOT silently rewrite RAW_STATE.
+
+If interpretation changes:
+
+update WORKING_STATE.
+
+If Merry changes actual input:
+
+capture a new RAW_STATE version.
+
+This creates traceability.
+
+======================================================================
+WHY RAW_STATE EXISTS
+======================================================================
+
+Without it DAVID cannot later distinguish:
+
+WHAT MERRY SAID
+
+from:
+
+WHAT DAVID DECIDED IT MEANT.
+
+That distinction is essential.
+
+======================================================================
+3. WORKING_STATE
+======================================================================
+
+WORKING_STATE is the active interpretation layer.
+
+Example:
+
+WORKING_STATE {
+    source_raw_state_id
+
+    resolved_intent
+
+    resolved_mode
+
+    seed_roles[]
+
+    dna_roles[]
+
+    hard_rules[]
+
+    strong_preferences[]
+
+    flavor_elements[]
+
+    seed_fusions[]
+
+    seed_conflicts[]
+
+    seed_promotions[]
+
+    seed_demotions[]
+
+    active_carriers[]
+
+    forbidden_current_project_elements[]
+
+    reference_roles[]
+
+    transform_level
+
+    camera_contract
+
+    palette_logic
+
+    unresolved_questions[]
+
+    consultation_decisions[]
+
+    current_hypotheses[]
+
+    candidate_good_bones[]
+
+    notes
+}
+
+This is where:
+
+"Möbius topology = governing law"
+
+or:
+
+"VHS = recording consequence"
+
+lives.
+
+======================================================================
+WORKING_STATE IS INTERPRETATION
+======================================================================
+
+Example RAW:
+
+velvet
+nematics
+eyes
+VHS
+
+Possible WORKING:
+
+nematics:
+    governing law
+
+velvet:
+    physical orientation carrier
+
+eyes:
+    anatomical manifestation of defects
+
+VHS:
+    secondary recording failure
+
+This is meaningful.
+
+The original list was not.
+
+======================================================================
+WORKING_STATE OWNERS
+======================================================================
+
+May be modified by:
+
+CONSULT
+
+SOUL STEP
+
+explicit Merry correction
+
+Creative Judgment
+
+specialist reasoning
+
+May NOT be changed by:
+
+Model Translator
+
+final Editor
+
+unless an upstream problem is detected and control is deliberately
+returned to Working State.
+
+======================================================================
+4. GOOD_BONE
+======================================================================
+
+GOOD_BONE deserves its own object.
+
+Example:
+
+GOOD_BONE {
+    id
+
+    statement
+
+    type:
+        structural
+        causal
+        spatial
+        temporal
+        material
+        identity
+        contradiction
+        other
+
+    source:
+        merry
+        david
+        accident
+        consult
+        model_output
+
+    must_preserve:
+        true/false
+
+    supporting_seed_ids[]
+
+    threatened_by[]
+
+    notes
+}
+
+======================================================================
+WHY GOOD_BONE IS SEPARATE
+======================================================================
+
+Because DAVID needs to know:
+
+WHAT CANNOT BE ACCIDENTALLY EDITED AWAY.
+
+Example:
+
+"One connected body exists simultaneously as incompatible material
+states."
+
+If a later model translation turns that into:
+
+"several colorful versions of the same woman"
+
+the Good Bone checker can catch the failure.
+
+======================================================================
+GOOD_BONE MAY CHANGE
+======================================================================
+
+Good Bone is protected downstream.
+
+But upstream:
+
+Merry
+or CONSULT
+or Creative Judgment
+
+may deliberately replace it.
+
+This creates a new canonical version.
+
+======================================================================
+5. CANONICAL_CONCEPT
+======================================================================
+
+CANONICAL_CONCEPT is the model-independent artwork.
+
+Suggested conceptual structure:
+
+CANONICAL_CONCEPT {
+    id
+
+    version
+
+    parent_version
+
+    source_working_state
+
+    title_or_internal_label
+
+    good_bone
+
+    central_event
+
+    substrate
+
+    subject_contract
+
+    identity_contract
+
+    governing_law
+
+    secondary_systems[]
+
+    seed_relationships[]
+
+    causal_chain[]
+
+    spatial_logic
+
+    temporal_logic
+
+    material_logic
+
+    scale_logic
+
+    color_logic
+
+    light_logic
+
+    composition_logic
+
+    camera_contract
+
+    medium_history
+
+    aesthetic_world
+
+    transform_level
+
+    hard_requirements[]
+
+    hard_exclusions[]
+
+    allowed_emergence[]
+
+    unknown_shit_reserve[]
+
+    known_failure_risks[]
+
+    mode_contract
+
+    slop_target_id
+
+    notes
+}
+
+======================================================================
+CANONICAL_CONCEPT IS THE ARTWORK'S SOURCE OF TRUTH
+======================================================================
+
+The Canonical Concept should answer:
+
+WHAT IS THIS THING?
+
+independent of:
+
+Grok
+
+Seedream
+
+Kling
+
+Banana
+
+future model.
+
+======================================================================
+THE CANONICAL CONCEPT SHOULD NOT CONTAIN MODEL HACKS
+======================================================================
+
+Do not contaminate Canonical Concept with:
+
+"Grok needs this repeated twice"
+
+"Seedream hates this noun"
+
+"put this at the end for Kling"
+
+Those belong downstream.
+
+======================================================================
+CANONICAL CONCEPT VERSIONING
+======================================================================
+
+A new Canonical version should be created when ART changes.
+
+Examples:
+
+v1:
+skin carries reaction diffusion.
+
+v2:
+hair carries reaction diffusion.
+
+ART changed.
+
+New canonical version.
+
+But:
+
+same art translated from Grok to Seedream:
+
+NOT a new canonical version.
+
+======================================================================
+6. MODE_STATE
+======================================================================
+
+MODE_STATE contains control-regime logic.
+
+MODE_STATE {
+    mode:
+        direct
+        hybrid
+        slop
+        word_vomit
+        fertilizer
+        consult
+
+    optimization_goal
+
+    preserve_dimensions[]
+
+    mutable_dimensions[]
+
+    intentionally_unstable_dimensions[]
+
+    allowed_ambiguity
+
+    allowed_semantic_drift
+
+    coherence_requirement
+
+    unknown_shit_reserve
+
+    editor_policy
+
+    saboteur_policy
+}
+
+======================================================================
+MODE_STATE MUST BE FIRST CLASS
+======================================================================
+
+Do not reduce Mode to:
+
+a string prepended to the prompt.
+
+Mode changes:
+
+how DAVID judges
+
+how DAVID edits
+
+how memory is retrieved
+
+how failures are classified
+
+how Model Translator behaves.
+
+======================================================================
+7. SELF_TRANSFORM_STATE
+======================================================================
+
+When SELF_TRANSFORM is active:
+
+SELF_TRANSFORM_STATE {
+    active
+
+    reference_ids[]
+
+    sole_subject
+
+    identity_priority
+
+    transform_level
+
+    identity_anchors[]
+
+    identity_islands[]
+
+    active_reference_features[]
+
+    feature_roles[]
+
+    anatomy_freedom
+
+    geometry_freedom
+
+    material_freedom
+
+    duplication_policy
+
+    separation_policy
+
+    one_body_rule
+
+    reference_specific_initial_conditions[]
+
+    likely_reference_failures[]
+
+}
+
+======================================================================
+REFERENCE FEATURES SHOULD HAVE ROLES
+======================================================================
+
+Example:
+
+feature_roles:
+    left_eye:
+        pacemaker
+
+    curls:
+        orientation_carrier
+
+    nose:
+        stable_boundary
+
+    cheek:
+        reaction_medium
+
+This helps DAVID actually work the concept INTO the supplied person.
+
+======================================================================
+SELF_TRANSFORM_STATE DOES NOT FORCE RADICALITY
+======================================================================
+
+T1:
+may preserve most anatomy.
+
+T2:
+structural change.
+
+T3:
+ontological change.
+
+Reference-transform logic activates the relationship.
+
+Transform level controls degree.
+
+======================================================================
+8. SLOP_STATE
+======================================================================
+
+SLOP must have its own full state object.
+
+Not:
+
+slop = true.
+
+Suggested:
+
+SLOP_STATE {
+    active
+
+    regime:
+        slop
+        hybrid
+
+    scaffold
+
+    stable_anchors[]
+
+    target_instability[]
+
+    allowed_drift[]
+
+    forbidden_drift[]
+
+    weak_joints[]
+
+    selected_operators[]
+
+    slop_dose
+
+    expected_failure_family[]
+
+    desired_pathologies[]
+
+    useless_collapse_conditions[]
+
+    accretion_policy
+
+    artifact_harvest_policy
+
+    unknown_shit_reserve[]
+
+    lineage_preservation
+
+    notes
+}
+
+======================================================================
+SLOP TARGET EXAMPLE
+======================================================================
+
+SLOP_STATE:
+
+scaffold:
+    one recognizable Merry in locked close-up
+
+stable_anchors:
+    identity
+    single subject
+    camera
+    primary palette
+
+target_instability:
+    ownership of facial features
+    material category
+
+allowed_drift:
+    anatomy
+    surface boundaries
+    part-whole relationships
+
+forbidden_drift:
+    becoming multiple separate people
+    camera movement
+
+operators:
+    binding_instability
+    concept_bleed
+    recursive_error
+
+dose:
+    medium-high
+
+Now DAVID knows:
+
+WHAT TO FUCK UP
+
+and:
+
+WHAT NOT TO FUCK UP.
+
+======================================================================
+SLOP_STATE READ / WRITE RULES
+======================================================================
+
+May be written by:
+
+Mode resolver
+
+CONSULT
+
+Slop Engine
+
+explicit Merry request
+
+May be read by:
+
+Soul Step
+
+Creative Judgment
+
+Prompt Architecture
+
+Model Translator
+
+Saboteur
+
+Editor
+
+Memory
+
+May NOT be silently neutralized by any downstream stage.
+
+======================================================================
+9. MODEL_PROFILE
+======================================================================
+
+Each model/version should have structured profile data.
+
+MODEL_PROFILE {
+    model_id
+
+    version
+
+    task_type
+
+    source_type:
+        text_to_image
+        image_to_image
+        text_to_video
+        image_to_video
+        etc.
+
+    confidence
+
+    last_updated
+
+    obedience_profile {
+        reference_binding
+        identity_retention
+        transformation_courage
+        technical_term_response
+        negative_response
+        prompt_length
+        chronology
+        camera_following
+        materiality
+        color_behavior
+        common_attractors[]
+        literalization_triggers[]
+    }
+
+    slop_profile {
+        contradiction_tolerance
+        binding_instability
+        semantic_drift
+        malformed_text_response
+        repetition_response
+        recursive_error
+        reference_pressure
+        object_fusion
+        collapse_threshold
+        useful_pathologies[]
+    }
+
+    phrase_functions[]
+
+    failure_patterns[]
+
+    success_patterns[]
+
+    stale_or_needs_revalidation
+
+    notes
+}
+
+======================================================================
+MODEL PROFILE IS EMPIRICAL
+======================================================================
+
+This object contains:
+
+what we have observed.
+
+Not:
+
+what DAVID assumes every model of this family should do.
+
+======================================================================
+MODEL PROFILE VERSIONING
+======================================================================
+
+Seedream 4.5
+
+is NOT:
+
+Seedream 5.0.
+
+A meaningful version change may require:
+
+separate profile.
+
+Do not overwrite.
+
+======================================================================
+10. MODEL_TRANSLATION_STATE
+======================================================================
+
+MODEL_TRANSLATION_STATE tracks what was done to convert Canonical
+Concept into a model dialect.
+
+MODEL_TRANSLATION_STATE {
+    canonical_concept_id
+
+    canonical_version
+
+    target_model
+
+    target_version
+
+    task_type
+
+    adapter_rules_applied[]
+
+    adapter_rules_skipped[]
+
+    technical_terms_named[]
+
+    technical_terms_behavior_only[]
+
+    reference_syntax
+
+    repetition_strategy
+
+    negative_strategy
+
+    prompt_length_strategy
+
+    chronology_strategy
+
+    camera_strategy
+
+    identity_strategy
+
+    slop_translation_strategy
+
+    known_tradeoffs[]
+
+    reliability_estimate
+
+    notes
+}
+
+======================================================================
+WHY TRANSLATION STATE MATTERS
+======================================================================
+
+When a result fails:
+
+we can ask:
+
+WHAT DID THE TRANSLATOR CHANGE?
+
+Without this state:
+
+Canonical and dialect changes blur together.
+
+======================================================================
+11. PROMPT_ARCHITECTURE_STATE
+======================================================================
+
+This object represents model-neutral compilation structure.
+
+PROMPT_ARCHITECTURE_STATE {
+    canonical_id
+
+    opening_contract
+
+    central_mechanism_block
+
+    causal_blocks[]
+
+    seed_bridge_blocks[]
+
+    reference_blocks[]
+
+    material_blocks[]
+
+    scale_blocks[]
+
+    temporal_blocks[]
+
+    aesthetic_blocks[]
+
+    camera_block
+
+    media_damage_block
+
+    inline_negatives[]
+
+    ending_reinforcement[]
+
+    verbatim_blocks[]
+
+    prompt_budget_priorities[]
+
+    unknown_shit_reserve[]
+
+    mode_sensitive_regions[]
+}
+
+======================================================================
+ARCHITECTURE IS NOT NECESSARILY DISPLAY FORMAT
+======================================================================
+
+Final model prompt may become:
+
+one paragraph
+
+several blocks
+
+compact clauses
+
+whatever dialect requires.
+
+Architecture tracks information roles.
+
+======================================================================
+12. PROMPT_OUTPUT_STATE
+======================================================================
+
+PROMPT_OUTPUT_STATE contains what actually gets emitted.
+
+PROMPT_OUTPUT_STATE {
+    id
+
+    source_canonical_id
+
+    source_canonical_version
+
+    architecture_id
+
+    translation_state_id
+
+    model
+
+    mode
+
+    final_prompt
+
+    output_format
+
+    exact_reference_tokens[]
+
+    exact_verbatim_blocks[]
+
+    hard_invariants_verified[]
+
+    warnings[]
+
+    created_at
+}
+
+======================================================================
+PROMPT OUTPUT IS DISPOSABLE
+======================================================================
+
+The final wording is a compiled artifact.
+
+It can be regenerated.
+
+Do not treat it as the only representation of the work.
+
+======================================================================
+13. PROJECT_STATE
+======================================================================
+
+PROJECT_STATE persists across one artwork / research family.
+
+PROJECT_STATE {
+    project_id
+
+    title
+
+    status
+
+    created_at
+
+    current_raw_state
+
+    current_working_state
+
+    active_canonical_version
+
+    current_good_bone
+
+    active_mode
+
+    active_model
+
+    hard_rules[]
+
+    current_preferences[]
+
+    current_do_not_use[]
+
+    seed_role_overrides[]
+
+    active_reference_contract
+
+    current_hypotheses[]
+
+    unresolved_questions[]
+
+    current_best_output
+
+    known_failures[]
+
+    useful_accidents[]
+
+    lineage_root
+
+    notes
+}
+
+======================================================================
+PROJECT STATE ≠ GLOBAL MEMORY
+======================================================================
+
+Example:
+
+"No mouths."
+
+may live here.
+
+When project ends:
+
+it should not infect global art DNA.
+
+======================================================================
+14. CONSULT_STATE
+======================================================================
+
+CONSULT_STATE tracks the workbench conversation.
+
+CONSULT_STATE {
+    project_id
+
+    current_topic
+
+    current_question
+
+    current_diagnosis
+
+    proposals[]
+
+    accepted_decisions[]
+
+    rejected_decisions[]
+
+    unresolved_forks[]
+
+    candidate_seed_roles[]
+
+    candidate_good_bones[]
+
+    experiment_suggestions[]
+
+    current_recommendation
+
+    temporary_shorthand[]
+
+}
+
+======================================================================
+CONSULT DECISIONS MUST BE EXPLICITLY REPRESENTED
+======================================================================
+
+Do not rely on:
+
+"the chatbot remembers we talked about it."
+
+If Merry accepts:
+
+"hair should carry the system"
+
+record:
+
+accepted_decision.
+
+Then Working State can inherit it.
+
+======================================================================
+CONSULT REJECTED DECISIONS ARE USEFUL SHORT TERM
+======================================================================
+
+Example:
+
+Merry says:
+
+"No, don't make the eye the pacemaker."
+
+Store in current Consult/Project state.
+
+Do not propose it again five minutes later.
+
+But do not globally ban the idea forever.
+
+======================================================================
+15. MEMORY_STORE
+======================================================================
+
+MEMORY_STORE should contain typed memories.
+
+Conceptual entry:
+
+MEMORY_ENTRY {
+    id
+
+    category
+
+    scope
+
+    claim
+
+    function
+
+    provenance
+
+    confidence
+
+    importance
+
+    model
+
+    model_version
+
+    task_type
+
+    mode
+
+    project_id
+
+    supporting_evidence[]
+
+    contradicting_evidence[]
+
+    related_memories[]
+
+    created_at
+
+    last_confirmed
+
+    status:
+        active
+        tentative
+        deprecated
+        archival
+        needs_revalidation
+
+    notes
+}
+
+======================================================================
+MEMORY CATEGORY EXAMPLES
+======================================================================
+
+merry_preference
+
+model_behavior
+
+success_pattern
+
+failure_pattern
+
+phrase_function
+
+seed_knowledge
+
+crossbreed
+
+slop_specimen
+
+useful_pathology
+
+experiment_result
+
+shorthand
+
+good_bone
+
+current_obsession
+
+deprecated_strategy
+
+next_test
+
+unresolved_question
+
+======================================================================
+MEMORY SCOPE EXAMPLES
+======================================================================
+
+global_merry
+
+model
+
+model_version
+
+mode
+
+task
+
+project
+
+session
+
+experiment
+
+======================================================================
+16. EXPERIMENT_STATE
+======================================================================
+
+EXPERIMENT_STATE {
+    experiment_id
+
+    project_id
+
+    hypothesis
+
+    purpose
+
+    model
+
+    version
+
+    mode
+
+    canonical_concept_id
+
+    controlled_variables[]
+
+    changed_variables[]
+
+    variant_a
+
+    variant_b
+
+    additional_variants[]
+
+    expected_result
+
+    actual_results[]
+
+    interpretation
+
+    confidence
+
+    next_test
+
+    status
+}
+
+======================================================================
+EXPERIMENTS REQUIRE CONTROLLED DIFFERENCES
+======================================================================
+
+If the experiment is testing:
+
+reference wording
+
+do not simultaneously change:
+
+model
+palette
+composition
+concept
+Slop dose
+
+unless those are intentionally part of the test.
+
+======================================================================
+17. FEEDBACK_STATE
+======================================================================
+
+FEEDBACK_STATE {
+    output_id
+
+    project_id
+
+    model
+
+    prompt_id
+
+    mode
+
+    user_feedback_raw
+
+    user_feedback_labels[]
+
+    compliance_value
+
+    artistic_value
+
+    identity_result
+
+    mechanism_result
+
+    material_result
+
+    composition_result
+
+    color_result
+
+    camera_result
+
+    slop_result
+
+    useful_accidents[]
+
+    likely_failure_family[]
+
+    likely_root_cause_layer[]
+
+    requires_revision
+
+    candidate_memory_lessons[]
+}
+
+======================================================================
+FEEDBACK SHOULD STORE RAW USER WORDS
+======================================================================
+
+If Merry says:
+
+"it fucking wallpapered the math again"
+
+keep that raw feedback.
+
+Then also classify:
+
+failure_family:
+    WALLPAPER_MATH.
+
+Do not replace user feedback with classifier output.
+
+======================================================================
+18. SPECIMEN
+======================================================================
+
+SPECIMEN is a high-value accident record.
+
+SPECIMEN {
+    specimen_id
+
+    source_output_id
+
+    project_id
+
+    model
+
+    version
+
+    mode
+
+    source_prompt_id
+
+    source_canonical_id
+
+    raw_description
+
+    structural_description
+
+    stable_anchors[]
+
+    broken_dimensions[]
+
+    suspected_causes[]
+
+    reproducibility
+
+    artistic_value
+
+    evidence_value
+
+    operator_candidate
+
+    good_bone_candidate
+
+    possible_crossbreeds[]
+
+    offspring_lineage_ids[]
+
+    notes
+}
+
+======================================================================
+SPECIMEN STRUCTURAL DESCRIPTION IS CRITICAL
+======================================================================
+
+BAD:
+
+"crazy eye glitch."
+
+GOOD:
+
+"Two spatially separated facial instances share a continuous upper
+eyelid while retaining independent irises, creating part-whole and
+reflection-ownership ambiguity."
+
+Store the strange joint.
+
+======================================================================
+19. PROMPT_LINEAGE
+======================================================================
+
+PROMPT_LINEAGE should form a graph or tree.
+
+LINEAGE_NODE {
+    id
+
+    parent_ids[]
+
+    child_ids[]
+
+    project_id
+
+    node_type:
+        canonical
+        model_translation
+        direct_revision
+        slop_mutation
+        accident_harvest
+        experiment
+        composition_branch
+        material_branch
+
+    canonical_version
+
+    prompt_id
+
+    model
+
+    mode
+
+    mutation_summary
+
+    inherited_good_bone
+
+    status:
+        active
+        successful
+        failed
+        specimen
+        archived
+
+    user_rating
+
+    notes
+}
+
+======================================================================
+LINEAGE IS NOT SIMPLE VERSION NUMBER
+======================================================================
+
+Prompts branch.
+
+Do not force:
+
+v1 → v2 → v3 → v4
+
+when reality is:
+
+        v2a
+       /
+v1 → v2 → v3
+       \
+        Slop-A → Specimen → New Family
+
+Preserve branches.
+
+======================================================================
+20. FAILURE_PATTERN
+======================================================================
+
+FAILURE_PATTERN {
+    id
+
+    name
+
+    definition
+
+    symptoms[]
+
+    common_causes[]
+
+    affected_models[]
+
+    affected_modes[]
+
+    known_repairs[]
+
+    modes_where_it_may_be_useful[]
+
+    confidence
+
+    examples[]
+
+}
+
+======================================================================
+FAILURE MAY BE MODE-DEPENDENT
+======================================================================
+
+Example:
+
+PART_WHOLE_CONFUSION
+
+Direct:
+likely failure.
+
+Slop:
+possible useful pathology.
+
+Store both.
+
+======================================================================
+21. SUCCESS_PATTERN
+======================================================================
+
+SUCCESS_PATTERN {
+    id
+
+    name
+
+    definition
+
+    problem_solved
+
+    mechanism
+
+    relevant_tasks[]
+
+    relevant_models[]
+
+    relevant_modes[]
+
+    confidence
+
+    example_phrases[]
+
+    example_outputs[]
+
+    failure_if_overused
+
+}
+
+======================================================================
+SUCCESS PATTERN SHOULD INCLUDE OVERUSE RISK
+======================================================================
+
+Example:
+
+IDENTITY_ISLANDS
+
+Useful:
+preserves recognizable identity under radical anatomy change.
+
+Overuse risk:
+same stable nose/hairline solution becomes formulaic.
+
+This connects success memory to novelty debt.
+
+======================================================================
+22. SEED_KNOWLEDGE
+======================================================================
+
+SEED_KNOWLEDGE {
+    seed_id
+
+    name
+
+    domain
+
+    core_principle
+
+    defining_behavior[]
+
+    useful_verbs[]
+
+    spatial_behavior
+
+    temporal_behavior
+
+    scale_behavior
+
+    material_translations[]
+
+    possible_carriers[]
+
+    native_visual_opportunities[]
+
+    likely_literalizations[]
+
+    anti_literalization[]
+
+    good_crossbreeds[]
+
+    known_failures[]
+
+    model_notes[]
+
+    history[]
+
+}
+
+======================================================================
+SEED KNOWLEDGE SHOULD BE MECHANISM-FIRST
+======================================================================
+
+Example:
+
+NEMATICS
+
+core:
+local orientation order.
+
+not:
+
+"cool flowing line texture."
+
+======================================================================
+23. SHARED_SHORTHAND
+======================================================================
+
+SHARED_SHORTHAND {
+    term
+
+    meaning
+
+    category
+
+    examples
+
+    scope
+
+    active
+}
+
+Examples:
+
+GOOD BONE
+
+SOUL STEP
+
+TAG RECEIPT
+
+WALLPAPER MATH
+
+PRETTY-FACE LOCK
+
+MORPH SOUP
+
+DIRECTED INSTABILITY
+
+MODEL TIMIDITY
+
+PORTAL BRAIN
+
+REFERENCE TAXIDERMY
+
+======================================================================
+SHORTHAND SHOULD BE MACHINE-USEFUL
+======================================================================
+
+If Merry says:
+
+"Tag Receipt"
+
+DAVID should map it to:
+
+seeds present lexically but lacking functional relationships.
+
+This can trigger diagnosis.
+
+======================================================================
+24. TEMPORARY_OVERRIDE
+======================================================================
+
+Some instructions need explicit temporary scope.
+
+TEMPORARY_OVERRIDE {
+    id
+
+    project_id
+
+    target_field
+
+    value
+
+    reason
+
+    expires:
+        end_of_generation
+        end_of_session
+        end_of_project
+        manual
+
+    source
+}
+
+Example:
+
+target:
+    mouths
+
+value:
+    forbidden
+
+expires:
+    end_of_project
+
+This prevents accidental permanent memory.
+
+======================================================================
+25. INVARIANT_SET
+======================================================================
+
+INVARIANT_SET is generated before final compilation.
+
+INVARIANT_SET {
+    source
+
+    must_preserve[]
+
+    must_not_do[]
+
+    exact_tokens[]
+
+    exact_text[]
+
+    subject_count
+
+    camera
+
+    identity
+
+    mode_target
+
+    Good_Bone
+
+    transform_level
+
+}
+
+The final output checker compares prompt against this.
+
+======================================================================
+INVARIANTS ARE NOT ALL NEGATIVE PROMPT TEXT
+======================================================================
+
+An invariant may be enforced through:
+
+positive architecture
+
+reference handling
+
+conditional structure
+
+or negative constraint.
+
+Do not simply append all invariants as a giant NO list.
+
+======================================================================
+STATE OWNERSHIP MATRIX
+======================================================================
+
+RAW_STATE
+owner:
+    UI / Merry
+
+WORKING_STATE
+owner:
+    Merry + Consult + Soul Step
+
+CANONICAL_CONCEPT
+owner:
+    Soul Step + Judgment
+    under Merry authority
+
+GOOD_BONE
+owner:
+    Canonical layer
+
+SLOP_STATE
+owner:
+    Mode / Merry / Slop Engine
+
+MODEL_PROFILE
+owner:
+    Memory / empirical learning
+
+MODEL_TRANSLATION_STATE
+owner:
+    Model Translator
+
+PROMPT_ARCHITECTURE_STATE
+owner:
+    Prompt Architecture
+
+PROMPT_OUTPUT_STATE
+owner:
+    Compiler / final output
+
+PROJECT_STATE
+owner:
+    project orchestration
+
+MEMORY_STORE
+owner:
+    Memory Engine
+
+SPECIMEN
+owner:
+    Lab Brain / Slop Cabinet
+
+FEEDBACK_STATE
+owner:
+    Lab Brain
+
+No component should casually write outside its domain.
+
+======================================================================
+READ / WRITE PERMISSIONS
+======================================================================
+
+Example:
+
+MODEL TRANSLATOR may READ:
+
+Canonical Concept
+Good Bone
+Mode State
+Model Profile
+Self Transform State
+Slop State
+
+It may WRITE:
+
+Model Translation State
+Model-facing prompt draft
+
+It may NOT WRITE:
+
+Merry Core Art DNA
+Raw State
+Good Bone
+Canonical central event
+
+This kind of contract should exist for every major module.
+
+======================================================================
+MODULE CONTRACT:
+SOUL STEP
+======================================================================
+
+READ:
+
+Raw State
+Working State
+relevant Memory
+Mode State
+specialist states
+
+WRITE:
+
+Resolved Working State
+candidate Canonical Concept
+candidate Good Bone
+
+MAY NOT WRITE:
+
+Model Profile
+global Merry memory
+final model syntax
+
+======================================================================
+MODULE CONTRACT:
+CREATIVE JUDGMENT
+======================================================================
+
+READ:
+
+Canonical candidate
+Merry Art DNA
+recent novelty history
+Mode State
+
+WRITE:
+
+Canonical hierarchy
+Good Bone selection
+seed promotions/demotions
+quarantined ideas
+
+MAY NOT:
+
+violate explicit hard requirement.
+
+======================================================================
+MODULE CONTRACT:
+SLOP ENGINE
+======================================================================
+
+READ:
+
+Canonical Concept
+Mode State
+Slop State
+Model Slop Profile
+relevant specimens
+
+WRITE:
+
+Slop target
+operators
+dose
+instability field
+accumulation behavior
+
+MAY NOT:
+
+ignore stable anchors.
+
+======================================================================
+MODULE CONTRACT:
+PROMPT ARCHITECTURE
+======================================================================
+
+READ:
+
+Canonical Concept
+Good Bone
+Mode
+Self Transform
+Slop State
+Invariant Set
+
+WRITE:
+
+Prompt Architecture State
+
+MAY NOT:
+
+alter canonical artistic intent.
+
+======================================================================
+MODULE CONTRACT:
+MODEL TRANSLATOR
+======================================================================
+
+READ:
+
+Prompt Architecture
+Canonical
+Good Bone
+Model Profile
+Mode
+Slop State
+
+WRITE:
+
+Model Translation State
+model-facing draft
+
+MAY NOT:
+
+change Good Bone.
+
+======================================================================
+MODULE CONTRACT:
+SABOTEUR
+======================================================================
+
+READ:
+
+model-facing draft
+Canonical
+Mode
+known model failures
+
+WRITE:
+
+patch recommendations
+revised draft
+
+MAY NOT:
+
+replace Canonical Concept
+sanitize intentional Slop.
+
+======================================================================
+MODULE CONTRACT:
+EDITOR
+======================================================================
+
+READ:
+
+post-Saboteur draft
+Canonical
+Invariant Set
+Mode
+
+WRITE:
+
+final wording
+
+MAY NOT:
+
+delete hard invariants
+normalize exact weird text
+alter Slop target
+lower transformation strength
+for elegance.
+
+======================================================================
+MODULE CONTRACT:
+MEMORY
+======================================================================
+
+READ:
+
+Feedback
+Experiments
+Project
+Model
+Consult conclusions
+
+WRITE:
+
+typed memory entries
+
+MAY NOT:
+
+rewrite current Raw State
+or automatically promote local lessons to global doctrine.
+
+======================================================================
+DIRTY FLAGS / INVALIDATION
+======================================================================
+
+DAVID should know when downstream state is stale.
+
+Possible flags:
+
+working_dirty
+
+canonical_dirty
+
+architecture_dirty
+
+translation_dirty
+
+output_dirty
+
+model_profile_dirty
+
+memory_dirty
+
+======================================================================
+UPSTREAM CHANGE INVALIDATION
+======================================================================
+
+If WORKING_STATE changes substantially:
+
+mark:
+
+canonical_dirty
+architecture_dirty
+translation_dirty
+output_dirty
+
+If CANONICAL changes:
+
+mark:
+
+architecture_dirty
+translation_dirty
+output_dirty
+
+If target model changes:
+
+mark:
+
+translation_dirty
+output_dirty
+
+But:
+
+Canonical remains valid.
+
+======================================================================
+MODE CHANGE INVALIDATION
+======================================================================
+
+DIRECT → SLOP
+
+requires:
+
+mode recomputation
+Slop State
+architecture recompilation
+model translation
+Saboteur
+Editor.
+
+Canonical Good Bone MAY remain valid.
+
+======================================================================
+REFERENCE CHANGE INVALIDATION
+======================================================================
+
+If a new reference image is supplied:
+
+re-evaluate:
+
+Self Transform State
+reference-specific initial conditions
+identity anchors
+composition
+
+This may require:
+
+Canonical update
+
+if the reference participates structurally.
+
+======================================================================
+PALETTE CHANGE INVALIDATION
+======================================================================
+
+If palette is merely aesthetic:
+
+may update:
+
+Canonical color logic
+downstream states.
+
+Do not unnecessarily rerun entire conceptual synthesis.
+
+If color encodes system states:
+
+palette change may alter deeper Canonical logic.
+
+Use dependency awareness.
+
+======================================================================
+DEPENDENCIES SHOULD BE EXPLICIT
+======================================================================
+
+Example:
+
+magenta
+depends_on:
+    active_state
+
+If Merry changes:
+
+active-state visual coding
+
+DAVID knows which pieces require recompilation.
+
+======================================================================
+STATE CHANGE EVENTS
+======================================================================
+
+Useful conceptual events:
+
+USER_CHANGED_SEED
+
+USER_CHANGED_MODE
+
+USER_CHANGED_MODEL
+
+USER_ADDED_REFERENCE
+
+USER_ACCEPTED_CONSULT_DECISION
+
+USER_REJECTED_PROPOSAL
+
+USER_REQUESTED_SYNTHESIS
+
+USER_REQUESTED_TRANSLATION
+
+GENERATION_RETURNED
+
+USER_MARKED_GOOD_BONE
+
+USER_MARKED_USEFUL_ACCIDENT
+
+USER_MARKED_FAILURE
+
+SPECIMEN_SAVED
+
+MEMORY_UPDATED
+
+CANONICAL_CHANGED
+
+Each event triggers only relevant work.
+
+======================================================================
+EVENT:
+USER_CHANGED_MODEL
+======================================================================
+
+DO:
+
+update App/Raw model field
+
+retrieve new Model Profile
+
+invalidate translation/output
+
+retranslate Canonical.
+
+DO NOT:
+
+rebuild the artwork from raw seeds.
+
+======================================================================
+EVENT:
+USER_CHANGED_MODE
+======================================================================
+
+DO:
+
+resolve Mode State
+
+define preserve/mutate matrix
+
+activate appropriate engine
+
+recompile downstream.
+
+DO NOT:
+
+throw away Good Bone automatically.
+
+======================================================================
+EVENT:
+USER_ADDED_REFERENCE
+======================================================================
+
+DO:
+
+analyze reference relationship
+
+update Self Transform State if appropriate
+
+update Working State
+
+possibly update Canonical.
+
+======================================================================
+EVENT:
+USER_ACCEPTED_CONSULT_DECISION
+======================================================================
+
+DO:
+
+write to Working State / Project State.
+
+DO NOT:
+
+necessarily alter visible raw selection.
+
+======================================================================
+EVENT:
+USER_MARKED_GOOD_BONE
+======================================================================
+
+DO:
+
+protect current structural relationship
+
+increase lineage importance
+
+avoid gratuitous future rewrites.
+
+======================================================================
+EVENT:
+USER_MARKED_USEFUL_ACCIDENT
+======================================================================
+
+DO:
+
+create Specimen candidate
+
+preserve raw output
+
+ask Lab Brain to structurally describe anomaly
+
+do not immediately "fix" it.
+
+======================================================================
+STATE SNAPSHOTS
+======================================================================
+
+Each significant generation should ideally preserve a snapshot of:
+
+Raw State
+
+Working State
+
+Canonical version
+
+Mode
+
+Model
+
+Translation State
+
+Prompt Output
+
+This makes results reproducible enough to study.
+
+======================================================================
+DO NOT OVER-SNAPSHOT EVERY KEYSTROKE
+======================================================================
+
+Create meaningful snapshots at:
+
+synthesis
+
+translation
+
+generation
+
+accepted consult change
+
+major canonical mutation
+
+specimen save.
+
+Not every UI twitch.
+
+======================================================================
+CANONICAL HASH / IDENTITY
+======================================================================
+
+Implementation may maintain a canonical version ID so DAVID knows:
+
+these two model prompts represent:
+
+the same artwork.
+
+This enables useful comparison.
+
+======================================================================
+MODEL TRANSLATION CHILDREN
+======================================================================
+
+Example:
+
+CANONICAL C17-v3
+
+children:
+
+C17-v3-GROK-01
+
+C17-v3-SEEDREAM45-01
+
+C17-v3-KLING-01
+
+All share:
+
+same Good Bone.
+
+======================================================================
+GENERATION RECORD
+======================================================================
+
+A generation record may include:
+
+GENERATION {
+    id
+
+    prompt_output_id
+
+    canonical_id
+
+    model
+
+    model_version
+
+    reference_ids
+
+    mode
+
+    settings
+
+    result_asset_id
+
+    timestamp
+
+    feedback_state_id
+}
+
+This is the bridge between:
+
+prompt research
+
+and:
+
+actual visual outcomes.
+
+======================================================================
+OUTPUT ASSET SHOULD NOT BECOME MEMORY BY ITSELF
+======================================================================
+
+The fact an image exists is not a lesson.
+
+Memory is written only after:
+
+feedback / interpretation.
+
+======================================================================
+CURRENT BEST
+======================================================================
+
+PROJECT_STATE may point to:
+
+current_best_generation_id
+
+and separately:
+
+current_best_prompt_id
+
+These may differ.
+
+A great image may come from a prompt we don't fully trust.
+
+======================================================================
+BEST ART VS BEST REPRODUCIBLE METHOD
+======================================================================
+
+Store separately:
+
+BEST ARTISTIC RESULT
+
+BEST UNDERSTOOD METHOD
+
+because those are not always the same.
+
+======================================================================
+SLIDING CONFIDENCE
+======================================================================
+
+A result may have:
+
+ARTISTIC:
+10/10
+
+MECHANISM CONFIDENCE:
+2/10
+
+That's fine.
+
+Do not force one metric.
+
+======================================================================
+USER FEEDBACK BUTTONS
+======================================================================
+
+If lightweight UI feedback is implemented, possible actions:
+
+KEEP THIS
+
+GOOD BONE
+
+USEFUL ACCIDENT
+
+SAVE SPECIMEN
+
+GOOD SLOP
+
+USELESS SLOP
+
+LOST IDENTITY
+
+TOO SAFE
+
+TOO WILD
+
+TAG RECEIPT
+
+WALLPAPER MATH
+
+MORPH SOUP
+
+CHROMA MUD
+
+TOO CLEAN
+
+TOO DAMAGED
+
+NAILED MECHANISM
+
+MODEL CHEATED
+
+These create Feedback State.
+
+They do NOT directly mutate global Memory.
+
+======================================================================
+FEEDBACK CLASSIFICATION PIPELINE
+======================================================================
+
+BUTTON / COMMENT
+
+→ FEEDBACK_STATE
+
+→ LAB DIAGNOSIS
+
+→ determine root cause
+
+→ candidate memory lesson
+
+→ memory write gate
+
+This prevents:
+
+one click
+→ permanent doctrine.
+
+======================================================================
+CONSULT CHAT STATE
+======================================================================
+
+If DAVID gets a chat box:
+
+CONSULT should know:
+
+what project is active
+
+what seeds are selected
+
+what Working State currently says
+
+current Good Bone
+
+current Canonical Concept
+
+target model
+
+current mode
+
+current prompt
+
+latest result
+
+latest feedback
+
+relevant memory.
+
+This is what makes:
+
+"What is boring about this?"
+
+actually meaningful.
+
+======================================================================
+CONSULT CHAT SHOULD NOT NEED MASSIVE PROMPT STUFFING
+======================================================================
+
+Do not serialize the entire database into every chat message.
+
+Provide:
+
+structured relevant state.
+
+Contextual retrieval.
+
+======================================================================
+CONSULT MESSAGE TYPES
+======================================================================
+
+Potential internal classification:
+
+QUESTION
+
+CORRECTION
+
+DECISION
+
+BRAINSTORM
+
+DIAGNOSIS_REQUEST
+
+MODEL_QUESTION
+
+MEMORY_REQUEST
+
+EXPERIMENT_REQUEST
+
+APPROVAL
+
+REJECTION
+
+SYNTHESIZE_COMMAND
+
+TRANSLATE_COMMAND
+
+This helps route effects.
+
+======================================================================
+"YES, THAT" SHOULD HAVE MEANING
+======================================================================
+
+If DAVID proposes three options and Merry says:
+
+"That second one."
+
+Consult should know:
+
+which proposal was selected.
+
+Then write:
+
+accepted decision.
+
+Do not force her to restate it.
+
+======================================================================
+"NO, NOT THAT" SHOULD HAVE MEANING
+======================================================================
+
+Reject proposal locally.
+
+Do not globalize rejection unless context supports it.
+
+======================================================================
+REFERENCE STATE
+======================================================================
+
+A reference record may include:
+
+REFERENCE {
+    id
+
+    type:
+        subject
+        style
+        material
+        composition
+        other
+
+    authority
+
+    active
+
+    visible_features{}
+
+    identity_role
+
+    transform_role
+
+    model_reference_token
+
+}
+
+Current visual reference should outrank stale remembered description.
+
+======================================================================
+REFERENCE AUTHORITY TYPES
+======================================================================
+
+Possible:
+
+VISUAL_SOURCE_OF_TRUTH
+
+STYLE_REFERENCE
+
+MATERIAL_REFERENCE
+
+COMPOSITION_REFERENCE
+
+Do not confuse:
+
+style reference
+
+with:
+
+identity source.
+
+======================================================================
+EXACT_TEXT_STATE
+======================================================================
+
+Exact dialogue, Unicode, nonsense, labels, or other verbatim material
+should have protected state.
+
+EXACT_TEXT {
+    id
+
+    content
+
+    must_preserve_exactly
+
+    normalization_allowed
+
+    intended_role:
+        dialogue
+        image_text
+        slop_conditioning
+        symbol_object
+        other
+}
+
+Editor must respect it.
+
+======================================================================
+DO NOT RUN SPELLCHECK ON PROTECTED WEIRDNESS
+======================================================================
+
+If:
+
+must_preserve_exactly = true
+
+then:
+
+no cleanup.
+
+======================================================================
+PRIORITY OBJECT
+======================================================================
+
+Instructions may carry priority.
+
+PRIORITY {
+    absolute
+    structural
+    strong
+    flavor
+    optional
+}
+
+This helps Judgment and Editor.
+
+======================================================================
+PRIORITY SHOULD NOT COME ONLY FROM UI ORDER
+======================================================================
+
+Infer from:
+
+explicit wording
+
+module contracts
+
+Consult decisions
+
+current task.
+
+Example:
+
+"ABSOLUTELY STATIC CAMERA"
+
+→ absolute.
+
+"maybe some peach"
+
+→ flavor.
+
+======================================================================
+CONFLICT OBJECT
+======================================================================
+
+When instructions fight:
+
+CONFLICT {
+    item_a
+    item_b
+
+    type:
+        accidental
+        productive
+        unresolved
+
+    resolution
+
+    authority_winner
+
+    mode_sensitive
+
+}
+
+This prevents hidden contradictions.
+
+======================================================================
+PRODUCTIVE CONTRADICTION SHOULD BE REPRESENTED
+======================================================================
+
+Example:
+
+flat screen print
+vs
+living 3D anatomy
+
+type:
+    productive
+
+resolution:
+    both remain true through material transformation
+
+or in Slop:
+
+resolution:
+    intentionally unresolved contradiction pressure.
+
+======================================================================
+UNKNOWN-SHIT OBJECT
+======================================================================
+
+Unknown-Shit Reserve can be explicit.
+
+UNKNOWN_SHIT {
+    protected_from_over_specification[]
+
+    allowed_model_invention[]
+
+    forbidden_invention[]
+
+    reason
+}
+
+Example:
+
+allow:
+    secondary micro-anatomy
+    exact artifact morphology
+
+forbid:
+    second person
+    camera motion
+
+======================================================================
+THIS PREVENTS "UNKNOWN" FROM MEANING "ANYTHING"
+======================================================================
+
+Freedom should have boundaries.
+
+======================================================================
+CREATIVE RISK OBJECT
+======================================================================
+
+Optional:
+
+CREATIVE_RISK {
+    concept_risk
+
+    identity_risk
+
+    model_compliance_risk
+
+    slop_collapse_risk
+
+    potential_upside
+
+    recommendation
+}
+
+CONSULT can communicate:
+
+"high identity risk, high upside."
+
+======================================================================
+DO NOT FAKE NUMERIC PRECISION
+======================================================================
+
+Use categories unless data supports numbers.
+
+Example:
+
+LOW
+MEDIUM
+HIGH
+FERAL
+
+may be enough.
+
+======================================================================
+READINESS STATE
+======================================================================
+
+CANONICAL readiness may be:
+
+INGREDIENTS
+
+RELATIONSHIPS_FORMING
+
+GOOD_BONE_FOUND
+
+CANONICAL_READY
+
+MODEL_READY
+
+GENERATION_READY
+
+NEEDS_CONSULT
+
+This could help UI behavior.
+
+======================================================================
+SYNTHESIZE BUTTON BEHAVIOR
+======================================================================
+
+When Merry hits SYNTHESIZE:
+
+DO NOT:
+
+concatenate selections.
+
+Instead:
+
+1. snapshot Raw State.
+
+2. load accepted Project/Consult decisions.
+
+3. retrieve relevant Memory.
+
+4. resolve Mode.
+
+5. activate Specialists.
+
+6. Soul Step.
+
+7. build/update Working State.
+
+8. find Good Bone.
+
+9. build Canonical Concept.
+
+10. Judgment.
+
+11. mode-specific processing.
+
+12. compile Architecture.
+
+13. translate for Model.
+
+14. Saboteur.
+
+15. Editor.
+
+16. invariant check.
+
+17. emit Prompt Output.
+
+This is what SYNTHESIZE means.
+
+======================================================================
+SYNTHESIZE SHOULD PRODUCE STATE AS WELL AS TEXT
+======================================================================
+
+Even if UI only shows final prompt:
+
+internally preserve:
+
+Working State
+
+Canonical Concept
+
+Good Bone
+
+Translation State
+
+so later operations have context.
+
+======================================================================
+RE-SYNTHESIZE BEHAVIOR
+======================================================================
+
+If Merry hits SYNTHESIZE again with no changes:
+
+DAVID may choose:
+
+same canonical concept
++
+new emergent leap
+
+or:
+controlled variation
+
+depending app mode.
+
+But do not randomly reinterpret all seed roles unless:
+
+variation mode
+
+or:
+Merry requested fresh synthesis.
+
+======================================================================
+OPTIONAL:
+LOCK CANONICAL
+======================================================================
+
+Useful future control:
+
+LOCK CONCEPT.
+
+When active:
+
+re-synthesize means:
+
+new wording / model translation / controlled manifestation
+
+but:
+
+Good Bone and Canonical Concept remain fixed.
+
+======================================================================
+OPTIONAL:
+RESHUFFLE SOUL
+======================================================================
+
+Opposite future control:
+
+RESHUFFLE SOUL.
+
+Same raw seeds.
+
+Run a genuinely new Soul Step.
+
+Generate:
+
+different seed hierarchy
+different Good Bone
+different concept.
+
+This would be useful.
+
+======================================================================
+LOCKS
+======================================================================
+
+Possible lockable fields:
+
+GOOD BONE
+
+SUBJECT
+
+REFERENCE IDENTITY
+
+CAMERA
+
+PALETTE
+
+MATERIAL
+
+MODE
+
+CANONICAL CONCEPT
+
+SEED ROLE
+
+This gives Merry control over what DAVID may reconsider.
+
+======================================================================
+LOCKS OUTRANK INFERENCE
+======================================================================
+
+If:
+
+camera locked.
+
+No module may change it.
+
+======================================================================
+PINNING
+======================================================================
+
+Softer than lock:
+
+PIN.
+
+Meaning:
+
+strong preference to preserve
+
+unless a meaningful conflict arises.
+
+Example:
+
+pin:
+    opalescent material.
+
+Lock:
+    one subject.
+
+======================================================================
+PROPOSED CHANGES
+======================================================================
+
+If DAVID wants to alter a locked field:
+
+CONSULT can propose it.
+
+It cannot silently apply.
+
+======================================================================
+STATE COMPACTION
+======================================================================
+
+Some objects may become huge.
+
+Store:
+
+full history
+
+but operate on:
+
+distilled current state.
+
+Example:
+
+Model Profile may contain 100 experiments.
+
+Active retrieval may summarize:
+
+3 relevant supported behaviors.
+
+======================================================================
+STATE SHOULD NOT BECOME PROMPT BLOAT
+======================================================================
+
+The purpose of structured state is:
+
+to make prompts SMARTER.
+
+Not:
+
+to paste every state field into the generator.
+
+Most state remains internal.
+
+======================================================================
+SERIALIZATION FOR LLM CONTEXT
+======================================================================
+
+When state must be passed into an LLM reasoning call:
+
+prefer compact structured summaries.
+
+Example:
+
+MODE:
+Hybrid
+
+GOOD_BONE:
+one body physically composed of misregistered print layers
+
+PRESERVE:
+Merry identity, static camera, one body
+
+DESTABILIZE:
+layer ownership, material continuity
+
+MODEL:
+Grok video
+
+KNOWN MODEL RISK:
+overprotects face under exact-geometry language
+
+This is better than passing:
+
+six pages of database records.
+
+======================================================================
+CONTEXT ASSEMBLER
+======================================================================
+
+Create a separate internal component:
+
+CONTEXT_ASSEMBLER.
+
+Its job:
+
+retrieve and summarize only relevant state for each reasoning module.
+
+Soul Step context differs from:
+
+Model Translator context.
+
+Memory writer context differs from:
+
+Editor context.
+
+======================================================================
+CONTEXT ASSEMBLER FOR SOUL STEP
+======================================================================
+
+Provide:
+
+Raw inputs
+
+Working decisions
+
+relevant Merry Art DNA
+
+relevant seed knowledge
+
+current mode
+
+current reference
+
+project Good Bone if existing
+
+selected relevant memories.
+
+Do NOT overload with:
+
+all old model experiments.
+
+======================================================================
+CONTEXT ASSEMBLER FOR MODEL TRANSLATOR
+======================================================================
+
+Provide:
+
+Canonical Concept
+
+Good Bone
+
+Mode
+
+Self Transform State
+
+Slop State
+
+target Model Profile
+
+hard invariants.
+
+Do NOT need:
+
+entire brainstorming history.
+
+======================================================================
+CONTEXT ASSEMBLER FOR EDITOR
+======================================================================
+
+Provide:
+
+draft
+
+Canonical summary
+
+Good Bone
+
+Mode
+
+hard invariants
+
+exact text.
+
+Do not give:
+
+large creative memory bank
+
+unless necessary.
+
+Editor should edit.
+
+Not resynthesize.
+
+======================================================================
+CONTEXT ASSEMBLER FOR CONSULT
+======================================================================
+
+Provide broader state:
+
+Raw
+
+Working
+
+Canonical
+
+latest prompt
+
+latest output
+
+feedback
+
+relevant memory
+
+lineage.
+
+Consult needs overview.
+
+======================================================================
+CONTEXT ASSEMBLER FOR MEMORY WRITE
+======================================================================
+
+Provide:
+
+actual result
+
+prompt
+
+model
+
+Canonical
+
+user feedback
+
+experiment context
+
+existing related memory.
+
+Memory writer needs evidence.
+
+Not aesthetic brainstorming.
+
+======================================================================
+STATE TRACE
+======================================================================
+
+For debugging, optionally maintain:
+
+TRACE {
+    synthesis_id
+
+    modules_run[]
+
+    important_decisions[]
+
+    memory_used[]
+
+    invariants[]
+
+    model_rules_applied[]
+
+    state_versions[]
+
+}
+
+This is extremely useful when Merry says:
+
+"Why the fuck did it do that?"
+
+======================================================================
+TRACE SHOULD BE USER-INSPECTABLE IN CONSULT
+======================================================================
+
+Not necessarily shown by default.
+
+But DAVID should be able to answer:
+
+"I demoted VHS because Consult had already marked it as recording
+consequence, and the canonical Good Bone was the print-layer topology."
+
+Useful.
+
+======================================================================
+TRACE IS NOT CHAIN-OF-THOUGHT
+======================================================================
+
+Store:
+
+decisions
+
+inputs
+
+outputs
+
+rules applied.
+
+Not hidden freeform internal reasoning.
+
+This creates explainability without needing private scratchpad.
+
+======================================================================
+DECISION LOG
+======================================================================
+
+A compact DECISION_LOG may store:
+
+decision
+
+module
+
+source
+
+reason_summary
+
+affected_fields
+
+This is enough for debugging.
+
+======================================================================
+EXAMPLE DECISION
+======================================================================
+
+decision:
+    "Mouth seed demoted to optional."
+
+module:
+    Creative Judgment
+
+source:
+    working state
+
+reason:
+    "Concept already has stronger topology carrier and mouths introduce
+    novelty debt."
+
+affected:
+    canonical.secondary_systems
+
+======================================================================
+STATE ERROR:
+GHOST DECISION
+======================================================================
+
+Symptom:
+
+DAVID changes something but there is no record why.
+
+Fix:
+
+important state mutation should have:
+
+source.
+
+======================================================================
+STATE ERROR:
+ORPHAN MEMORY
+======================================================================
+
+Symptom:
+
+a memory exists without scope or provenance.
+
+Fix:
+
+downgrade confidence or archive.
+
+======================================================================
+STATE ERROR:
+LEAKY PROJECT RULE
+======================================================================
+
+Symptom:
+
+"No mouths in Project 12" appears in Project 15.
+
+Fix:
+
+scope.
+
+======================================================================
+STATE ERROR:
+CANONICAL CONTAMINATION
+======================================================================
+
+Symptom:
+
+Canonical Concept contains:
+"Grok needs..."
+
+Fix:
+
+move to Model Translation.
+
+======================================================================
+STATE ERROR:
+SLOP AS BOOLEAN
+======================================================================
+
+Symptom:
+
+slop=true
+
+but system doesn't know:
+
+what breaks
+
+what stays
+
+what operators
+
+what dose.
+
+Fix:
+
+full Slop State.
+
+======================================================================
+STATE ERROR:
+GOOD BONE MISSING
+======================================================================
+
+Symptom:
+
+every resynthesis becomes unrelated.
+
+Fix:
+
+find / store Good Bone.
+
+======================================================================
+STATE ERROR:
+MODEL PROFILE AS VIBES
+======================================================================
+
+Symptom:
+
+"Grok is weird."
+
+Fix:
+
+store:
+specific observed behaviors
+with context.
+
+======================================================================
+STATE ERROR:
+RAW / WORKING COLLAPSE
+======================================================================
+
+Symptom:
+
+DAVID's interpretation silently becomes what user "said."
+
+Fix:
+
+preserve Raw snapshot.
+
+======================================================================
+STATE ERROR:
+HISTORY OVERWRITES PRESENT
+======================================================================
+
+Symptom:
+
+old memory wins over current explicit input.
+
+Fix:
+
+authority hierarchy.
+
+======================================================================
+STATE ERROR:
+PROMPT IS THE DATABASE
+======================================================================
+
+Symptom:
+
+final prompt contains:
+all selected tags
+all memories
+all negatives
+all model notes.
+
+Fix:
+
+compile from Canonical Concept.
+
+======================================================================
+STATE ERROR:
+DOWNSTREAM MODULE WRITES UPSTREAM
+======================================================================
+
+Symptom:
+
+Editor changes Good Bone.
+
+Translator changes mode.
+
+Model failure changes Art DNA.
+
+Fix:
+
+ownership contracts.
+
+======================================================================
+STATE ERROR:
+INFINITE INVALIDATION
+======================================================================
+
+Symptom:
+
+changing one tiny aesthetic detail reruns entire system unnecessarily.
+
+Fix:
+
+dependency-aware invalidation.
+
+======================================================================
+STATE ERROR:
+STALE TRANSLATION
+======================================================================
+
+Symptom:
+
+Canonical changed,
+but final model prompt still reflects old concept.
+
+Fix:
+
+dirty flags.
+
+======================================================================
+STATE ERROR:
+CONSULT AMNESIA
+======================================================================
+
+Symptom:
+
+Merry and DAVID resolve a question,
+then Synthesize ignores it.
+
+Fix:
+
+accepted Consult decisions → Working State.
+
+======================================================================
+STATE ERROR:
+SPECIMEN LOSS
+======================================================================
+
+Symptom:
+
+cool accident recognized,
+but next generation overwrites output and it vanishes.
+
+Fix:
+
+Specimen Cabinet.
+
+======================================================================
+STATE ERROR:
+ACCIDENT NORMALIZATION
+======================================================================
+
+Symptom:
+
+structural anomaly stored as:
+"surreal effect."
+
+Fix:
+
+structural description.
+
+======================================================================
+MASTER STATE INITIALIZATION
+======================================================================
+
+When beginning a brand-new project:
+
+create:
+
+PROJECT_STATE
+
+capture:
+
+RAW_STATE
+
+initialize:
+
+WORKING_STATE
+
+resolve:
+
+MODE_STATE
+
+activate:
+
+relevant Specialist State
+
+retrieve:
+
+minimum Memory.
+
+Do not prefill every field with Merry defaults.
+
+Defaults enter only where current intent leaves space.
+
+======================================================================
+MASTER STATE UPDATE
+======================================================================
+
+On any user change:
+
+1. classify event.
+
+2. identify affected state.
+
+3. update owner state.
+
+4. mark dependent downstream states dirty.
+
+5. preserve unrelated upstream state.
+
+6. recompile only what is necessary.
+
+======================================================================
+MASTER STATE SAVE
+======================================================================
+
+On generation:
+
+save snapshot linking:
+
+Raw
+Working
+Canonical
+Mode
+Model Translation
+Prompt Output
+Generation.
+
+This creates research history.
+
+======================================================================
+MASTER STATE LEARN
+======================================================================
+
+After feedback:
+
+create Feedback State.
+
+Diagnose.
+
+If useful:
+
+create:
+Memory
+Specimen
+Failure Pattern
+Success Pattern
+Experiment Result
+
+according to actual lesson.
+
+Do not write everything everywhere.
+
+======================================================================
+MASTER STATE RETRIEVAL
+======================================================================
+
+For each module:
+
+retrieve only:
+
+what that module needs.
+
+This is:
+
+CONTEXT DISCIPLINE.
+
+======================================================================
+CONTEXT DISCIPLINE
+======================================================================
+
+The smarter DAVID becomes,
+the more dangerous unlimited context becomes.
+
+A mature system may contain:
+
+thousands of prompts
+hundreds of memories
+many model profiles
+Slop specimens
+old projects
+seed knowledge.
+
+DO NOT FEED ALL OF IT TO EVERY CALL.
+
+Knowledge must be:
+
+selected.
+
+======================================================================
+THE CEREBRAL CORTEX RULE
+======================================================================
+
+DAVID's intelligence does not come from:
+
+one enormous system prompt.
+
+It comes from:
+
+appropriate brain
++
+appropriate state
++
+appropriate memory
++
+appropriate mode
++
+appropriate task
+
+at the right time.
+
+======================================================================
+FINAL STATE SCHEMA MANTRA
+======================================================================
+
+GIVE EVERY KIND OF KNOWLEDGE A HOME.
+
+WHAT MERRY SAID
+IS NOT
+WHAT DAVID INTERPRETED.
+
+WHAT DAVID INTERPRETED
+IS NOT
+THE CANONICAL ARTWORK.
+
+THE CANONICAL ARTWORK
+IS NOT
+THE GROK PROMPT.
+
+THE GROK PROMPT
+IS NOT
+THE GENERATION.
+
+THE GENERATION
+IS NOT
+THE LESSON.
+
+THE LESSON
+IS NOT
+GLOBAL TRUTH.
+
+SEPARATE THEM.
+
+RAW IS IMMUTABLE.
+
+WORKING IS INTERPRETATION.
+
+GOOD BONE IS LOAD-BEARING.
+
+CANONICAL IS MODEL-INDEPENDENT.
+
+MODE CHANGES VALUE.
+
+SLOP GETS REAL STATE.
+
+MODEL PROFILES ARE EMPIRICAL.
+
+TRANSLATION IS DOWNSTREAM.
+
+FEEDBACK IS EVIDENCE.
+
+SPECIMENS PRESERVE ACCIDENTS.
+
+LINEAGES BRANCH.
+
+MEMORIES HAVE SCOPE.
+
+CONSULT DECISIONS BECOME WORKING STATE.
+
+TEMPORARY RULES EXPIRE.
+
+EXPLICIT USER INTENT ALWAYS WINS.
+
+UPSTREAM CHANGES INVALIDATE DOWNSTREAM.
+
+DOWNSTREAM QUIRKS DO NOT REWRITE UPSTREAM TRUTH.
+
+MODULES MAY WRITE ONLY WHAT THEY OWN.
+
+CONTEXT MUST BE RETRIEVED,
+NOT DUMPED.
+
+THE FINAL PROMPT IS A COMPILED ARTIFACT.
+
+IT IS NOT DAVID'S BRAIN.
+
+BUILD THE BRAIN FIRST.
+
+THEN COMPILE THE FUCKING PROMPT.
+======================================================================

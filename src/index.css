@@ -1,1 +1,118 @@
 @import "tailwindcss";
+
+:root {
+  --semantic-cyan: #43F5FF;
+  --semantic-magenta: #FF4FD8;
+  --semantic-violet: #B875FF;
+  --semantic-yellow: #EFFF52;
+  --semantic-green: #78FF77;
+  --semantic-red: #FF3333;
+  --semantic-white: #FFFFFF;
+  --semantic-gray: #555555;
+  
+  --phosphor: var(--semantic-green); /* Default */
+  --bg-dark: #050505;
+  --panel-dark: #0c0d12;
+}
+
+body.theme-mother-green { --phosphor: #78FF77; }
+body.theme-merry-magenta { --phosphor: #FF4FD8; }
+body.theme-synthetic-violet { --phosphor: #B875FF; }
+body.theme-acid-yellow { --phosphor: #EFFF52; }
+body.theme-cryo-cyan { --phosphor: #43F5FF; }
+body.theme-solar-orange { --phosphor: #FF8A3D; }
+
+@theme {
+  --color-phosphor: var(--phosphor);
+  --color-phosphor-bright: var(--phosphor-bright);
+  --color-phosphor-dim: var(--phosphor-dim);
+  --color-phosphor-muted: var(--phosphor-muted);
+  --color-semantic-cyan: var(--semantic-cyan);
+  --color-semantic-magenta: var(--semantic-magenta);
+  --color-semantic-violet: var(--semantic-violet);
+  --color-semantic-yellow: var(--semantic-yellow);
+  --color-semantic-green: var(--semantic-green);
+  --color-semantic-red: var(--semantic-red);
+  --color-semantic-white: var(--semantic-white);
+  --color-semantic-gray: var(--semantic-gray);
+  
+  --color-bg-dark: var(--bg-dark);
+  --color-panel-dark: var(--panel-dark);
+  
+  --color-theme-bg: var(--bg-dark);
+  --color-theme-panel: var(--panel-dark);
+
+  --font-display: 'VT323', monospace;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+}
+
+body {
+  --phosphor-bright: color-mix(in srgb, var(--phosphor) 85%, white);
+  --phosphor-dim: color-mix(in srgb, var(--phosphor) 50%, transparent);
+  --phosphor-muted: color-mix(in srgb, var(--phosphor) 20%, transparent);
+
+  background-color: var(--bg-dark);
+  color: var(--phosphor);
+  font-family: var(--font-mono);
+}
+
+.terminal-border {
+  border: 1px solid color-mix(in srgb, var(--phosphor) 30%, transparent);
+}
+.terminal-panel {
+  background-color: var(--panel-dark);
+  border: 1px solid color-mix(in srgb, var(--phosphor) 20%, transparent);
+}
+
+.crt-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+body.crt-clean .crt-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.1) 50%
+  );
+  background-size: 100% 4px;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+body.crt-aged .crt-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.15) 50%
+  ),
+  url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  background-size: 100% 4px, 150px 150px;
+  background-blend-mode: overlay;
+  box-shadow: inset 0 0 150px rgba(0,0,0,0.8);
+  opacity: 0.15;
+}
+
+.phosphor-glow {
+  text-shadow: 0 0 8px color-mix(in srgb, var(--phosphor) 60%, transparent);
+}
+
+/* Custom Scrollbar for terminal vibe */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark); 
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--phosphor) 30%, transparent); 
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--phosphor) 50%, transparent); 
+}
+.specimen-chamber {
+  position: relative;
+  z-index: 10000;
+  text-shadow: none; /* No phosphor glow */
+}

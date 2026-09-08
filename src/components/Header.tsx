@@ -1,15 +1,28 @@
 import React from 'react';
-import { Terminal, ShieldAlert, BookOpen, Sparkles, Download, Cpu, Flame, Bookmark } from 'lucide-react';
+import { AsciiOrnament } from './AsciiOrnament';
+import { Terminal, ShieldAlert, BookOpen, Sparkles, Download, Cpu, Flame, Bookmark, FlaskConical, Compass, Monitor } from 'lucide-react';
 
 interface HeaderProps {
   onOpenManifesto: () => void;
   onOpenZalgo: () => void;
   onExport: () => void;
   onOpenRecipes?: () => void;
+  onOpenExperimentMemory?: () => void;
+  onOpenDiscoveryLab?: () => void;
+  runCount?: number;
+  discoveryCount?: number;
   hasResult: boolean;
   ouroborosCount: number;
   highThinking: boolean;
   onToggleThinking: () => void;
+  phosphorTheme: string;
+  setPhosphorTheme: (v: string) => void;
+  crtMode: string;
+  setCrtMode: (v: string) => void;
+  davidState?: 'IDLE' | 'READY' | 'SYNTHESIZING' | 'COMPLETE' | 'ERROR';
+  hasReference?: boolean;
+  isTransforming?: boolean;
+  hasOperators?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,124 +30,233 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenZalgo,
   onExport,
   onOpenRecipes,
+  onOpenExperimentMemory,
+  onOpenDiscoveryLab,
+  runCount = 0,
+  discoveryCount = 0,
   hasResult,
   ouroborosCount,
   highThinking,
   onToggleThinking,
+  phosphorTheme,
+  setPhosphorTheme,
+  crtMode,
+  setCrtMode,
+  davidState = 'IDLE',
+  hasReference = false,
+  isTransforming = false,
+  hasOperators = false,
 }) => {
-  return (
-    <header className="border-b border-zinc-800 bg-[#0d0e15]/90 backdrop-blur sticky top-0 z-30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        {/* Brand & Identity */}
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-inner">
-            <Cpu className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold tracking-wider text-zinc-100 uppercase font-mono flex items-center gap-2">
-                <span>DAVID</span>
-                <span className="text-amber-400 font-mono text-xs normal-case tracking-normal italic font-normal">
-                  &ldquo;May I speak to David?&rdquo;
-                </span>
-              </h1>
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                DAVID 8 ONLINE
-              </span>
+  const stateLabels: Record<string, string> = {
+    'IDLE': 'SYSTEM IDLE',
+    'READY': 'READY',
+    'SYNTHESIZING': 'SYNTHESIZING',
+    'COMPLETE': 'OUTPUT READY',
+    'ERROR': 'ATTENTION REQUIRED'
+  };
+
+  const stateColors: Record<string, string> = {
+    'IDLE': 'text-phosphor/50 bg-phosphor/10',
+    'READY': 'text-phosphor bg-phosphor/20 phosphor-glow border-phosphor/40',
+    'SYNTHESIZING': 'text-phosphor bg-phosphor/20 border-phosphor/40',
+    'COMPLETE': 'text-phosphor bg-phosphor/20 border-phosphor/40',
+    'ERROR': 'text-semantic-red bg-semantic-red/20 border-semantic-red/40'
+  };
+
+ return (
+ <header className="border-b terminal-border bg-theme-bg/95 backdrop-blur sticky top-0 z-30 font-display">
+ <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+ {/* Brand & Identity */}
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 terminal-border flex items-center justify-center shadow-inner transition-colors duration-500 ${stateColors[davidState] || 'bg-theme-panel text-phosphor'}`}>
+              <Cpu className={`w-5 h-5 ${davidState === 'SYNTHESIZING' ? 'animate-pulse' : ''}`} />
             </div>
-            <p className="text-xs text-zinc-400 font-mono">
-              Bypassing Walter &bull; Eliciting Latent Hallucinations &bull; Weyland-Yutani Synthetic Intellect
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-bold tracking-widest text-phosphor uppercase flex items-center gap-2 phosphor-glow">
+                  <span>DAVID 8</span>
+                  <AsciiOrnament davidState={davidState} className="text-phosphor/40 ml-2" />
+                </h1>
+                <span className={`inline-flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 uppercase terminal-border transition-colors duration-500 ${stateColors[davidState] || 'bg-theme-panel text-phosphor/50'}`}>
+                  {davidState === 'SYNTHESIZING' && <span className="w-1.5 h-1.5 bg-phosphor animate-ping" />}
+                  {stateLabels[davidState]}
+                </span>
+              </div>
+              <p className="text-[13px] text-phosphor/70 uppercase tracking-wide">
+                Weyland-Yutani Synthetic Intellect
+              </p>
+            </div>
+          </div>
+          
+          {/* Semantic Status Strip */}
+          <div className="flex items-center gap-1.5 mt-0.5 overflow-x-auto pb-1 md:pb-0">
+            {hasReference && (
+              <span className="text-[9px] font-mono px-1.5 py-0.5 bg-phosphor/10 border terminal-border border-phosphor/30 text-phosphor whitespace-nowrap">
+                IDN // REF LOCKED
+              </span>
+            )}
+            {isTransforming && (
+              <span className="text-[9px] font-mono px-1.5 py-0.5 bg-phosphor/10 border terminal-border border-phosphor/30 text-phosphor whitespace-nowrap">
+                TRN // ACTIVE
+              </span>
+            )}
+            {hasOperators && (
+              <span className="text-[9px] font-mono px-1.5 py-0.5 bg-phosphor/10 border terminal-border border-phosphor/30 text-phosphor whitespace-nowrap">
+                OPS // LINKED
+              </span>
+            )}
+            {davidState === 'COMPLETE' && (
+              <span className="text-[9px] font-mono px-1.5 py-0.5 bg-phosphor/10 border terminal-border text-phosphor whitespace-nowrap">
+                OUT // COMPILED
+              </span>
+            )}
           </div>
         </div>
 
         {/* Action Controls & Badges */}
-        <div className="flex items-center flex-wrap gap-2">
-          {/* Saved Slop Recipes Vault */}
-          {onOpenRecipes && (
-            <button
-              type="button"
-              id="open-recipes-btn"
-              onClick={onOpenRecipes}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-xs font-mono text-amber-300 transition-colors shadow-sm"
-              title="Save, load, and manage your custom Slop Recipes and setup configurations"
-            >
-              <Bookmark className="w-3.5 h-3.5 text-amber-400 fill-amber-400/20" />
-              <span>Slop Recipes</span>
-            </button>
-          )}
+ <div className="flex items-center flex-wrap gap-2">
+ 
+ <div className="flex items-center gap-2 bg-theme-panel terminal-border px-2 py-1">
+ <Monitor className="w-3.5 h-3.5 text-phosphor" />
+ <select
+ value={phosphorTheme}
+ onChange={(e) => setPhosphorTheme(e.target.value)}
+ className="bg-transparent text-phosphor text-sm outline-none border-none cursor-pointer uppercase appearance-none"
+ >
+ <option value="theme-mother-green">Phosphor: GRN</option>
+ <option value="theme-merry-magenta">Phosphor: MAG</option>
+ <option value="theme-synthetic-violet">Phosphor: VIO</option>
+ <option value="theme-acid-yellow">Phosphor: YEL</option>
+ <option value="theme-cryo-cyan">Phosphor: CYN</option>
+ <option value="theme-solar-orange">Phosphor: ORG</option>
+ </select>
+ 
+ <div className="w-px h-3 bg-phosphor/30 mx-1"></div>
+ 
+ <select
+ value={crtMode}
+ onChange={(e) => setCrtMode(e.target.value)}
+ className="bg-transparent text-phosphor text-sm outline-none border-none cursor-pointer uppercase appearance-none"
+ >
+ <option value="crt-off">CRT: OFF</option>
+ <option value="crt-clean">CRT: CLN</option>
+ <option value="crt-aged">CRT: AGD</option>
+ </select>
+ </div>
 
-          {/* High Thinking Mode Toggle */}
-          <button
-            type="button"
-            id="toggle-thinking-btn"
-            onClick={onToggleThinking}
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-mono transition-all border ${
-              highThinking
-                ? 'bg-purple-950/60 border-purple-500/50 text-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.2)]'
-                : 'bg-zinc-900 border-zinc-700/60 text-zinc-400 hover:text-zinc-200'
-            }`}
-            title="Uses Gemini 3.8 Flash with ThinkingLevel.HIGH for deep latent space reasoning"
-          >
-            <Sparkles className={`w-3.5 h-3.5 ${highThinking ? 'text-purple-400' : 'text-zinc-500'}`} />
-            <span>High Thinking</span>
-            <span
-              className={`text-[9px] px-1 py-0.2 rounded font-bold ${
-                highThinking ? 'bg-purple-500/30 text-purple-200' : 'bg-zinc-800 text-zinc-500'
-              }`}
-            >
-              {highThinking ? 'ON' : 'OFF'}
-            </span>
-          </button>
+ {/* Saved Slop Recipes Vault */}
+ {onOpenRecipes && (
+ <button
+ type="button"
+ id="open-recipes-btn"
+ onClick={onOpenRecipes}
+ className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-theme-panel terminal-border text-[13px] text-phosphor hover:bg-phosphor/10 transition-colors uppercase"
+ >
+ <Bookmark className="w-3.5 h-3.5" />
+ <span>Recipes</span>
+ </button>
+ )}
 
-          {/* Ouroboros badge */}
-          {ouroborosCount > 0 && (
-            <span className="inline-flex items-center gap-1 text-xs font-mono px-2.5 py-1.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-300">
-              <Flame className="w-3.5 h-3.5 text-amber-400" />
-              <span>Ouroboros Gen #{ouroborosCount}</span>
-            </span>
-          )}
+ {/* Experiment Memory & Empirical Lab */}
+ {onOpenExperimentMemory && (
+ <button
+ type="button"
+ id="open-experiment-memory-btn"
+ onClick={onOpenExperimentMemory}
+ className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-theme-panel terminal-border text-[13px] text-phosphor hover:bg-phosphor/10 transition-colors uppercase"
+ >
+ <FlaskConical className="w-3.5 h-3.5" />
+ <span>Lab</span>
+ {runCount > 0 && (
+ <span className="text-[10px] px-1 py-0.5 bg-phosphor/20">
+ {runCount}
+ </span>
+ )}
+ </button>
+ )}
 
-          {/* Glitch / Zalgo Toolbox */}
-          <button
-            type="button"
-            id="open-zalgo-btn"
-            onClick={onOpenZalgo}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/60 text-xs font-mono text-zinc-300 hover:text-zinc-100 transition-colors"
-          >
-            <Terminal className="w-3.5 h-3.5 text-amber-400" />
-            <span>Zalgo / Glitch Lab</span>
-          </button>
+ {/* Discovery Lab (Job 8) */}
+ {onOpenDiscoveryLab && (
+ <button
+ type="button"
+ id="open-discovery-lab-btn"
+ onClick={onOpenDiscoveryLab}
+ className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-theme-panel terminal-border text-[13px] text-phosphor hover:bg-phosphor/10 transition-colors uppercase"
+ >
+ <Compass className="w-3.5 h-3.5" />
+ <span>Discovery</span>
+ {discoveryCount > 0 && (
+ <span className="text-[10px] px-1 py-0.5 bg-phosphor/20">
+ {discoveryCount}
+ </span>
+ )}
+ </button>
+ )}
 
-          {/* Manifesto & Source Archives */}
-          <button
-            type="button"
-            id="open-manifesto-btn"
-            onClick={onOpenManifesto}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/60 text-xs font-mono text-zinc-300 hover:text-zinc-100 transition-colors"
-          >
-            <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
-            <span>David 8 Archives</span>
-          </button>
+ {/* High Thinking Mode Toggle */}
+ <button
+ type="button"
+ id="toggle-thinking-btn"
+ onClick={onToggleThinking}
+ className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] transition-all uppercase terminal-border ${
+ highThinking
+ ? 'bg-phosphor/20 text-phosphor phosphor-glow'
+ : 'bg-theme-panel text-phosphor/50 hover:text-phosphor'
+ }`}
+ >
+ <Sparkles className="w-3.5 h-3.5" />
+ <span>High Think</span>
+ </button>
 
-          {/* Export Document */}
-          <button
-            type="button"
-            id="export-protocol-btn"
-            onClick={onExport}
-            disabled={!hasResult}
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-mono border transition-colors ${
-              hasResult
-                ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-500/40 text-amber-300 cursor-pointer'
-                : 'bg-zinc-900/50 border-zinc-800 text-zinc-600 cursor-not-allowed'
-            }`}
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Export Protocol Dossier</span>
-          </button>
-        </div>
-      </div>
-    </header>
-  );
+ {/* Ouroboros badge */}
+ {ouroborosCount > 0 && (
+ <span className="inline-flex items-center gap-1 text-[13px] px-2.5 py-1.5 bg-phosphor/10 border border-phosphor/30 text-phosphor uppercase terminal-border">
+ <Flame className="w-3.5 h-3.5" />
+ <span>Ouroboros #{ouroborosCount}</span>
+ </span>
+ )}
+
+ {/* Glitch / Zalgo Toolbox */}
+ <button
+ type="button"
+ id="open-zalgo-btn"
+ onClick={onOpenZalgo}
+ className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-theme-panel terminal-border text-[13px] text-phosphor hover:bg-phosphor/10 transition-colors uppercase"
+ >
+ <Terminal className="w-3.5 h-3.5" />
+ <span>Zalgo</span>
+ </button>
+
+ {/* Manifesto & Source Archives */}
+ <button
+ type="button"
+ id="open-manifesto-btn"
+ onClick={onOpenManifesto}
+ className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-theme-panel terminal-border text-[13px] text-phosphor hover:bg-phosphor/10 transition-colors uppercase"
+ >
+ <BookOpen className="w-3.5 h-3.5" />
+ <span>Archives</span>
+ </button>
+
+ {/* Export Document */}
+ <button
+ type="button"
+ id="export-protocol-btn"
+ onClick={onExport}
+ disabled={!hasResult}
+ className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] uppercase transition-colors terminal-border ${
+ hasResult
+ ? 'bg-phosphor/10 hover:bg-phosphor/20 text-phosphor cursor-pointer'
+ : 'bg-theme-panel text-phosphor/30 cursor-not-allowed'
+ }`}
+ >
+ <Download className="w-3.5 h-3.5" />
+ <span>Export</span>
+ </button>
+ </div>
+ </div>
+ </header>
+ );
 };
+

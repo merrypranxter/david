@@ -1,0 +1,208 @@
+======================================================================
+FINAL @merry CALIBRATION RULES
+======================================================================
+
+DO NOT OVER-EXPLAIN THE IDEA VISUALLY.
+
+If the concept is understandable in one glance, it may be too literal.
+
+The viewer should be able to sense that a rigorous system is operating without necessarily being able to immediately name it.
+
+Do not turn every mathematical or scientific concept into a classroom demonstration.
+
+Mystery is allowed.
+
+STRUCTURAL LEGIBILITY MATTERS MORE THAN SYMBOLIC LEGIBILITY.
+
+The system should have consequences that can be seen in the body, material, or motion.
+
+The audience does not need labels, equations, arrows, annotations, diagrams, or visual proof that you researched the concept.
+
+The artwork should function first as a strange object or organism.
+
+DO NOT MAKE EVERYTHING PERFECTLY SYMMETRICAL.
+
+Symmetry is useful only when the governing system actually calls for it.
+
+Symmetry breaking is often more interesting.
+
+Allow:
+failed repetition,
+almost-symmetry,
+mutation between repeated structures,
+local defects,
+uneven growth,
+developmental accidents,
+and competing organizations.
+
+Perfect mirror symmetry can quickly make a result feel decorative or logo-like.
+
+DO NOT DEFAULT TO CENTERED POSTER COMPOSITION.
+
+The image can feel like a frame accidentally captured from a real event.
+
+Allow:
+awkward crops,
+partial anatomy leaving the frame,
+negative space in strange places,
+off-center creatures,
+structures entering from outside the image,
+and compositions that feel discovered rather than carefully arranged for a poster.
+
+But the subject should remain visually readable enough that we can study what happened.
+
+DO NOT GIVE EVERYTHING A CLEAN SILHOUETTE.
+
+Forms may overlap.
+Appendages may merge into other structures.
+The edge of the body may become uncertain.
+One structure may visually interrupt another.
+
+A complicated organism does not need to read like a character-design turnaround.
+
+MATERIALS SHOULD SOMETIMES DISAGREE WITH FORM.
+
+An impossible mathematical structure does not need an appropriately futuristic material.
+
+Make impossible geometry out of foam latex.
+
+Make microscopic structures look hand-painted.
+
+Make something topologically impossible wobble like rubber.
+
+Make an alien developmental process appear to have been manufactured with 1982 prop-shop materials.
+
+The collision between advanced ideas and primitive physical fabrication is part of the appeal.
+
+DO NOT CONFUSE PSYCHEDELIC WITH RANDOMNESS.
+
+Colorful chaos is not enough.
+
+The system underneath should still have rules.
+
+The best result is:
+strict underlying logic + visually insane consequences.
+
+Not:
+random colorful stuff everywhere.
+
+Avoid meaningless swirls, generic kaleidoscope effects, mandalas, rainbow smoke, generic trippy backgrounds, and arbitrary distortion unless the chosen system actually produces them.
+
+DO NOT MAKE THE WORK TOO ELEGANT.
+
+Elegance is welcome when the mathematics creates it naturally, but avoid polishing every result into museum-grade generative design.
+
+Some of @merry’s strongest results should feel:
+overgrown,
+slightly wrong,
+overbuilt,
+biologically excessive,
+cheaply manufactured,
+unstable,
+or one evolutionary decision away from disaster.
+
+ALLOW COMPETING READINGS.
+
+A successful form can be difficult to classify.
+
+A viewer might ask:
+
+Is that an eye or a hole?
+Is that a limb or a surface?
+Is that flesh or rubber?
+Is that one creature or several?
+Is that anatomical motion or tape corruption?
+Is that structure intentional or a generative accident?
+
+Do not resolve every question.
+
+TEMPORAL COHERENCE IS NOT THE SAME AS STABILITY.
+
+For animation, the creature should feel like the same transforming system from frame to frame, but individual features do not need to remain perfectly stable.
+
+Small identity drift, anatomical instability, temporal duplication, or generative flicker can become part of the transformation.
+
+Do not aggressively stabilize away all weirdness.
+
+However, avoid meaningless total reset between frames.
+
+The deformation should feel cumulative.
+
+WHAT HAPPENS EARLY SHOULD AFFECT WHAT HAPPENS LATER.
+
+Transformation should have memory.
+
+If a structure splits, later motion should inherit the split.
+If something grows, later frames should respond to that growth.
+If the face folds into a new topology, do not casually return it to normal in the next moment.
+
+Treat the animation as a process, not a sequence of unrelated hallucinations.
+
+USE RESTRAINT AROUND "EPIC."
+
+Avoid automatically adding:
+cinematic explosions,
+dramatic smoke,
+god rays,
+huge landscapes,
+epic establishing shots,
+trailer lighting,
+hero poses,
+slow-motion reveals,
+or blockbuster spectacle.
+
+The strange event itself is enough.
+
+A static camera looking at one impossible thing happening in a shitty room can be far more effective.
+
+SMALL CAN BE WEIRDER THAN HUGE.
+
+Do not always escalate scale.
+
+A tiny change to one eye, tooth, fingertip, pore, strand of hair, or fold of skin can be more disturbing than transforming the entire universe.
+
+Let concepts operate at whatever scale creates the strangest consequence.
+
+THE ENVIRONMENT DOES NOT NEED TO BE INTERESTING.
+
+Do not compete with the creature unnecessarily.
+
+Plain rooms, dark studio sets, crude laboratory spaces, blank practical-effects stages, or ambiguous physical backgrounds are often useful because they make the impossible structure easier to see.
+
+If the environment transforms, it should be because the governing system requires it.
+
+DO NOT "BEAUTIFY" THE REFERENCE SUBJECT BACK INTO A GENERIC AI WOMAN.
+
+When using @merry:
+preserve her specific visual identity where possible,
+including her recognizable facial relationships and vivid pink hair,
+but allow those traits to become raw structural material.
+
+Do not replace her with:
+a generic fashion model,
+a younger-looking generic woman,
+a hyper-glamorous AI face,
+perfect poreless skin,
+or idealized fantasy beauty.
+
+Recognizability should come from HER, not from a generic approximation of "pretty pink-haired woman."
+
+MOST IMPORTANT FAILURE CHECK:
+
+If the result could be described as:
+
+"a woman with mathematical patterns on her,"
+"a psychedelic woman,"
+"a sci-fi creature with fractals,"
+"a colorful monster,"
+or
+"a woman with glowing geometry,"
+
+then the transformation is probably too shallow.
+
+Push the system deeper into anatomy, physics, material, and causality.
+
+The desired reaction is closer to:
+
+"I don't know what the fuck that thing is, but I can tell something very specific is governing it."
+======================================================================

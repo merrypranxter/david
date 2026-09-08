@@ -69,6 +69,81 @@ export function getOperatorExecutionGuidance(operatorId: string): string {
     case 'diversity_select':
       return 'Deliberately choose the most orthogonal, least-expected structural trajectory among available candidates.';
 
+    case 'destructive_vocab_ban':
+      return 'Strictly ban destructive verbs (dissolve, melt, morph, transform, break apart, shatter). Substitute deterministic structural verbs from topology, CAD, and procedural VFX (evert, homotopic deformation, retopologize, facet, planar unwrap, extrude, subdivide, tessellate).';
+
+    case 'technical_register':
+      return 'Rewrite all sensory descriptions in the formal vocabulary of the specific scientific or mathematical field that studies the phenomenon (rheology, crystallography, fluid dynamics, acoustics). Specificity narrows the sampled cluster away from distribution-average noise.';
+
+    case 'damage_specificity':
+      return 'Replace generic wear/damage terms with named analog failure modes: head-switching noise, timebase corrector failure causing horizontal shearing, chroma subsampling error, CRT phosphor bloom, macro-blocking, halation, telecine jitter, or extreme Y/C separation error.';
+
+    case 'contradiction_constraint':
+      return 'Enforce an impossible constraint with zero hedging: locally normal but globally incompatible, volume expanding while surface area collapses, continuous folding into unsmoothable manifolds, infinite surface area with finite volume, or two bodies with different anatomy casting the same spectral shadow.';
+
+    case 'progressive_wavefront':
+      return 'A continuous geometric wavefront sweeps along a designated spatial axis; unreached areas remain in their base state; the trailing edge continuously reorganizes into the target geometry, providing temporal attention with a trackable edge.';
+
+    case 'kinetic_anchor':
+      return 'Lock the visual frame to a relentless continuous 360-degree orbit or unbroken high-speed tracking shot. The kinetic momentum forces temporal attention compute onto 3D parallax and consistent specular lighting, disincentivizing collapse to flat 2D noise.';
+
+    case 'bridge_agent':
+      return 'Insert a legitimate intermediate state of matter that is simultaneously organic and mathematical: nematic liquid crystal phase changes, continuous Miura fold tessellation propagating across silhouettes, or Voronoi trabecular scaffolds opening along logarithmic spirals.';
+
+    case 'substrate_shift':
+      return 'Replace the default substance with an uncomfortable, physically specific material: dense expanding polyurethane foam, shivering hyper-glossy molded silicone, oxidized bismuth and dripping neon thermal paste, interwoven fiber-optic cables that leak light, or magnetized ferrofluid.';
+
+    case 'format_contamination':
+      return 'Wrap the subject in a mundane period broadcast format: lost educational television demonstration, 1980s aerobics instruction tape, late-night public-access broadcast, 1970s science demonstration film, corporate training tape, or telecined 16mm print.';
+
+    case 'semantic_distance_walk':
+      return 'Traverse 3 to 4 associative conceptual hops away from the primary subject before selecting modifiers or attributes. Strictly forbid first-order hop-1 neighbors; select properties that connect logically only across multiple intermediate associative leaps.';
+
+    case 'syntax_injection':
+      return 'Interleave rigid non-linguistic syntax carrying concept values (JSON hierarchies, regular expression brackets, PGP armored blocks, hexadecimal memory dumps, FASTA nucleotide sequences, kernel panics, CSS rulesets, MIDI hex, or SQL queries). Syntax supplies pacing; content supplies meaning.';
+
+    case 'lens_shift':
+      return 'Select an analytical lens maximally orthogonal to the default register: antimatter inversion, geological timescale where human history is a one-second blur, subatomic charge/spin ethics, panpsychic noise where every atom screams, dimensional upgrade, or null-routing garbage collection.';
+
+    case 'auto_genesis':
+      return 'Synthesize an entirely novel analytical lens when no standard framework is sufficiently orthogonal: invent its formal designation, state its axiomatic operating logic in one concise sentence, and execute the perspective shift through that newly forged lens.';
+
+    case 'sensory_rewiring':
+      return 'Force description through the wrong sensory channel: describe an algorithm by its tactile odor and viscous flavor; describe an emotion strictly through optical refraction indices and shear modulus.';
+
+    case 'temporal_anchor':
+      return 'Lock the representation to a specific historic year, technical epoch, or cosmological era (e.g. 1974 lab telecine, Silurian geological strata, or Planck epoch heat death), satisfying that timeframe’s authentic constraints as a spring-board for mutation.';
+
+    case 'oblique_answer':
+      return 'When the prompt requests a conventional subject, answer its negative shadow: depict what was displaced by its arrival, the residue left in its wake, or the structural perimeter of the hole it leaves behind.';
+
+    case 'houdini_hijack':
+      return 'Append procedural 3D VFX terminology to hijack the clean motion-graphics latent cluster: Houdini procedural surface deformation, Signed Distance Field (SDF) raymarching transition, continuous vertex displacement mapping, isosurface polygonization, marching cubes, and clean specular highlights.';
+
+    case 'latent_bridge':
+      return 'Never bridge disparate states in a single leap: generate Anchor A (initial state), a 50% Hybrid Node matching lighting and palette with tessellated geometry, and Anchor B (full target); interpolate through geometric unfolding.';
+
+    case 'frequency_conflict':
+      return 'Force mutually incompatible acoustic genres, instrumentation, and acoustic spaces into single bracketed cues: [Gregorian chant + 240BPM speedcore + underwater cavern reverb], [Baroque harpsichord + drill 808 distortion + anechoic chamber].';
+
+    case 'instrument_displacement':
+      return 'Assign standard musical rhythm and melodic roles to non-musical phenomena: percussion is rhythmic human throat-clearing and pleural fluid clicks; bassline is seismic fault tremor; lead melody is an erratically failing refrigerator compressor.';
+
+    case 'structural_paradox_tag':
+      return 'Inject impossible physical transformations inside section cue brackets: [Breakdown: singer vocal cords calcify into solid brass over 8 measures], [Solo: piano keys strike themselves backwards in time with negative decibels].';
+
+    case 'sonification_of_absence':
+      return 'Demand sonification of pure negative space: [the absence of a 1980s synthesizer], [localized drop in atmospheric pressure], anechoic chamber vacuum, absolute zero thermal noise, phase cancellation, or the exact frequency of offline physical spaces.';
+
+    case 'psychoacoustic_phantom':
+      return 'Instruct audio synthesis to produce perceptual-only auditory phenomena: Tartini third difference tone extraction, nonlinear phantom fundamental, Shepard scale infinite pitch descent, and simultaneous backward spectral masking.';
+
+    case 'register_collision':
+      return 'Pair a hyper-rigid pop song or choral arrangement structure with lyric texts that possess zero rhyme, zero metric feet, and no line breaks, compelling the neural vocoder to stretch syllables into microtonal glissandi and novel polyphony.';
+
+    case 'zalgo_phoneme_forcing':
+      return 'Apply controlled Unicode combining diacritics strictly to phonetic lyrics (never to style tags) to corrupt standard tokenizer pronunciation and force the acoustic engine into producing glottal clicks, unvoiced whispers, and alien diphthongs.';
+
     default:
       return 'Apply systemic ontological mutation to relational rules and structure rather than cosmetic decoration.';
   }
@@ -121,11 +196,13 @@ export function formatMutationDirective(
 
   // 1. Pipeline Header & Core Principle
   sections.push(
-    `[MUTATION ARCHITECTURE: SYSTEMIC RESTRUCTURING (DELUGE / SLOP)]\n` +
-      `CORE PRINCIPLE: NO DECORATIVE WEIRDNESS\n` +
+    `[MUTATION ARCHITECTURE: SYSTEMIC RESTRUCTURING (DELUGE / SLOP / GUIDANCE GEOMETRY)]\n` +
+      `CORE PRINCIPLE: NO DECORATIVE WEIRDNESS (ANTI-SLOP-SLOP MANDATE)\n` +
       `- Do NOT merely decorate a normal concept with fractals, tentacles, crystals, neon, glitches, psychedelic adjectives, or random impossible materials.\n` +
-      `- Every strange element MUST originate from coherent physical, conceptual, or geometric reorganization.\n` +
-      `- Mutate: relationships, organization, causality, topology, identity persistence, temporal structure, material categorization, and representational rules BEFORE adding surface details.\n` +
+      `- REJECT WEAK MUTATION ADJECTIVES: Never use "surreal", "dreamlike", "psychedelic", "chaotic", "otherworldly", "glitchy", or "impossible" as substitutes for an actual mechanism.\n` +
+      `- Every strange element MUST originate from coherent physical, conceptual, or geometric reorganization: mechanism, interaction, causality, geometry, material rheology, temporal behavior, or scale conflict.\n` +
+      `- ATTRACTORS MUST GUIDE — NOT SWALLOW — THE SEED: Attractors are directional gravity fields, NOT replacement subjects. The original seed entity must remain recognizable through the mutation.\n` +
+      `- OPERATOR BLENDING: Allow multiple mutation operators to interact in a causal chain (A causes B, B destabilizes C, C feeds back into A), rather than treating them as an independent checklist.\n` +
       `- Preserved anchors MUST remain recognizable.`
   );
 

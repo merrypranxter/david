@@ -555,6 +555,129 @@ export const LATENT_ATTRACTORS: readonly LatentAttractor[] = [
         'a living domestic space whose air density, color palette, and psychological cadence are modulated by late-Cold-War magnetic tape decay and cathode-ray flicker',
     },
   },
+  // ==============================================================
+  // MECHANISM BANK: ATTRACTORS, EMERGENCE & IMPOSSIBLE GEOMETRIES
+  // ==============================================================
+  {
+    id: 'rossler',
+    name: 'Rossler Hyperchaotic System',
+    category: 'ontological',
+    description:
+      'Two positive Lyapunov exponents; stretches and folds along multiple independent directions simultaneously.',
+    directive:
+      'Govern all form, motion, and spatial transformation through the Rossler hyperchaotic system: simultaneously stretch and fold structure along multiple independent orthogonal directions without collapsing into random noise.',
+    tendencies: ['hyperchaotic folding', 'dual Lyapunov divergence', 'multi-axis stretching', 'bounded orbit'],
+    destabilizes: ['planar stability', 'predictable trajectories', 'isolated Euclidean axes'],
+    literalizationWarning: 'Do NOT simply draw abstract line ribbons. Structure the subject itself as folding across multiple independent dimensions simultaneously.',
+    minEntropy: 5,
+    compatibleOperatorIds: ['ontology_swap', 'scale_schism'],
+    tags: ['mechanism-bank', 'chaotic-attractor', 'hyperchaos', 'lyapunov'],
+  },
+  {
+    id: 'chua',
+    name: 'Chua Double-Scroll',
+    category: 'topological',
+    description:
+      'Two interconnected swirling lobes composed of infinite fractal layers.',
+    directive:
+      'Structure all spatial geometry and causal flow between two interconnected swirling lobes composed of infinite nested fractal layers, switching abruptly across a piecewise-linear boundary.',
+    tendencies: ['double-scroll topology', 'infinite fractal layering', 'piecewise switching', 'swirling dual basins'],
+    destabilizes: ['single-center compositions', 'smooth continuous transitions', 'monolithic forms'],
+    literalizationWarning: 'Do NOT just draw two circles or yin-yang swirls. Force the concept to occupy two mutually feeding orbital basins.',
+    minEntropy: 4,
+    compatibleOperatorIds: ['switch', 'alternate', 'ontology_swap'],
+    tags: ['mechanism-bank', 'chaotic-attractor', 'double-scroll', 'fractal-layers'],
+  },
+  {
+    id: 'lorenz',
+    name: 'Lorenz Orbital Basin',
+    category: 'topological',
+    description:
+      'Two inescapable orbital basins governing choreography; deterministic chaos with extreme sensitivity to initial conditions.',
+    directive:
+      'Bind limbs, camera, and conceptual relationships to two inescapable orbital basins; movement oscillates unpredictably between opposing poles with sensitive path dependence.',
+    tendencies: ['butterfly attractor', 'dual orbital basins', 'deterministic chaos', 'sensitive path dependence'],
+    destabilizes: ['static positioning', 'stable equilibrium', 'reversible motion'],
+    literalizationWarning: 'Do NOT draw literal butterfly wings. Bind the movement and compositional choreography to the orbital basins.',
+    minEntropy: 4,
+    compatibleOperatorIds: ['kinetic_anchor', 'ontology_swap'],
+    tags: ['mechanism-bank', 'chaotic-attractor', 'lorenz', 'orbital-basins'],
+  },
+  {
+    id: 'turing_instability',
+    name: 'Turing Instability',
+    category: 'material',
+    description:
+      'Activator plus faster-diffusing inhibitor spontaneously breaking a uniform state into periodic spatial pattern.',
+    directive:
+      'Spontaneously break homogeneous surfaces and structures into periodic patterns through an activator-inhibitor dynamic: local reinforcement paired with long-range suppression creates emergent labyrinths, dots, and stripes in real time.',
+    tendencies: ['reaction-diffusion morphogenesis', 'activator-inhibitor waves', 'spontaneous pattern formation', 'labyrinths'],
+    destabilizes: ['smooth featureless surfaces', 'static textures', 'externally painted patterns'],
+    literalizationWarning: 'Do NOT apply a leopard or zebra pattern filter. Allow the skin, organs, or architecture to grow and re-tessellate continuously through chemical reaction-diffusion.',
+    minEntropy: 4,
+    compatibleOperatorIds: ['bridge_agent', 'ontology_swap', 'progressive_wavefront'],
+    tags: ['mechanism-bank', 'emergence', 'turing', 'morphogenesis', 'reaction-diffusion'],
+  },
+  {
+    id: 'belousov_zhabotinsky',
+    name: 'Belousov-Zhabotinsky Reaction',
+    category: 'transformational',
+    description:
+      'Propagating oxidation waves, concentric targets and rotating spirals that annihilate on collision due to a refractory period.',
+    directive:
+      'Organize visual and temporal evolution as propagating concentric target waves and rotating multi-armed spirals; waves that collide annihilate each other due to a local refractory period, preventing feedback explosion.',
+    tendencies: ['chemical wave propagation', 'spiral waves', 'collision annihilation', 'refractory phase resetting'],
+    destabilizes: ['linear wavefronts', 'additive wave interference', 'permanent states'],
+    literalizationWarning: 'Do NOT draw a spiral swirl. Model physical changes as propagating chemical oxidation waves that self-annihilate on contact.',
+    minEntropy: 5,
+    compatibleOperatorIds: ['progressive_wavefront', 'ontology_swap'],
+    tags: ['mechanism-bank', 'emergence', 'chemical-oscillator', 'spiral-waves'],
+  },
+  {
+    id: 'poincare_disk',
+    name: 'Poincare Disk Hyperbolic Geometry',
+    category: 'topological',
+    description:
+      'Objects shrink exponentially toward a boundary that represents infinity; tilings impossible in Euclidean space.',
+    directive:
+      'Map all spatial metrics into a Poincare disk representation: metric distance expands exponentially as coordinates approach the perimeter boundary; infinite Euclidean expanse is geometrically compressed into a finite disc with conformal angular preservation.',
+    tendencies: ['hyperbolic metric dilation', 'exponential boundary decay', 'non-Euclidean tessellation', 'conformal mapping'],
+    destabilizes: ['parallel lines', 'Euclidean distance invariance', 'infinite canvas edges'],
+    literalizationWarning: 'Do NOT just apply a fish-eye lens distortion. The actual geometric relationships, polygons, and proportions must obey hyperbolic non-Euclidean geometry.',
+    minEntropy: 5,
+    compatibleOperatorIds: ['destructive_vocab_ban', 'ontology_swap', 'contradiction_constraint'],
+    tags: ['mechanism-bank', 'impossible-geometry', 'poincare', 'hyperbolic'],
+  },
+  {
+    id: 'quantum_foam',
+    name: 'Planck Quantum Foam',
+    category: 'material',
+    description:
+      'Seething bubbling froth of spacetime geometry and vacuum fluctuations at the Planck scale.',
+    directive:
+      'Treat the physical substrate not as smooth continuum, but as a seething, churning froth of fluctuating topology at the Planck scale, where micro-wormholes spontaneously nucleate, entangle, and collapse.',
+    tendencies: ['topological fluctuation', 'vacuum zero-point boiling', 'micro-wormhole foam', 'non-smooth spacetime'],
+    destabilizes: ['smooth solid surfaces', 'continuous time', 'differentiable manifolds'],
+    literalizationWarning: 'Do NOT make cartoon soap bubbles. Depict continuous topological foam where spacetime itself boils at the micro scale.',
+    minEntropy: 6,
+    compatibleOperatorIds: ['substrate_shift', 'ontology_swap'],
+    tags: ['mechanism-bank', 'physical-exotica', 'quantum-foam', 'planck-scale'],
+  },
+  {
+    id: 'bootstrap_paradox',
+    name: 'Bootstrap Paradox / Closed Timelike Curve',
+    category: 'epistemic',
+    description:
+      'A stable fixed point; the object is the attractor of its own history with no external origin point.',
+    directive:
+      'Structure the entity as a closed causal loop: it exists solely because its future iteration traveled into its past to construct itself. It has zero external genesis or author; its origin is a stable ontological fixed point.',
+    tendencies: ['closed timelike curve', 'self-originating artifact', 'acausal stability', 'retrocausal anchoring'],
+    destabilizes: ['linear chronology', 'cause preceding effect', 'teleological creation'],
+    literalizationWarning: 'Do NOT just put clocks or hourglasses in the background. Structure the narrative and visual causality so the entity is the direct parent of its own creation.',
+    minEntropy: 5,
+    compatibleOperatorIds: ['contradiction_constraint', 'recursive_reversal', 'staged_paradox'],
+    tags: ['mechanism-bank', 'physical-exotica', 'bootstrap-paradox', 'closed-timeloop'],
+  },
 ] as const;
 
 /**
@@ -591,6 +714,7 @@ export function getAttractorsGroupedByCategory(): Record<AttractorCategory, Late
     transformational: [],
     archetypal: [],
     epistemic: [],
+    topological: [],
   };
 
   for (const attractor of LATENT_ATTRACTORS) {

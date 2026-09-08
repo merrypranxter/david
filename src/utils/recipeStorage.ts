@@ -1,4 +1,5 @@
 import { SlopRecipe, SlopSeedingConfig, TargetEngine, CommandMode, OpenArtModel, GrokMode } from '../types';
+import { normalizeSlopConfig, normalizeSlopRecipe } from './slopConfigNormalizer';
 
 const STORAGE_KEY = 'david_slop_recipes_v1';
 const DRAFT_STORAGE_KEY = 'david_active_draft_v1';
@@ -197,7 +198,7 @@ export function getAllRecipes(): SlopRecipe[] {
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+      return parsed.map((r, idx) => normalizeSlopRecipe(r, idx + 1));
     }
     return [...CURATED_SLOP_RECIPES];
   } catch (err) {
@@ -444,7 +445,11 @@ export function loadActiveDraft(): {
   try {
     const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.slopConfig) {
+      parsed.slopConfig = normalizeSlopConfig(parsed.slopConfig);
+    }
+    return parsed;
   } catch {
     return null;
   }

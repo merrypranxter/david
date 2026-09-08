@@ -87,7 +87,7 @@ async function executeCookieHandshake(checkUrl: string): Promise<void> {
   await sleep(250);
 }
 
-window.fetch = (async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+export const apiFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   if (!isSameOriginApiRequest(input)) {
     return nativeFetch(input, init);
   }
@@ -107,4 +107,4 @@ window.fetch = (async (input: RequestInfo | URL, init?: RequestInit): Promise<Re
   }
 
   return response;
-}) as typeof window.fetch;
+};

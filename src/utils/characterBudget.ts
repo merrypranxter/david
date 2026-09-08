@@ -219,3 +219,69 @@ export function compressToCharacterBudget(text: string, maxChars: number, option
 
   return assembled;
 }
+
+import {
+  calculateTargetBudget,
+  expandConceptMechanisms,
+  selectFailureOperators,
+  composeMutationGraph,
+  extractNonNegotiablesAndAssumptions,
+  verifyRadicalTransformation,
+  BudgetProfile,
+  FailureOperator,
+  AdaptedOperator
+} from './radicalTransformation';
+
+export {
+  calculateTargetBudget,
+  extractNonNegotiablesAndAssumptions,
+  verifyRadicalTransformation,
+  selectFailureOperators,
+};
+export type { BudgetProfile, FailureOperator, AdaptedOperator };
+
+/**
+ * Radical Prompt Transformation Budget Saturator:
+ * Ensures prompts do not collapse into brief summaries. If generated text utilizes
+ * less than 88% of the target character budget, this saturator enriches it with
+ * substantive, non-decorative generative machinery, topological constraints,
+ * and material dynamics until it reaches 90-95% of the available character budget.
+ */
+export function saturateToCharacterBudget(
+  text: string,
+  targetBudget: number,
+  options?: {
+    targetEngine?: TargetEngine;
+    subject?: string;
+    concept?: string;
+    preservedAnchors?: string[];
+  }
+): string {
+  if (!text || typeof text !== 'string') return text || '';
+  const budget = calculateTargetBudget(targetBudget);
+  const currentLen = text.length;
+
+  // If already occupying 88%+ of target budget, no expansion needed
+  if (currentLen >= budget.minimumTarget) {
+    return compressToCharacterBudget(text, budget.maxCharacters, {
+      preservedAnchors: options?.preservedAnchors,
+      targetEngine: options?.targetEngine,
+    });
+  }
+
+  const engine = options?.targetEngine || 'general';
+
+  // Use the radical length-aware conceptual expansion pass
+  const expanded = expandConceptMechanisms(text, budget, engine, {
+    subject: options?.subject,
+    concept: options?.concept,
+    preservedAnchors: options?.preservedAnchors,
+  });
+
+  return compressToCharacterBudget(expanded.trim(), budget.maxCharacters, {
+    preservedAnchors: options?.preservedAnchors,
+    targetEngine: options?.targetEngine,
+  });
+}
+
+

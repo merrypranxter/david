@@ -1,3 +1,7 @@
+import type { FailureOperator } from './data/failureOperators';
+import type { ContentDNA } from './types/contentDna';
+export * from './types/contentDna';
+
 export type TargetEngine =
   | 'general'
   | 'suno'
@@ -6,6 +10,23 @@ export type TargetEngine =
   | 'grok'
   | 'llm_agent'
   | 'void';
+
+export type StraitjacketLevel = 'normal' | 'loosen' | 'misinterpret' | 'destabilize' | 'remove_subject';
+
+export type ElementAnchorType = 'HARD_ANCHOR' | 'SOFT_ANCHOR' | 'MUTABLE' | 'DISPOSABLE';
+
+export interface StraitjacketConfig {
+  level: StraitjacketLevel;
+  sourcePreservation: 'very_high' | 'high' | 'medium' | 'low_medium' | 'intent_only';
+  wordingPreservation: 'high' | 'medium_high' | 'low' | 'very_low' | 'near_zero';
+  nounPreservation: 'very_high' | 'high' | 'medium_high' | 'medium_low' | 'very_low';
+  operatorCount: [number, number];
+  graphComplexity: 'minimal' | 'low' | 'medium' | 'high';
+  causalRewrite: 'minimal' | 'low' | 'medium' | 'high' | 'very_high';
+  subjectRemoval: 'none' | 'very_low' | 'low_medium' | 'medium_high' | 'maximum';
+  productiveMisunderstanding: 'none' | 'low' | 'high' | 'maximum';
+  novelOperatorProbability: 'near_zero' | 'low' | 'medium' | 'medium_high' | 'high';
+}
 
 export type OpenArtModel = 'banana' | 'nano_bananas' | 'pro' | 'light' | 'seadream';
 
@@ -179,7 +200,8 @@ export type AttractorCategory =
   | 'collective'
   | 'transformational'
   | 'archetypal'
-  | 'epistemic';
+  | 'epistemic'
+  | 'topological';
 
 export interface AttractorExampleTransformation {
   input: string;
@@ -296,6 +318,7 @@ export interface SlopRecipe {
   openArtModel: OpenArtModel;
   grokMode: GrokMode;
   entropyLevel: number;
+  straitjacket?: StraitjacketLevel;
   commandMode: CommandMode;
   highThinking: boolean;
   useSearch: boolean;
@@ -357,6 +380,9 @@ export interface SynthesisPayload {
   mutationRecipe?: MutationRecipe;
   generation?: PromptGeneration;
   mutantFamily?: MutantFamilyResult;
+  modelProfile?: ModelOrganismProfile;
+  transformationVerification?: any;
+  contentDna?: ContentDNA;
 }
 
 export interface SynthesisHistoryItem {
@@ -368,6 +394,7 @@ export interface SynthesisHistoryItem {
   openArtModel?: OpenArtModel;
   grokMode?: GrokMode;
   entropyLevel: number;
+  straitjacket?: StraitjacketLevel;
   highThinking: boolean;
   useSearch: boolean;
   commandMode: CommandMode;
@@ -378,6 +405,141 @@ export interface SynthesisHistoryItem {
   lineage?: PromptGeneration;
 }
 
+export type MediaType = 'image' | 'video' | 'audio';
+
+export interface AdaptedOperator {
+  operator: FailureOperator;
+  directive: string;
+}
+
+export interface MediaProfile {
+  id: MediaType;
+  name: string;
+  primaryDimensions: string[];
+  strongFailureSurfaces: string[];
+  weakFailureSurfaces: string[];
+  preferredConstraintTypes: string[];
+  preferredVariables: string[];
+  preferredGraphRelations: string[];
+  translationRules: Record<string, string>;
+  antiPatterns: string[];
+  promptStructureGuidance: string[];
+}
+
+// ==========================================
+// MODEL-SPECIFIC ORGANISM PROFILES (Job 6)
+// ==========================================
+
+export type EpistemicStatus = 'OBSERVED' | 'LIKELY' | 'UNKNOWN' | 'EXPERIMENTAL';
+export type ProfileConfidence = 'high' | 'medium' | 'low' | 'unknown';
+
+export interface ModelTechnicalFacts {
+  id: string;
+  platformId: TargetEngine;
+  modelName: string;
+  version: string;
+  mediaType: MediaType;
+  promptCharacterLimit: number;
+  preferredTargetLength: number;
+  capabilities: string[];
+  supportedReferences: string[];
+  technicalParameters?: Record<string, any>;
+}
+
+export interface ModelFingerprint {
+  referenceGrip: 'high' | 'medium' | 'low' | 'unknown';
+  semanticGrip: 'high' | 'medium' | 'low' | 'unknown';
+  topologyGrip: 'strong' | 'moderate' | 'weak' | 'unknown';
+  materialGrip: 'strong' | 'moderate' | 'weak' | 'unknown';
+  temporalGrip: 'strong' | 'moderate' | 'weak' | 'unknown';
+  promptLiteralness: 'high' | 'moderate' | 'low' | 'unknown';
+  contradictionTolerance: 'high' | 'moderate' | 'low' | 'unknown';
+  ambiguityTolerance: 'high' | 'moderate' | 'low' | 'unknown';
+  longPromptBehavior: 'strong_retention' | 'beginning_weighted' | 'end_weighted' | 'dilution' | 'unknown';
+  technicalLanguageTolerance: 'high' | 'moderate' | 'low' | 'unknown';
+  negativeInstructionReliability: 'reliable' | 'moderate' | 'unreliable' | 'unknown';
+}
+
+export type PromptOrderingComponent =
+  | 'anchors_first'
+  | 'mechanisms_first'
+  | 'rendering_first'
+  | 'blockers_last';
+
+export type PromptDensityPreference = 'sparse_explicit' | 'balanced' | 'dense_compressed';
+
+export interface ModelOrganismProfile {
+  // Fixed Technical Facts
+  technicalFacts: ModelTechnicalFacts;
+
+  // Empirical Behavioral Profile
+  epistemicStatus: EpistemicStatus;
+  confidence: ProfileConfidence;
+  fingerprint: ModelFingerprint;
+
+  // Operator Weighting & Warnings
+  operatorWeights: Record<string, number>;
+  familyWeights: Record<string, number>;
+  operatorWarnings: Record<string, string>;
+
+  // Graph Complexity Guidance
+  recommendedMinOperators: number;
+  recommendedMaxOperators: number;
+  recommendedDebtCount: number;
+  contradictionStyle: 'compact_coupled' | 'distributed_graph' | 'hierarchical';
+
+  // Prompt Structuring & Density
+  promptOrdering: PromptOrderingComponent[];
+  promptDensityPreference: PromptDensityPreference;
+  anchorRepetition: boolean;
+
+  // Model-Specific Easy-Outs to Block
+  easyOuts: string[];
+
+  // Qualitative Surfaces
+  observedFailureSurfaces: string[];
+  weakFailureSurfaces: string[];
+  knownStrengths: string[];
+
+  // Experimental Metadata
+  experimentalNotes: string[];
+  source: string;
+  lastUpdated: string;
+}
+
+export type ObservedArtifactTag =
+  | 'IDENTITY_DRIFT'
+  | 'IDENTITY_LOCK'
+  | 'TOPOLOGY_LEAK'
+  | 'MORPHOLOGICAL_LEAKAGE'
+  | 'TEMPORAL_SMEAR'
+  | 'GHOST_STRUCTURE'
+  | 'BACKGROUND_INHERITANCE'
+  | 'MATERIAL_SUBSTITUTION'
+  | 'UNREQUESTED_SYMMETRY'
+  | 'EXTRA_ANATOMY'
+  | 'BOUNDARY_COLLAPSE'
+  | 'PHONETIC_COLLAPSE'
+  | 'INSTRUMENT_CONFUSION'
+  | 'RHYTHMIC_COLLAPSE'
+  | 'SPECTRAL_ARTIFACT'
+  | 'PROMPT_IGNORED'
+  | 'GENERIC_RESOLUTION';
+
+export interface ModelObservation {
+  observationId: string;
+  modelId: string;
+  date: string;
+  inputSummary: string;
+  operatorsUsed: string[];
+  graphSummary: string;
+  straitjacketLevel: StraitjacketLevel;
+  observedArtifactTags: ObservedArtifactTag[];
+  userRating?: number;
+  notes: string;
+  confidence: 'high' | 'medium' | 'low';
+}
+
 export interface PresetItem {
   id: string;
   title: string;
@@ -386,6 +548,7 @@ export interface PresetItem {
   concept: string;
   target: TargetEngine;
   entropyLevel: number;
+  straitjacket?: StraitjacketLevel;
   note: string;
 }
 
@@ -532,3 +695,146 @@ export interface MutantSelectionConfig {
     semanticCollapsePenalty: number;
   };
 }
+
+// ==========================================
+// SLOP METHODS & OPERATOR LIBRARY TYPES
+// ==========================================
+
+export type SlopMethodFamily =
+  | 'lexical'
+  | 'structural'
+  | 'syntax'
+  | 'perspective'
+  | 'dialect'
+  | 'pipeline';
+
+export interface StructuralTestPredicate {
+  id: string;
+  description: string;
+  tests: string[];
+  fail_example: string;
+  pass_example: string;
+}
+
+export interface BridgeAgentItem {
+  agent: string;
+  phrasing: string;
+}
+
+export interface SyntaxVectorItem {
+  id: string;
+  format: string;
+  effect: string;
+}
+
+export interface LensShiftItem {
+  id: string;
+  logic: string;
+}
+
+export interface SlopMethodOperator {
+  id: string;
+  name: string;
+  family: SlopMethodFamily;
+  targets?: string[];
+  structural: boolean | 'partial';
+  priority?: string;
+  min_w_coeff?: number;
+  mechanism?: string;
+  operation: string;
+  swap?: Record<string, string>;
+  bank?: Array<string | BridgeAgentItem>;
+  templates?: string[];
+  template?: string;
+  params?: Record<string, any>;
+  vectors?: SyntaxVectorItem[];
+  formats?: Record<string, { example: string; pacing_effect?: string; syntax?: string }>;
+  selection_rule?: Record<string, string>;
+  lenses?: LensShiftItem[];
+  steps?: string[];
+  example?: string;
+  strongest_tokens?: string[];
+  caution?: string;
+  source?: string;
+}
+
+export interface WeirdnessBand {
+  range: [number, number];
+  label: string;
+  permits: string[];
+  note?: string;
+}
+
+export interface SlopMethodProtocol {
+  id: string;
+  name: string;
+  type: 'gate' | 'filter' | 'loop' | 'diversity_constraint' | 'variant_constraint';
+  description: string;
+  priority?: string;
+  bands?: WeirdnessBand[];
+  escalation?: { trigger: string; delta: number };
+  operation?: string;
+  steps?: string[];
+  maps_to?: string;
+  bank?: string[];
+  anti_goal?: string;
+  note?: string;
+  source?: string;
+}
+
+export interface MechanismAttractor {
+  name: string;
+  signature: string;
+}
+
+export interface MechanismEmergence {
+  name: string;
+  signature: string;
+}
+
+export interface MechanismImpossibleGeometry {
+  name: string;
+  signature: string;
+}
+
+export interface MechanismPhysicalExotica {
+  name: string;
+  signature: string;
+}
+
+export interface MechanismBank {
+  note: string;
+  attractors: MechanismAttractor[];
+  emergence: MechanismEmergence[];
+  impossible_geometry: MechanismImpossibleGeometry[];
+  physical_exotica: MechanismPhysicalExotica[];
+  calibration_specimens: string[];
+}
+
+export interface SlopMethodsLibrary {
+  schema_version: string;
+  name: string;
+  description: string;
+  predicate: StructuralTestPredicate;
+  operators: SlopMethodOperator[];
+  protocols: SlopMethodProtocol[];
+  mechanism_bank: MechanismBank;
+  sources: Record<string, string>;
+  not_yet_mined: Array<{ id: string; title: string; note?: string }>;
+}
+
+// Re-export Technical Experimental Core Types (Job 1)
+export * from './types/technicalCore';
+
+// Re-export Tokenizer & Serialization Sabotage Types (Job 2)
+export * from './types/serialization';
+
+// Re-export Context Budget & Binding Failure Types (Job 3)
+export * from './types/contextBinding';
+
+// Re-export Structural Syntax & Relational Traps Types (Job 4)
+export * from './types/structuralRelational';
+
+// Re-export Guidance Geometry: Core Competing Forces Types (Job 5A)
+export * from './types/guidanceGeometry';
+
