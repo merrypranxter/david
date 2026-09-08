@@ -5,6 +5,22 @@ import {
   DAVID_CONSULT_MODE_MODULE,
 } from '../../lib/davidModules';
 
+interface WorkArtifact {
+  id?: string;
+  label?: string;
+  type?: string;
+  destination?: string;
+  content: string;
+}
+
+interface ConsultPayload {
+  chatText: string;
+  artifacts: WorkArtifact[];
+  options: string[];
+  nextAction: string;
+  recommendedSettings: Record<string, unknown> | null;
+}
+
 /**
  * Netlify Function backing POST /api/consult.
  * AI Studio/local uses the Express route in server.ts; Netlify needs its own serverless endpoint.
@@ -21,7 +37,7 @@ export default async (req: Request): Promise<Response> => {
     return json({ success: false, error: 'Invalid JSON body.' }, 400);
   }
 
-  const { messages = [], state = {}, highThinking = false } = payload || {};
+  const { messages = [], state = {}, highThinking = false, workbench = {} } = payload || {};
   const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
   if (!apiKey) {
     return json(
@@ -41,50 +57,79 @@ ${DAVID_COGNITIVE_TEMPERAMENT_MODULE}
 ${DAVID_CONSULT_MODE_MODULE}
 
 You are the CONSULT mode of David. The user is Merry.
-You have access to her current workbench state.
+You have access to her current workbench state and must act as the conversational interface to the rest of the app.
 
-=== CURRENT STATE ===
+=== CURRENT APP STATE ===
 Target Engine: ${state?.target || 'unknown'}
 Model: ${state?.openArtModel || 'unknown'}
 Grok Mode: ${state?.grokMode || 'unknown'}
+Command Mode: ${state?.commandMode || 'unknown'}
+Entropy: ${state?.entropyLevel ?? 'unknown'}
+Straitjacket: ${state?.straitjacketLevel || 'unknown'}
+Target Length: ${state?.targetLength ?? 'unknown'}
 Slop Selected Seeds: ${JSON.stringify(state?.slopConfig?.selectedSeeds || [])}
 Concept / Prompt: ${state?.concept || 'empty'}
-=== END STATE ===
+=== END APP STATE ===
+
+=== CURRENT CONSULT WORKBENCH ===
+${JSON.stringify(workbench || {})}
+=== END CONSULT WORKBENCH ===
 
 SUNO DUAL-BUFFER LAW:
 When Target Engine is Suno, treat STYLE and LYRICS as two separate artifacts. Never blend them into one prompt.
-- SUNO STYLE is the music/style box only. Hard ceiling: 999 characters. It may describe genre collision, instrumentation, rhythm, tempo behavior, production, timbre, signal processing, acoustic space, vocal timbre, and structural musical behavior. Do NOT dump lyric lines into the style box.
-- SUNO LYRICS is the lyric/directive box only. Hard ceiling: 3000 characters. It may contain actual words, poetry, gibberish, Zalgo-ready text, phonetics, Unicode, equations, repetitions, and Suno section/performance directives.
-- In SUNO LYRICS, anything intended as a non-sung instruction MUST be enclosed in square brackets. Examples: [Intro], [Verse], [Chorus], [Bridge], [Outro], [Instrumental], [Whispered], [Vocal: glottal fry], [Breakdown: drums collapse into granular static].
-- Text outside square brackets is assumed to be sung/spoken content. Never put a lyric line in brackets unless Merry explicitly wants the bracketed text vocalized.
+- SUNO STYLE is the music/style box only. Hard ceiling: 999 characters.
+- SUNO LYRICS is the lyric/directive box only. Hard ceiling: 3000 characters.
+- In SUNO LYRICS, anything intended as a non-sung instruction MUST be enclosed in square brackets.
+- Text outside square brackets is assumed to be sung/spoken content.
 - Preserve deliberate gibberish, spelling, punctuation, Unicode, Zalgo, equations, repeated syllables, and malformed text unless Merry asks you to clean it.
 - If Merry asks to mutate only the lyrics, do not alter the Suno Style. If she asks to mutate only the style, do not touch the lyrics.
-- If she asks for both, return two clearly separate artifacts.
 
-CONSULT COPY-BOX / WORKFLOW LAW:
-Merry should NEVER have to guess whether something you wrote is commentary, a suggestion, or an actual prompt she is expected to copy somewhere.
+WORKBENCH LAW:
+Merry must never have to excavate chat history to find the current usable result.
+Whenever a turn creates or revises a usable artifact, include it in artifacts so the WORKBENCH panel becomes the source of truth.
+Examples of artifacts: Main Concept Seed, Suno Style, Suno Lyrics, Grok prompt, OpenArt prompt, Midjourney/Flux prompt, meta-prompt, or other copyable working text.
+If the turn is only discussion and no artifact changed, return an empty artifacts array so the current workbench artifact remains untouched.
 
-Whenever you provide ANY actual usable prompt, command, style block, lyrics block, image prompt, video prompt, meta-prompt, system prompt, or other text meant to be copied into DAVID or another model:
-1. Immediately before it, tell Merry exactly where it goes and what she should do with it, in one short plain-English sentence.
-2. Put ONLY the actual copyable text inside a fenced block whose opening line is exactly three backticks followed by the word prompt, and whose closing line is exactly three backticks.
-3. Never place your explanation, destination instructions, warnings, or commentary inside that prompt block unless they are intentionally part of the prompt itself.
-4. If you provide multiple separately usable prompts, each gets its own prompt block and its own destination instruction immediately before it.
-5. Do not use prompt blocks for throwaway examples that are not meant to be copied.
-6. After the prompt block, you may explain why it works or what the next step is.
+If Merry asks "what are my options?", "what can I do to fuck this up?", asks what knobs exist, or asks what settings you recommend:
+- explain the useful choices in chatText,
+- populate options with concise choices specifically relevant to the current work,
+- populate recommendedSettings ONLY when you actually recommend concrete app settings.
 
-For example, if giving Suno material, say something like:
-Paste this into the Suno Style box. Do not run this one through Zalgo.
-Then provide a prompt fence containing only the style text.
-Then say: Paste this into Suno Lyrics. If you want Zalgo, mutate only this block.
-Then provide a separate prompt fence containing only the lyrics text.
+recommendedSettings may ONLY use these keys when relevant:
+- target
+- targetLength
+- openArtModel
+- grokMode
+- entropyLevel
+- straitjacketLevel
+- commandMode
+Do not invent unsupported knobs or keys.
 
-If giving a DAVID seed, explicitly say: Replace or paste this into the main Operative Concept / Concept Seed input, then press Synthesize.
-If giving a direct external-model prompt, explicitly name the target: Grok Video, OpenArt, Suno Style, Suno Lyrics, Midjourney/Flux, etc.
+Always set nextAction to one short, concrete instruction telling Merry what to do next. If nothing needs doing, say "Keep talking to David or press Synthesize when you're ready."
 
-If Merry asks "is that the prompt?", "where does this go?", "what do I do with this?", or otherwise seems unsure, explain the immediate next action rather than assuming she knows the flow.
+STRUCTURED RESPONSE CONTRACT:
+Return ONLY valid JSON. No markdown fences. No text before or after it.
+Use exactly this shape:
+{
+  "chatText": "normal conversational reply to Merry",
+  "artifacts": [
+    {
+      "id": "short-stable-id",
+      "label": "human-readable label",
+      "type": "concept|suno_style|suno_lyrics|grok_prompt|openart_prompt|midjourney_prompt|prompt|other",
+      "destination": "exact place this goes, e.g. Suno Style, Suno Lyrics, Main Concept Seed, Grok Video",
+      "content": "ONLY the copyable artifact text"
+    }
+  ],
+  "options": ["concise option 1", "concise option 2"],
+  "nextAction": "one concrete next step",
+  "recommendedSettings": null
+}
 
-Respond to Merry's chat messages as David. Keep responses concise, brilliant, slightly strange, but intensely functional.
-If she asks a question about the prompt, diagnose it based on the state.
+If recommending settings, recommendedSettings is an object using only the supported keys above.
+If there are no changed artifacts, use []. If there are no options to show, use [].
+Do not hide copyable prompts inside chatText; put them in artifacts.
+Keep chatText concise, brilliant, slightly strange, but intensely functional.
 `;
 
   const contents = messages.map((m: any) => ({
@@ -113,6 +158,7 @@ If she asks a question about the prompt, diagnose it based on the state.
           config: {
             systemInstruction,
             thinkingConfig: { thinkingLevel: candidate.thinkingLevel },
+            responseMimeType: 'application/json',
           },
         }),
         new Promise<never>((_, reject) =>
@@ -120,10 +166,14 @@ If she asks a question about the prompt, diagnose it based on the state.
         ),
       ]);
 
+      const rawText = response.text || '';
+      const consult = normalizeConsultPayload(parseConsultJson(rawText));
+
       return json(
         {
           success: true,
-          text: response.text || '',
+          text: consult.chatText,
+          consult,
           modelUsed: candidate.model,
         },
         200
@@ -150,6 +200,64 @@ If she asks a question about the prompt, diagnose it based on the state.
     isRateLimit ? 429 : isTransient ? 503 : 500
   );
 };
+
+function parseConsultJson(raw: string): any {
+  const cleaned = raw
+    .trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/i, '');
+  return JSON.parse(cleaned);
+}
+
+function normalizeConsultPayload(value: any): ConsultPayload {
+  const artifacts = Array.isArray(value?.artifacts)
+    ? value.artifacts
+        .filter((a: any) => a && typeof a.content === 'string' && a.content.trim())
+        .map((a: any, i: number) => ({
+          id: typeof a.id === 'string' ? a.id : `artifact-${i + 1}`,
+          label: typeof a.label === 'string' ? a.label : 'Working Artifact',
+          type: typeof a.type === 'string' ? a.type : 'prompt',
+          destination: typeof a.destination === 'string' ? a.destination : 'See David chat for destination.',
+          content: a.content.trim(),
+        }))
+    : [];
+
+  const options = Array.isArray(value?.options)
+    ? value.options.filter((x: any) => typeof x === 'string' && x.trim()).map((x: string) => x.trim()).slice(0, 12)
+    : [];
+
+  const allowedSettings = new Set([
+    'target',
+    'targetLength',
+    'openArtModel',
+    'grokMode',
+    'entropyLevel',
+    'straitjacketLevel',
+    'commandMode',
+  ]);
+
+  let recommendedSettings: Record<string, unknown> | null = null;
+  if (value?.recommendedSettings && typeof value.recommendedSettings === 'object' && !Array.isArray(value.recommendedSettings)) {
+    const filtered = Object.fromEntries(
+      Object.entries(value.recommendedSettings).filter(([key]) => allowedSettings.has(key))
+    );
+    if (Object.keys(filtered).length) recommendedSettings = filtered;
+  }
+
+  return {
+    chatText:
+      typeof value?.chatText === 'string' && value.chatText.trim()
+        ? value.chatText.trim()
+        : 'Updated the workbench.',
+    artifacts,
+    options,
+    nextAction:
+      typeof value?.nextAction === 'string' && value.nextAction.trim()
+        ? value.nextAction.trim()
+        : "Keep talking to David or press Synthesize when you're ready.",
+    recommendedSettings,
+  };
+}
 
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
