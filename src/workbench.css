@@ -1,0 +1,295 @@
+.david-app-workbench {
+  position: fixed;
+  top: 58px;
+  right: 0;
+  bottom: 0;
+  z-index: 46;
+  width: min(390px, 34vw);
+  min-width: 330px;
+  display: flex;
+  flex-direction: column;
+  background: color-mix(in srgb, var(--panel-dark, #0c0d12) 96%, transparent);
+  color: var(--phosphor, #78ff77);
+  border-left: 1px solid color-mix(in srgb, var(--phosphor, #78ff77) 38%, transparent);
+  box-shadow: -18px 0 42px rgba(0, 0, 0, 0.42);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  backdrop-filter: blur(12px);
+}
+
+.david-app-workbench.is-collapsed {
+  width: 42px;
+  min-width: 42px;
+  bottom: auto;
+}
+
+.david-app-workbench__header {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--phosphor, #78ff77) 30%, transparent);
+  background: color-mix(in srgb, var(--phosphor, #78ff77) 5%, transparent);
+}
+
+.david-app-workbench.is-collapsed .david-app-workbench__header {
+  justify-content: center;
+  padding: 8px 4px;
+}
+
+.david-app-workbench.is-collapsed .david-app-workbench__header > div:first-child {
+  display: none;
+}
+
+.david-app-workbench__icon,
+.david-app-workbench__button,
+.david-app-workbench__chip,
+.david-app-workbench__send,
+.david-app-workbench__lock-toggle,
+.david-app-workbench__option {
+  color: inherit;
+}
+
+.david-app-workbench__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid color-mix(in srgb, var(--phosphor, #78ff77) 28%, transparent);
+  background: transparent;
+}
+
+.david-app-workbench__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.david-app-workbench__section {
+  border: 1px solid color-mix(in srgb, var(--phosphor, #78ff77) 24%, transparent);
+  background: color-mix(in srgb, var(--phosphor, #78ff77) 2.5%, transparent);
+  padding: 9px;
+}
+
+.david-app-workbench__section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  color: var(--phosphor, #78ff77);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.david-app-workbench__prompt,
+.david-app-workbench__chat-input,
+.david-app-workbench__notepad,
+.david-app-workbench__lock-row input {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--phosphor, #78ff77) 23%, transparent);
+  background: rgba(0, 0, 0, 0.34);
+  color: var(--phosphor, #78ff77);
+  outline: none;
+  font: inherit;
+}
+
+.david-app-workbench__prompt {
+  resize: vertical;
+  min-height: 128px;
+  padding: 9px;
+  margin-bottom: 7px;
+  font-size: 10px;
+  line-height: 1.5;
+  cursor: default;
+}
+
+.david-app-workbench__prompt:focus,
+.david-app-workbench__chat-input:focus,
+.david-app-workbench__notepad:focus,
+.david-app-workbench__lock-row input:focus {
+  border-color: color-mix(in srgb, var(--phosphor, #78ff77) 72%, transparent);
+}
+
+.david-app-workbench__button,
+.david-app-workbench__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid color-mix(in srgb, var(--phosphor, #78ff77) 28%, transparent);
+  background: transparent;
+  padding: 5px 7px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.david-app-workbench__button:hover:not(:disabled),
+.david-app-workbench__chip:hover:not(:disabled),
+.david-app-workbench__icon:hover,
+.david-app-workbench__lock-toggle:hover,
+.david-app-workbench__option:hover {
+  background: color-mix(in srgb, var(--phosphor, #78ff77) 10%, transparent);
+}
+
+.david-app-workbench__button.is-primary {
+  background: var(--phosphor, #78ff77);
+  color: var(--theme-bg, #050608);
+  border-color: var(--phosphor, #78ff77);
+}
+
+.david-app-workbench__button:disabled,
+.david-app-workbench__chip:disabled,
+.david-app-workbench__send:disabled {
+  opacity: 0.34;
+  cursor: not-allowed;
+}
+
+.david-app-workbench__lock-row {
+  display: grid;
+  grid-template-columns: 26px 62px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+}
+
+.david-app-workbench__lock-toggle {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid color-mix(in srgb, var(--phosphor, #78ff77) 24%, transparent);
+  background: transparent;
+}
+
+.david-app-workbench__lock-toggle.is-active {
+  background: color-mix(in srgb, var(--phosphor, #78ff77) 18%, transparent);
+  border-color: color-mix(in srgb, var(--phosphor, #78ff77) 70%, transparent);
+}
+
+.david-app-workbench__lock-label {
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.58;
+}
+
+.david-app-workbench__lock-row input {
+  padding: 5px 6px;
+  min-width: 0;
+  font-size: 9px;
+}
+
+.david-app-workbench__option {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 5px;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px dashed color-mix(in srgb, var(--phosphor, #78ff77) 16%, transparent);
+  background: transparent;
+  padding: 4px 2px;
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.david-app-workbench__messages {
+  max-height: 190px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+
+.david-app-workbench__message {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 5px;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.david-app-workbench__message > span {
+  opacity: 0.45;
+  font-weight: 800;
+}
+
+.david-app-workbench__message p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.david-app-workbench__message.is-user p {
+  opacity: 0.78;
+}
+
+.david-app-workbench__chip {
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.75;
+}
+
+.david-app-workbench__chat-input,
+.david-app-workbench__notepad {
+  resize: vertical;
+  padding: 7px;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.david-app-workbench__send {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--phosphor, #78ff77);
+  background: var(--phosphor, #78ff77);
+  color: var(--theme-bg, #050608);
+}
+
+/* Make the shell respect the always-visible desktop workbench instead of
+   letting it sit on top of the controls. Modern Safari/Chrome support :has. */
+@media (min-width: 1180px) {
+  body:has(.david-app-workbench:not(.is-collapsed)) .david-shell-app > div > main {
+    padding-right: 404px;
+    max-width: none;
+  }
+}
+
+@media (max-width: 1179px) {
+  .david-app-workbench {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    min-width: 0;
+    max-height: min(68vh, 620px);
+    border-left: 0;
+    border-top: 1px solid color-mix(in srgb, var(--phosphor, #78ff77) 40%, transparent);
+    box-shadow: 0 -18px 42px rgba(0, 0, 0, 0.5);
+  }
+
+  .david-app-workbench.is-collapsed {
+    left: auto;
+    width: 44px;
+    min-width: 44px;
+    bottom: 12px;
+    right: 10px;
+    border: 1px solid color-mix(in srgb, var(--phosphor, #78ff77) 40%, transparent);
+  }
+
+  .david-app-workbench__body {
+    overscroll-behavior: contain;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+}
