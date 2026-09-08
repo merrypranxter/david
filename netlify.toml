@@ -8,7 +8,7 @@
 #   GEMINI_API_KEY
 
 [build]
-  command = "vite build"
+  command = "node patch-suno-dual-buffers.cjs && vite build"
   publish = "dist"
   functions = "netlify/functions"
 
