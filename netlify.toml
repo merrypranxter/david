@@ -17,6 +17,12 @@
 
 # Map the app's /api/* calls onto the serverless functions.
 [[redirects]]
+  from = "/api/consult"
+  to = "/.netlify/functions/consult"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/synthesize"
   to = "/.netlify/functions/synthesize"
   status = 200
