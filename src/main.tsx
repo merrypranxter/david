@@ -5,6 +5,7 @@ import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import { InterfaceShell } from './components/InterfaceShell.tsx';
 import './index.css';
 import './shell.css';
+import './workbench.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
