@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, X, Loader2, Bot, User, Maximize2, Minimize2 } from 'lucide-react';
+import { Send, X, Loader2, Bot, User, Maximize2, Minimize2, Copy, Check } from 'lucide-react';
 
 interface Message {
   role: 'user' | 'david';
@@ -20,6 +20,7 @@ export function ConsultChat({ isOpen, onClose, currentState, highThinking }: Con
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [compact, setCompact] = useState(false);
+  const [copiedPromptKey, setCopiedPromptKey] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -36,6 +37,71 @@ export function ConsultChat({ isOpen, onClose, currentState, highThinking }: Con
   }, [isOpen, compact]);
 
   if (!isOpen) return null;
+
+  const copyPrompt = async (text: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedPromptKey(key);
+      window.setTimeout(() => setCopiedPromptKey(current => current === key ? null : current), 1800);
+    } catch (err) {
+      console.error('Failed to copy prompt', err);
+    }
+  };
+
+  const renderDavidContent = (content: string, messageIndex: number) => {
+    const segments: React.ReactNode[] = [];
+    const regex = /```prompt\s*\n([\s\S]*?)```/gi;
+    let cursor = 0;
+    let match: RegExpExecArray | null;
+    let promptIndex = 0;
+
+    while ((match = regex.exec(content)) !== null) {
+      const before = content.slice(cursor, match.index);
+      if (before) {
+        segments.push(
+          <div key={`text-${messageIndex}-${promptIndex}`} className="whitespace-pre-wrap">
+            {before.trimEnd()}
+          </div>
+        );
+      }
+
+      const promptText = match[1].trim();
+      const key = `${messageIndex}-${promptIndex}`;
+      segments.push(
+        <div key={`prompt-${key}`} className="my-3 border border-phosphor/40 bg-phosphor/[0.04]">
+          <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 border-b border-phosphor/25 bg-phosphor/[0.05]">
+            <span className="text-[9px] uppercase tracking-[0.15em] text-phosphor/60 font-bold">COPY PROMPT</span>
+            <button
+              type="button"
+              onClick={() => copyPrompt(promptText, key)}
+              className="inline-flex items-center gap-1.5 px-2 py-1 border border-phosphor/30 text-[9px] uppercase tracking-wider text-phosphor/70 hover:text-phosphor hover:bg-phosphor/10 transition-colors"
+              title="Copy only the usable prompt"
+            >
+              {copiedPromptKey === key ? <Check size={12} /> : <Copy size={12} />}
+              <span>{copiedPromptKey === key ? 'Copied' : 'Copy'}</span>
+            </button>
+          </div>
+          <div className="p-3 whitespace-pre-wrap text-phosphor leading-relaxed select-text">
+            {promptText}
+          </div>
+        </div>
+      );
+
+      cursor = regex.lastIndex;
+      promptIndex += 1;
+    }
+
+    const after = content.slice(cursor);
+    if (after) {
+      segments.push(
+        <div key={`text-${messageIndex}-tail`} className="whitespace-pre-wrap">
+          {after.trimStart()}
+        </div>
+      );
+    }
+
+    return segments.length > 0 ? <div className="space-y-1">{segments}</div> : content;
+  };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -118,8 +184,8 @@ export function ConsultChat({ isOpen, onClose, currentState, highThinking }: Con
               {m.role === 'user' ? <User size={12} className="text-phosphor/50"/> : <Bot size={12} className="text-phosphor/50"/>}
               <span className="text-[9px] text-phosphor/45 uppercase tracking-[0.14em]">{m.role === 'user' ? 'MERRY' : 'DAVID 8'}</span>
             </div>
-            <div className={`text-[13px] sm:text-sm whitespace-pre-wrap leading-relaxed max-w-[92%] sm:max-w-[86%] p-3.5 border ${m.role === 'user' ? 'bg-phosphor/10 border-phosphor/20 text-phosphor' : 'bg-theme-bg border-dashed border-phosphor/30 text-phosphor/90'}`}>
-              {m.content}
+            <div className={`text-[13px] sm:text-sm leading-relaxed max-w-[92%] sm:max-w-[86%] p-3.5 border ${m.role === 'user' ? 'bg-phosphor/10 border-phosphor/20 text-phosphor whitespace-pre-wrap' : 'bg-theme-bg border-dashed border-phosphor/30 text-phosphor/90'}`}>
+              {m.role === 'david' ? renderDavidContent(m.content, i) : m.content}
             </div>
           </div>
         ))}
