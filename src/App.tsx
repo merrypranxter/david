@@ -24,6 +24,7 @@ import { ZalgoToolbox } from './components/ZalgoToolbox';
 import { SimulatorModal } from './components/SimulatorModal';
 import { SlopVaultModal } from './components/SlopVaultModal';
 import { SlopRecipeModal } from './components/SlopRecipeModal';
+import { ConsultChat } from './components/ConsultChat';
 import { SerializationDiagnosticsPanel } from './components/SerializationDiagnosticsPanel';
 import { ContextDiagnosticsPanel } from './components/ContextDiagnosticsPanel';
 import { StructuralRelationalPanel } from './components/StructuralRelationalPanel';
@@ -36,7 +37,7 @@ import { normalizeSlopConfig } from './utils/slopConfigNormalizer';
 import { SlopRecipe } from './types';
 import { generateDavidProtocolDocument, downloadMarkdownFile } from './utils/exporter';
 import { apiFetch } from './cloudRunFetchGuard';
-import { AlertCircle, RotateCcw, Clock, Sparkles, CheckCircle2 } from 'lucide-react';
+import {  AlertCircle, RotateCcw, Clock, Sparkles, CheckCircle2 , MessageSquare } from 'lucide-react';
 
 /**
  * Resilient API post helper that:
@@ -175,6 +176,7 @@ export default function App() {
  const [zalgoOpen, setZalgoOpen] = useState<boolean>(false);
  const [slopVaultOpen, setSlopVaultOpen] = useState<boolean>(false);
  const [recipeModalOpen, setRecipeModalOpen] = useState<boolean>(false);
+  const [consultChatOpen, setConsultChatOpen] = useState<boolean>(false);
  const [recipeModalMode, setRecipeModalMode] = useState<'list' | 'save'>('list');
  const [recipeToast, setRecipeToast] = useState<string | null>(null);
 
@@ -717,7 +719,7 @@ return (
  useSearch={useSearch}
  setUseSearch={setUseSearch}
  highThinking={highThinking}
- onSynthesize={() => handleSynthesize()}
+ onSynthesize={() => handleSynthesize()} 
  isSynthesizing={isSynthesizing}
  onSelectPreset={handleSelectPreset}
  slopConfig={slopConfig}
@@ -989,6 +991,26 @@ return (
  if (run.targetEngine) setTarget(run.targetEngine as any);
  }}
  />
- </div>
- );
+ 
+      {/* MASSIVE GLOWING CONSULT BUTTON */}
+      {!consultChatOpen && (
+        <button
+          onClick={() => setConsultChatOpen(true)}
+          className="fixed bottom-6 right-6 z-[60] bg-phosphor text-theme-bg px-6 py-4 rounded-full shadow-[0_0_30px_var(--color-phosphor)] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all border-2 border-theme-bg"
+          title="Open David's Workbench"
+        >
+          <MessageSquare size={24} className="fill-theme-bg" />
+          <span className="font-display font-bold uppercase tracking-[0.2em] text-lg mt-1">CONSULT DAVID</span>
+        </button>
+      )}
+
+      <ConsultChat 
+        isOpen={consultChatOpen} 
+        onClose={() => setConsultChatOpen(false)} 
+        currentState={{ concept, target, targetLength, openArtModel, grokMode, slopConfig, entropyLevel, straitjacketLevel }}
+        highThinking={highThinking}
+      />
+    </div>
+  );
 }
+

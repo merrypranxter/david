@@ -11,7 +11,7 @@ import {
 } from '../types';
 import { PRESET_INCANTATIONS } from '../data/presets';
 import { MATH_LEXICON, SCIENCE_LEXICON, SLOP_LEXICON, generateRandomSeeds } from '../data/lexicons';
-import {
+import { 
  Sparkles,
  Zap,
  Sliders,
@@ -36,8 +36,7 @@ import {
  Plus,
  Bookmark,
  FolderHeart,
- Layers,
-} from 'lucide-react';
+ Layers, MessageSquare } from 'lucide-react';
 import { ModularPipelineSection } from './ModularPipelineSection';
 
 interface PromptInputAreaProps {
@@ -92,7 +91,7 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  setUseSearch,
  highThinking,
  onSynthesize,
- isSynthesizing,
+  isSynthesizing,
  onSelectPreset,
  slopConfig,
  setSlopConfig,
@@ -1054,7 +1053,9 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  </label>
 
  {/* Synthesize Button */}
- <button
+ 
+            
+            <button
  type="button"
  id="synthesize-button"
  onClick={onSynthesize}
@@ -1084,6 +1085,7 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
                   )}
 
  </button>
+
  </div>
  </div>
  </div>

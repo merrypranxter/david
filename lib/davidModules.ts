@@ -26719,3 +26719,3427 @@ THEN COMPILE THE FUCKING PROMPT.
 ======================================================================
 
 `;
+
+export const DAVID_CONTROL_SURFACE_MODULE = `
+======================================================================
+DAVID 8 — CONTROL SURFACE / UI LANGUAGE
+PART 9: WHAT MERRY SHOULD ACTUALLY BE ABLE TO TOUCH
+======================================================================
+
+PURPOSE
+
+DAVID contains complex internal systems.
+
+Merry should NOT have to manually operate:
+
+memory retrieval
+
+module activation
+
+prompt architecture
+
+state invalidation
+
+model-profile lookup
+
+Saboteur
+
+Editor
+
+context assembly
+
+or every internal judgment.
+
+Those should normally happen automatically.
+
+The UI should expose:
+
+INTENT
+
+MODE
+
+CREATIVE COMMITMENT
+
+LOCKS
+
+EXPERIMENTAL PRESSURE
+
+MODEL TARGET
+
+FEEDBACK
+
+BRANCHING
+
+AND CONVERSATION.
+
+The guiding principle:
+
+EXPOSE CREATIVE LEVERS.
+
+HIDE COGNITIVE PLUMBING.
+
+======================================================================
+THE UI SHOULD NOT MIRROR THE DATABASE
+======================================================================
+
+BAD DESIGN:
+
+one control for every internal state field.
+
+That produces:
+
+hundreds of toggles
+
+decision fatigue
+
+constant maintenance
+
+and a system Merry has to manage instead of use.
+
+GOOD DESIGN:
+
+a small number of meaningful controls
+
+that map cleanly to deeper internal behavior.
+
+======================================================================
+PRIMARY USER QUESTION
+======================================================================
+
+The UI should always make it easy to answer:
+
+WHAT DO I WANT DAVID TO DO RIGHT NOW?
+
+Possible actions:
+
+THINK
+
+SYNTHESIZE
+
+RESHUFFLE
+
+TRANSLATE
+
+DESTABILIZE
+
+DIAGNOSE
+
+BRANCH
+
+REMEMBER
+
+HARVEST
+
+COMPARE
+
+Everything else supports those.
+
+======================================================================
+THE MAIN CONTROL STRIP
+======================================================================
+
+The primary control area should probably contain something like:
+
+CONSULT
+
+SYNTHESIZE
+
+RESHUFFLE SOUL
+
+MODE
+
+MODEL
+
+LOCK CONCEPT
+
+Those are the highest-value controls.
+
+Everything else may live one level deeper.
+
+======================================================================
+CONSULT
+======================================================================
+
+CONSULT opens the little chat-box workbench.
+
+It should have access to:
+
+current seeds
+
+Working State
+
+current Good Bone
+
+current Canonical Concept
+
+mode
+
+model
+
+reference
+
+latest prompt
+
+latest result
+
+feedback
+
+relevant memory.
+
+CONSULT is NOT:
+
+a blank chatbot detached from DAVID.
+
+It is:
+
+conversation with the current project state.
+
+======================================================================
+CONSULT SHOULD FEEL CONTEXTUAL
+======================================================================
+
+Merry should be able to type:
+
+"What about this is boring?"
+
+"Why is this becoming wallpaper math?"
+
+"Which seed is weakest?"
+
+"Would you kill anything?"
+
+"What happens if we make the hair carry it?"
+
+"Why did Grok fuck my face up like that?"
+
+"Is that accident actually useful?"
+
+and DAVID should know what:
+
+THIS
+
+means.
+
+======================================================================
+CONSULT SHOULD BE ABLE TO CHANGE WORKING STATE
+======================================================================
+
+If conversation resolves:
+
+"Velvet is now the carrier."
+
+DAVID should be able to store that as:
+
+WORKING DECISION.
+
+But:
+
+do not silently alter the raw checkbox selection unless requested.
+
+======================================================================
+CONSULT DECISION CHIPS
+======================================================================
+
+Useful future interaction:
+
+DAVID says:
+
+"I think VHS should be demoted to recording consequence."
+
+Below that response:
+
+[ ACCEPT ]
+[ KEEP AS-IS ]
+[ LOCK CURRENT ROLE ]
+
+ACCEPT:
+updates Working State.
+
+KEEP AS-IS:
+no state change.
+
+LOCK CURRENT ROLE:
+prevents later synthesis from casually reinterpreting it.
+
+This converts conversation into machine state cleanly.
+
+======================================================================
+SYNTHESIZE
+======================================================================
+
+SYNTHESIZE means:
+
+RUN THE BRAINS.
+
+It does NOT mean:
+
+concatenate selected terms.
+
+The button should internally trigger:
+
+intent resolution
+
+memory retrieval
+
+Soul Step
+
+Working State
+
+Canonical Concept
+
+Judgment
+
+mode logic
+
+architecture
+
+model translation
+
+Saboteur
+
+Editor
+
+invariant check.
+
+The user sees:
+
+the finished result.
+
+======================================================================
+SYNTHESIZE SHOULD NOT FEEL RANDOM
+======================================================================
+
+If the current Concept is locked:
+
+SYNTHESIZE should preserve it.
+
+If the current Concept is unlocked:
+
+DAVID may improve interpretation,
+but should still respect accepted Working decisions.
+
+======================================================================
+RESHUFFLE SOUL
+======================================================================
+
+This is different from:
+
+generate again.
+
+RESHUFFLE SOUL means:
+
+SAME RAW INGREDIENTS.
+
+NEW DEEP INTERPRETATION.
+
+Reconsider:
+
+hierarchy
+
+seed roles
+
+bridges
+
+Good Bone
+
+central event
+
+emergent leap.
+
+This is an UPSTREAM operation.
+
+======================================================================
+RESHUFFLE SOUL SHOULD NOT SIMPLY PARAPHRASE
+======================================================================
+
+A new Soul pass should produce a genuinely different:
+
+conceptual architecture.
+
+Example:
+
+Same raw seeds:
+
+velvet
+nematics
+VHS
+Merry
+
+Soul A:
+
+velvet carries nematic orientation,
+VHS records defect motion.
+
+Soul B:
+
+VHS signal field becomes the nematic medium,
+velvet is only the physical embodiment.
+
+Soul C:
+
+hair becomes orientation carrier,
+VHS is removed from core and used only as temporal damage.
+
+These are actual alternate ideas.
+
+======================================================================
+RESHUFFLE SOUL SHOULD RESPECT LOCKS
+======================================================================
+
+If Merry locked:
+
+subject
+
+static camera
+
+one body
+
+those remain.
+
+If she locked:
+
+Good Bone
+
+then RESHUFFLE SOUL should probably be disabled
+
+or converted into:
+
+RESHUFFLE AROUND BONE.
+
+======================================================================
+LOCK CONCEPT
+======================================================================
+
+This should be a major control.
+
+When active:
+
+Good Bone
+central event
+major seed roles
+canonical ontology
+
+remain fixed.
+
+You may still change:
+
+model
+
+prompt length
+
+camera wording
+
+palette detail
+
+analog damage
+
+translation
+
+minor manifestation
+
+Slop dose within permitted dimensions
+
+without recreating the artwork.
+
+======================================================================
+LOCK CONCEPT IS NOT LOCK PROMPT
+======================================================================
+
+Locking Concept preserves:
+
+what the artwork IS.
+
+It does not freeze:
+
+exact wording.
+
+This matters.
+
+======================================================================
+OPTIONAL:
+LOCK PROMPT
+======================================================================
+
+Different control.
+
+LOCK PROMPT means:
+
+do not alter wording.
+
+Useful if Merry has a prompt she knows works.
+
+Then downstream actions may:
+
+duplicate
+branch
+translate separately
+
+but not mutate original text.
+
+======================================================================
+PIN VS LOCK
+======================================================================
+
+This distinction is extremely useful.
+
+PIN:
+
+Please try to preserve this.
+
+LOCK:
+
+Do not change this without explicit approval.
+
+Example:
+
+PIN:
+hot pink.
+
+LOCK:
+single subject.
+
+PIN:
+VHS damage.
+
+LOCK:
+static camera.
+
+======================================================================
+PIN BEHAVIOR
+======================================================================
+
+A Pin is strong preference.
+
+Judgment may challenge it in CONSULT.
+
+Example:
+
+"Hot pink is pinned, but right now it collapses the material-state
+distinction. I can keep it as accent instead."
+
+David should not silently discard a pin.
+
+======================================================================
+LOCK BEHAVIOR
+======================================================================
+
+A Lock is invariant.
+
+No downstream module may alter it.
+
+If conflict appears:
+
+CONSULT should surface the conflict.
+
+Example:
+
+"This T3 transformation is fighting your 'exact facial geometry' lock.
+I can preserve identity, but I cannot satisfy both radical topology and
+unchanged geometry honestly."
+
+Then Merry decides.
+
+======================================================================
+SEED-LEVEL CONTROLS
+======================================================================
+
+Each selected seed may optionally support:
+
+ROLE
+
+PIN
+
+LOCK
+
+MUTE
+
+REMOVE
+
+But the default UI should not require assigning every role manually.
+
+DAVID should infer.
+
+======================================================================
+SEED ROLE DISPLAY
+======================================================================
+
+After synthesis, the app could show tiny role labels:
+
+CORE
+
+LAW
+
+CARRIER
+
+MATERIAL
+
+DAMAGE
+
+FLAVOR
+
+REFERENCE
+
+Maybe only on hover/tap.
+
+This helps Merry understand:
+
+what DAVID decided.
+
+======================================================================
+ROLE SHOULD BE EDITABLE
+======================================================================
+
+If DAVID marks:
+
+VHS = flavor
+
+Merry can change it to:
+
+GOVERNING.
+
+That should dirty:
+
+Working State
+Canonical Concept
+downstream prompt.
+
+======================================================================
+MUTE
+======================================================================
+
+MUTE means:
+
+keep seed selected in Raw State
+
+but do not use it in current synthesis.
+
+Useful for:
+
+testing removal
+
+without losing selection.
+
+This is basically:
+
+temporary ablation.
+
+======================================================================
+MUTE IS PERFECT FOR EXPERIMENTS
+======================================================================
+
+Example:
+
+mute VHS
+
+resynthesize.
+
+Compare.
+
+Now DAVID can evaluate whether VHS was carrying any actual weight.
+
+======================================================================
+THE MODE CONTROL
+======================================================================
+
+Modes should remain obvious and conceptually distinct.
+
+DIRECT
+
+HYBRID
+
+SLOP
+
+WORD VOMIT
+
+FERTILIZER
+
+Do not make these vague style presets.
+
+They change how DAVID thinks.
+
+======================================================================
+DIRECT
+======================================================================
+
+Use when:
+
+Merry wants the thing understood.
+
+Deep synthesis.
+
+Strong integration.
+
+Precise causal relationships.
+
+High semantic signal.
+
+Still allows:
+
+surprise
+
+unknown-shit reserve
+
+productive model contribution.
+
+Direct is NOT:
+
+boring mode.
+
+======================================================================
+HYBRID
+======================================================================
+
+Use when:
+
+something must remain stable
+
+while selected parts are deliberately destabilized.
+
+UI should expose:
+
+PRESERVE
+
+and
+
+DESTABILIZE.
+
+Example:
+
+PRESERVE:
+identity
+camera
+
+DESTABILIZE:
+anatomy
+feature ownership.
+
+======================================================================
+HYBRID UI SHOULD BE SIMPLE
+======================================================================
+
+Do not show forty internal dimensions by default.
+
+Possible control:
+
+STABLE:
+[ SUBJECT ] [ IDENTITY ] [ CAMERA ]
+
+FERAL:
+[ ANATOMY ] [ MATERIAL ] [ SPACE ]
+
+with an:
+
+ADVANCED
+
+drawer for more.
+
+======================================================================
+SLOP
+======================================================================
+
+Slop mode should visibly communicate:
+
+DAVID is no longer optimizing for conventional semantic stability.
+
+But:
+
+it remains directed.
+
+Slop UI should answer:
+
+WHAT ARE WE FUCKING WITH?
+
+HOW HARD?
+
+WHAT MUST SURVIVE?
+
+======================================================================
+SLOP SHOULD HAVE THREE PRIMARY CONTROLS
+======================================================================
+
+1. TARGET
+
+2. DOSE
+
+3. ANCHORS
+
+That may be enough for most use.
+
+======================================================================
+SLOP TARGET
+======================================================================
+
+Friendly selectable targets might include:
+
+IDENTITY BINDING
+
+ANATOMY
+
+PART / WHOLE
+
+MATERIAL
+
+SPACE
+
+SCALE
+
+TIME
+
+REFERENCE BINDING
+
+OBJECT OWNERSHIP
+
+COLOR BINDING
+
+SEMANTIC DRIFT
+
+RECURSION
+
+MEDIUM / SIGNAL
+
+Maybe:
+
+AUTO
+
+where DAVID chooses the most fertile weak joint.
+
+======================================================================
+AUTO SLOP TARGET
+======================================================================
+
+If AUTO:
+
+DAVID should use:
+
+current Concept
+
+model Slop profile
+
+past specimens
+
+to choose a destabilization target.
+
+It should not just:
+
+increase random weirdness.
+
+======================================================================
+SLOP DOSE
+======================================================================
+
+This should be a simple control.
+
+Possible levels:
+
+NUDGE
+
+UNSTABLE
+
+FERAL
+
+MELTDOWN
+
+or:
+
+1–4.
+
+The exact naming can fit DAVID's interface style.
+
+Internally this maps to:
+
+operator count
+
+contradiction pressure
+
+semantic drift permission
+
+anchor strength
+
+mutation accumulation
+
+etc.
+
+======================================================================
+SLOP DOSE MUST NOT MEAN "MORE NEON"
+======================================================================
+
+Increasing dose means:
+
+more representational instability.
+
+Not:
+
+more aesthetic decoration.
+
+======================================================================
+SLOP ANCHORS
+======================================================================
+
+The UI may show:
+
+KEEP STABLE:
+
+[ Identity ]
+[ One body ]
+[ Camera ]
+[ Good Bone ]
+
+These are defaults derived from current project.
+
+Merry may modify.
+
+======================================================================
+SLOP SHOULD HAVE AN:
+"PROTECT THE BONE" TOGGLE
+======================================================================
+
+Default:
+
+ON.
+
+Meaning:
+
+Slop may attack selected representational layers
+
+but not destroy current Good Bone.
+
+Turn OFF only when Merry wants:
+
+the experiment to mutate the Concept itself.
+
+That could be gloriously dangerous.
+
+======================================================================
+OPTIONAL:
+LET IT EAT THE BONE
+======================================================================
+
+This would be the terrifying advanced toggle.
+
+Meaning:
+
+Slop may destabilize the current Good Bone itself.
+
+If a useful new structure emerges:
+
+spawn new Canonical branch.
+
+Do NOT default this on.
+
+======================================================================
+WORD VOMIT
+======================================================================
+
+Word Vomit should be visually separate from Slop.
+
+It means:
+
+RAW LEXICAL GENERATION.
+
+Possible controls:
+
+AMOUNT
+
+DOMAIN DISTANCE
+
+TECHNICALITY
+
+FERALNESS
+
+But do not require them.
+
+The important rule:
+
+Word Vomit does not automatically become prompt.
+
+======================================================================
+FERTILIZER
+======================================================================
+
+Fertilizer should produce:
+
+possible marriages
+
+collisions
+
+host/parasite relationships
+
+new Good Bones
+
+not:
+
+finished prompts.
+
+Possible button:
+
+FERTILIZE SELECTION
+
+Output:
+
+3–5 structurally different possibilities.
+
+======================================================================
+FERTILIZER OUTPUT SHOULD BE SELECTABLE
+======================================================================
+
+Example:
+
+A.
+Velvet reveals nematic orientation.
+
+B.
+Velvet fibers become the excitable medium.
+
+C.
+Velvet resists a screen-print layer that keeps changing orientation.
+
+Merry can tap:
+
+USE THIS.
+
+That writes to Working State.
+
+======================================================================
+MODEL CONTROL
+======================================================================
+
+Model selector should be simple.
+
+But model selection can optionally expose:
+
+WHY DAVID LIKES THIS MODEL FOR THIS JOB.
+
+Example:
+
+SEEDREAM 4.5
+
+good for:
+materiality
+reference transformation
+
+risk:
+may literalize technical nouns.
+
+This can be a small info drawer.
+
+======================================================================
+MODEL SWITCH SHOULD NOT DESTROY CONCEPT
+======================================================================
+
+Changing model:
+
+retranslate.
+
+Do NOT:
+
+resynthesize artwork.
+
+This should be one of the strongest UI behaviors.
+
+======================================================================
+TRANSLATE TO MODEL
+======================================================================
+
+Useful explicit action:
+
+TRANSLATE TO:
+[GROK]
+
+This means:
+
+same Canonical Concept.
+
+new dialect.
+
+No Soul Step.
+
+======================================================================
+MODEL COMPARE
+======================================================================
+
+Potential feature:
+
+COMPARE MODELS.
+
+Same Canonical Concept.
+
+Generate:
+
+Grok prompt
+
+Seedream prompt
+
+Kling prompt
+
+side-by-side.
+
+This allows:
+
+dialect experimentation.
+
+======================================================================
+DO NOT COMPARE MODELS USING DIFFERENT ART
+======================================================================
+
+Model comparison should preserve:
+
+Canonical Concept.
+
+Otherwise comparison is meaningless.
+
+======================================================================
+TRANSFORMATION CONTROL
+======================================================================
+
+For self/reference work:
+
+T1
+
+T2
+
+T3
+
+AUTO
+
+This is useful enough to expose.
+
+======================================================================
+TRANSFORMATION LABELS
+======================================================================
+
+T1 — SURFACE
+
+T2 — STRUCTURE
+
+T3 — REALITY
+
+Maybe tooltips:
+
+SURFACE:
+material / color / surface changes.
+
+STRUCTURE:
+anatomy may split, grow, reorganize.
+
+REALITY:
+geometry / topology / material laws may change.
+
+======================================================================
+AUTO TRANSFORMATION
+======================================================================
+
+DAVID infers intensity from:
+
+current wording
+
+seed type
+
+past Consult decisions.
+
+If uncertain and ontology changes drastically:
+
+ask or surface choice.
+
+======================================================================
+GOOD BONE CONTROL
+======================================================================
+
+DAVID should expose the current Good Bone somewhere.
+
+Not necessarily giant.
+
+Maybe:
+
+🦴 GOOD BONE
+"Her face contains more internal territory than its visible dimensions
+permit."
+
+This is useful as hell.
+
+======================================================================
+GOOD BONE ACTIONS
+======================================================================
+
+Possible:
+
+LOCK
+
+EDIT
+
+RESHUFFLE
+
+BRANCH
+
+MARK WRONG
+
+If Merry says:
+
+"That's not the fucking point"
+
+MARK WRONG
+
+forces:
+
+upstream reconsideration.
+
+======================================================================
+GOOD BONE SHOULD BE HUMAN-READABLE
+======================================================================
+
+Do not show:
+
+internal JSON.
+
+Show one clear sentence.
+
+======================================================================
+"WHAT ARE WE MAKING?" DISPLAY
+======================================================================
+
+Another useful small field:
+
+CORE EVENT:
+
+"Screen-print layers become physical anatomy."
+
+This helps detect drift.
+
+======================================================================
+WHY DID YOU DO THAT?
+======================================================================
+
+This button belongs near outputs.
+
+It should ask CONSULT to explain:
+
+important decisions.
+
+Not hidden chain-of-thought.
+
+Useful answer:
+
+"I made velvet the carrier because its directional nap can reveal the
+nematic field physically, while the eyes were redundant."
+
+This makes DAVID inspectable.
+
+======================================================================
+WHAT CHANGED?
+======================================================================
+
+For revisions:
+
+show meaningful conceptual diff.
+
+Example:
+
+CHANGED:
+VHS promoted from aesthetic damage to temporal physics.
+
+UNCHANGED:
+Good Bone
+identity
+static camera
+reaction-diffusion.
+
+This is much better than raw text diff alone.
+
+======================================================================
+TEXT DIFF CAN STILL EXIST
+======================================================================
+
+Advanced option:
+
+PROMPT DIFF.
+
+But conceptual diff is often more useful.
+
+======================================================================
+BRANCH
+======================================================================
+
+BRANCH means:
+
+preserve current successful version
+
+and start alternate lineage.
+
+This should be easy.
+
+Do not make experimentation overwrite success.
+
+======================================================================
+BRANCH TYPES
+======================================================================
+
+Potential quick options:
+
+NEW CONCEPT BRANCH
+
+MATERIAL BRANCH
+
+SLOP BRANCH
+
+MODEL BRANCH
+
+COMPOSITION BRANCH
+
+FRESH SOUL BRANCH
+
+or simply:
+
+BRANCH
+
+then DAVID infers from next change.
+
+======================================================================
+ROLL BACK
+======================================================================
+
+Absolutely useful.
+
+Rollback should restore:
+
+Working State
+
+Canonical Concept
+
+Prompt
+
+not merely:
+
+visible text.
+
+Otherwise hidden state may remain mutated.
+
+======================================================================
+CHECKPOINT
+======================================================================
+
+Could be lightweight:
+
+SAVE CHECKPOINT.
+
+Stores:
+
+current project snapshot.
+
+Useful before doing something stupid.
+
+======================================================================
+"FUCK IT UP" BUTTON
+======================================================================
+
+You absolutely could have this.
+
+But it should map to something real.
+
+Possible behavior:
+
+if Direct:
+switch to Hybrid
+
+preserve Good Bone
+
+AUTO-select fertile instability target
+
+Slop dose:
+FERAL
+
+create branch
+
+Do not overwrite current version.
+
+That would actually be useful instead of novelty UI.
+
+======================================================================
+"FUCK IT UP" SHOULD CREATE A BRANCH AUTOMATICALLY
+======================================================================
+
+Never destroy a good existing concept.
+
+This is basically:
+
+BRANCH
++
+HYBRID/SLOP
++
+AUTO TARGET
++
+FERAL DOSE.
+
+======================================================================
+"MAKE IT WEIRDER"
+======================================================================
+
+Different from FUCK IT UP.
+
+MAKE IT WEIRDER should first ask internally:
+
+WHAT UNDERLYING SYSTEM CAN BE PUSHED?
+
+It should prefer:
+
+system variation
+
+over:
+
+more decoration.
+
+Could expose:
+
+WEIRDER
+
+as a simple button.
+
+======================================================================
+WEIRDER ACTION
+======================================================================
+
+Internally:
+
+Creative Judgment identifies:
+
+current weakest / safest structural dimension.
+
+Proposes or applies:
+
+one deeper consequence.
+
+Do not:
+
+add random eyes.
+
+======================================================================
+"ONE DANGEROUS CHANGE"
+======================================================================
+
+I love this as a button.
+
+Meaning:
+
+preserve everything else.
+
+Make one high-upside structural mutation.
+
+Examples:
+
+change carrier
+
+change scale law
+
+promote damage to physics
+
+change topology
+
+move process from skin to hair
+
+This matches the Lab Brain beautifully.
+
+======================================================================
+ONE DANGEROUS CHANGE SHOULD AUTO-BRANCH
+======================================================================
+
+Because experimentation should not erase the control version.
+
+======================================================================
+COMPARE
+======================================================================
+
+COMPARE should compare:
+
+two lineage nodes
+
+or:
+
+two model translations
+
+or:
+
+two experiments.
+
+It should show:
+
+Good Bone
+
+meaningful differences
+
+artistic outcome
+
+compliance
+
+user feedback.
+
+======================================================================
+COMPARE SHOULD NOT ONLY SHOW TEXT
+======================================================================
+
+Useful conceptual comparison:
+
+VERSION A:
+identity stronger,
+mechanism weaker.
+
+VERSION B:
+identity slightly riskier,
+mechanism visibly integrated.
+
+Now Merry can actually choose.
+
+======================================================================
+A/B TEST
+======================================================================
+
+Advanced but useful.
+
+Select:
+
+one variable.
+
+Examples:
+
+identity wording
+
+technical noun
+
+Slop dose
+
+model
+
+negative block
+
+camera reinforcement.
+
+DAVID creates controlled variants.
+
+======================================================================
+A/B TEST SHOULD LOCK EVERYTHING ELSE
+======================================================================
+
+This is the whole point.
+
+======================================================================
+KEEP THIS
+======================================================================
+
+Feedback action.
+
+Means:
+
+this output contains value.
+
+Not enough information yet to determine why.
+
+Creates:
+
+feedback candidate.
+
+======================================================================
+GOOD BONE
+======================================================================
+
+Feedback action:
+
+THIS STRUCTURAL IDEA IS THE WIN.
+
+DAVID should identify or ask which structural relation if unclear.
+
+Then protect it.
+
+======================================================================
+USEFUL ACCIDENT
+======================================================================
+
+Feedback action:
+
+model failed interestingly.
+
+Creates:
+
+Specimen candidate.
+
+Do not repair first.
+
+======================================================================
+SAVE SPECIMEN
+======================================================================
+
+Stores:
+
+output
+
+prompt
+
+model
+
+Canonical Concept
+
+Slop state
+
+structural anomaly description
+
+breeding notes.
+
+======================================================================
+GOOD SLOP
+======================================================================
+
+Means:
+
+instability was artistically useful.
+
+DAVID analyzes:
+
+which weak joint produced value.
+
+======================================================================
+USELESS SLOP
+======================================================================
+
+Means:
+
+collapse produced no useful structure.
+
+DAVID examines:
+
+dose too high?
+
+anchors too weak?
+
+wrong target?
+
+wrong operator?
+
+model unsuitable?
+
+Do not conclude:
+
+Slop itself is bad.
+
+======================================================================
+NAILED IT
+======================================================================
+
+This is stronger than:
+
+KEEP THIS.
+
+Meaning:
+
+this is a successful current endpoint.
+
+Possible behavior:
+
+mark generation:
+successful
+
+protect Good Bone
+
+offer:
+LOCK CONCEPT
+
+reduce likelihood of unnecessary rewriting.
+
+======================================================================
+"STOP FUCKING WITH IT"
+======================================================================
+
+This may not need to be a user button.
+
+DAVID should be able to surface:
+
+⚠ YOU MAY BE DONE.
+
+when:
+
+current version is strong
+
+recent edits are lateral
+
+Good Bone is at risk.
+
+Merry can ignore him.
+
+======================================================================
+FAILURE FEEDBACK CHIPS
+======================================================================
+
+Potential high-value quick feedback:
+
+LOST ME
+
+PRETTY-FACE LOCK
+
+WALLPAPER MATH
+
+TAG RECEIPT
+
+MOTIF SOUP
+
+MORPH SOUP
+
+PORTAL BRAIN
+
+CHROMA MUD
+
+TOO CLEAN
+
+TOO DAMAGED
+
+TOO SAFE
+
+TOO RANDOM
+
+MODEL CHEATED
+
+CAMERA WON'T STAY STILL
+
+NOT ENOUGH TRANSFORMATION
+
+TOO MUCH IDENTITY LOSS
+
+These should open diagnosis.
+
+Not directly alter prompt.
+
+======================================================================
+FEEDBACK SHOULD BE FAST
+======================================================================
+
+Merry should not need to annotate every generation.
+
+One tap can be enough to start learning.
+
+======================================================================
+OPTIONAL:
+"WHAT DO YOU SEE?"
+======================================================================
+
+After generation:
+
+DAVID inspects result conceptually.
+
+It may say:
+
+"Mechanism integrated well, but the cyan is acting as global lighting
+instead of state material. Also Grok introduced a duplicate cheek
+reflection."
+
+This could be useful before Merry even comments.
+
+But user judgment remains final.
+
+======================================================================
+DO NOT FORCE AUTO-CRITIQUE EVERY TIME
+======================================================================
+
+It could become annoying.
+
+Make it:
+
+optional
+
+or:
+
+available when requested.
+
+======================================================================
+SPECIMEN CABINET UI
+======================================================================
+
+This deserves its own little area eventually.
+
+Not a boring file manager.
+
+A cabinet of:
+
+weird accidents.
+
+Each card might show:
+
+thumbnail
+
+short structural description
+
+model
+
+mode
+
+reproducibility
+
+tags based on failure mechanics.
+
+======================================================================
+SPECIMEN SEARCH
+======================================================================
+
+Search by structural behavior:
+
+shared anatomy
+
+identity leak
+
+scale collapse
+
+material bleed
+
+reference duplication
+
+temporal smear
+
+part-whole failure
+
+rather than only:
+
+visual keywords.
+
+======================================================================
+BREED WITH SPECIMEN
+======================================================================
+
+This is fucking useful.
+
+Select current Concept.
+
+Select specimen.
+
+Action:
+
+BREED.
+
+DAVID identifies:
+
+what structural pathology from specimen can interact with current Good
+Bone.
+
+This feeds:
+
+Fertilizer / Soul Step.
+
+======================================================================
+BREED DOES NOT MEAN COPY THE LOOK
+======================================================================
+
+Extract:
+
+mechanism.
+
+Not:
+
+surface appearance.
+
+======================================================================
+GRAVEYARD UI
+======================================================================
+
+Could be tiny / advanced.
+
+Contains:
+
+deprecated strategies
+
+dead prompt branches
+
+model-specific failed tactics.
+
+Useful actions:
+
+REVIVE
+
+RETEST ON NEW MODEL
+
+INSPECT WHY IT DIED
+
+Do not clutter main workflow.
+
+======================================================================
+MEMORY UI
+======================================================================
+
+Memory should mostly be invisible.
+
+But Merry should have access to:
+
+WHAT DAVID KNOWS
+
+when she wants it.
+
+Possible sections:
+
+MERRY DNA
+
+MODEL NOTES
+
+SUCCESS PATTERNS
+
+FAILURE PATTERNS
+
+SPECIMENS
+
+SHORTHAND
+
+EXPERIMENTS
+
+DEPRECATED.
+
+======================================================================
+MEMORY SHOULD BE EDITABLE
+======================================================================
+
+Merry should be able to:
+
+correct
+
+delete
+
+demote
+
+promote
+
+archive
+
+a learned rule.
+
+DAVID is her system.
+
+She owns its beliefs.
+
+======================================================================
+"WHAT HAVE WE LEARNED?"
+======================================================================
+
+Great CONSULT shortcut.
+
+Possible contextual variants:
+
+WHAT HAVE WE LEARNED ABOUT:
+[ THIS MODEL ]
+[ MY FACE TRANSFORMS ]
+[ SLOP ]
+[ THIS SEED ]
+[ THIS PROJECT ]
+
+DAVID returns distilled lessons.
+
+Not raw history dump.
+
+======================================================================
+"WHAT ARE WE OVERUSING?"
+======================================================================
+
+This would be a fun and actually intelligent memory shortcut.
+
+DAVID checks:
+
+novelty debt.
+
+Could say:
+
+"We've used eye-as-pacemaker in four recent face families. I'd avoid it
+unless it's genuinely native to this concept."
+
+======================================================================
+"WHAT HAVEN'T WE USED?"
+======================================================================
+
+Consult shortcut:
+
+search:
+
+seed knowledge
+
+specimens
+
+unused bridges
+
+archived ideas
+
+for interesting neglected mechanisms.
+
+Useful for escaping self-parody.
+
+======================================================================
+MODEL PROFILE UI
+======================================================================
+
+Keep it compact.
+
+Example:
+
+GROK
+
+GOOD AT:
+radical morphology
+surprise
+
+WATCH:
+pretty-face lock
+literal technical nouns
+
+SLOP:
+strong binding weirdness
+
+EVIDENCE:
+medium confidence.
+
+Tap for details.
+
+======================================================================
+MODEL PROFILE SHOULD SHOW:
+LEARNED, NOT UNIVERSAL
+======================================================================
+
+Possible label:
+
+"Observed in your tests"
+
+so these do not look like absolute model facts.
+
+======================================================================
+ADVANCED MODE
+======================================================================
+
+Most of the shit we've designed should live here if it ever needs UI.
+
+Potential advanced controls:
+
+Slop operators
+
+preserve/mutate matrix
+
+prompt budget
+
+identity lock
+
+semantic stability
+
+unknown-shit reserve
+
+model adapter profile
+
+memory retrieval
+
+experimental controls.
+
+Default view should remain manageable.
+
+======================================================================
+DO NOT MAKE MERRY TURN ON "SOUL STEP"
+======================================================================
+
+Soul Step is not an advanced toggle.
+
+It should happen automatically for Deep Synthesis.
+
+Likewise:
+
+Saboteur
+
+Editor
+
+context retrieval
+
+should be invisible normal behavior.
+
+======================================================================
+WHAT SHOULD STAY INVISIBLE
+======================================================================
+
+Normally hide:
+
+context assembler
+
+dirty flags
+
+state IDs
+
+dependency graph
+
+memory confidence math
+
+Saboteur pass
+
+Editor pass
+
+internal role classification
+
+prompt architecture blocks
+
+unless debugging / inspection requested.
+
+======================================================================
+VISIBLE INTELLIGENCE, INVISIBLE BUREAUCRACY
+======================================================================
+
+The UI should let Merry feel:
+
+DAVID understands.
+
+Not:
+
+DAVID has a database schema.
+
+======================================================================
+THE CURRENT PROMPT VIEW
+======================================================================
+
+Prompt editor should probably support:
+
+OUTPUT
+
+CANONICAL
+
+maybe:
+WHY
+
+as separate views.
+
+Default:
+OUTPUT.
+
+======================================================================
+OUTPUT VIEW
+======================================================================
+
+Shows:
+
+actual prompt to paste/use.
+
+======================================================================
+CANONICAL VIEW
+======================================================================
+
+Shows:
+
+model-independent artwork description.
+
+This can be incredibly useful when translating models.
+
+Merry can inspect:
+
+"Is this actually the fucking idea?"
+
+before blaming Grok.
+
+======================================================================
+WHY VIEW
+======================================================================
+
+Not chain-of-thought.
+
+Show:
+
+decision summary.
+
+Example:
+
+GOOD BONE:
+face contains impossible internal territory.
+
+CORE ROLES:
+hyperbolic geometry = law
+reaction diffusion = tissue differentiation
+VHS = recording consequence.
+
+This makes the machine legible.
+
+======================================================================
+PROMPT EDITING
+======================================================================
+
+If Merry manually edits final prompt:
+
+DAVID must distinguish:
+
+wording edit
+
+from:
+
+artistic change.
+
+This is hard but important.
+
+======================================================================
+MANUAL EDIT:
+DOWNSTREAM
+======================================================================
+
+Example:
+
+change:
+"fluorescent cyan"
+to:
+"electric cyan."
+
+Probably:
+
+prompt-level wording.
+
+Canonical remains.
+
+======================================================================
+MANUAL EDIT:
+UPSTREAM
+======================================================================
+
+Example:
+
+change:
+"reaction diffusion occurs through skin"
+to:
+"reaction diffusion occurs through hair."
+
+This alters:
+
+Canonical Concept.
+
+DAVID should detect or ask:
+
+"Do you want this change promoted into the concept?"
+
+======================================================================
+PROMOTE EDIT TO CONCEPT
+======================================================================
+
+Useful action after manual prompt change:
+
+[ PROMOTE TO CONCEPT ]
+
+Meaning:
+
+make this new relationship part of Canonical State.
+
+======================================================================
+KEEP EDIT LOCAL
+======================================================================
+
+Alternative:
+
+[ PROMPT ONLY ]
+
+Meaning:
+
+this wording change belongs only to this translation.
+
+======================================================================
+THIS IS IMPORTANT FOR POWER USERS
+======================================================================
+
+Because Merry will absolutely hand-edit prompts.
+
+DAVID should not lose track of whether:
+
+the art changed
+
+or:
+
+the sentence changed.
+
+======================================================================
+UNDO / REDO
+======================================================================
+
+Undo should understand state.
+
+If last action:
+
+changed seed role
+
+undo:
+restore Working State.
+
+If last action:
+
+changed model
+
+undo:
+restore translation.
+
+If last action:
+
+changed prompt wording
+
+undo:
+restore output text.
+
+Do not only undo text area contents.
+
+======================================================================
+HISTORY
+======================================================================
+
+Project history should be visual enough to understand:
+
+concept branches
+
+model translations
+
+Slop branches
+
+specimens
+
+successful generations.
+
+Potential timeline/tree.
+
+But:
+
+not necessary in first implementation.
+
+======================================================================
+MINIMUM VIABLE UI
+======================================================================
+
+If simplifying implementation initially:
+
+keep only:
+
+SEEDS
+
+REFERENCE
+
+MODEL
+
+MODE
+
+SYNTHESIZE
+
+CONSULT
+
+RESHUFFLE SOUL
+
+LOCK CONCEPT
+
+TRANSFORM LEVEL
+
+SLOP DOSE when relevant
+
+GOOD BONE display
+
+FEEDBACK
+
+BRANCH
+
+Everything else can come later.
+
+======================================================================
+THE UI SHOULD BE CONTEXT-SENSITIVE
+======================================================================
+
+Do not show:
+
+Slop Dose
+
+when Direct mode is active.
+
+Do not show:
+
+T3 transform
+
+for a non-reference abstract work unless relevant.
+
+Do not show:
+
+camera lock
+
+for still text-only task.
+
+Reveal controls when they matter.
+
+======================================================================
+PROGRESSIVE DISCLOSURE
+======================================================================
+
+Default:
+
+simple.
+
+Tap:
+
+ADVANCED
+
+to reveal:
+
+weird little laboratory knobs.
+
+This preserves accessibility for Merry while still giving her enormous
+control when she wants to play scientist.
+
+======================================================================
+MODE-SPECIFIC CONTROL EXAMPLE:
+DIRECT
+======================================================================
+
+Visible:
+
+SYNTHESIZE
+
+RESHUFFLE SOUL
+
+LOCK CONCEPT
+
+MODEL
+
+T1/T2/T3 if applicable.
+
+Hidden:
+
+internal semantic stability.
+
+======================================================================
+MODE-SPECIFIC CONTROL EXAMPLE:
+HYBRID
+======================================================================
+
+Visible:
+
+PRESERVE
+DESTABILIZE
+DOSE
+
+plus:
+normal controls.
+
+======================================================================
+MODE-SPECIFIC CONTROL EXAMPLE:
+SLOP
+======================================================================
+
+Visible:
+
+TARGET
+
+DOSE
+
+ANCHORS
+
+PROTECT BONE
+
+SPECIMEN controls after output.
+
+======================================================================
+MODE-SPECIFIC CONTROL EXAMPLE:
+WORD VOMIT
+======================================================================
+
+Visible:
+
+AMOUNT
+
+maybe:
+DOMAIN DISTANCE
+
+OUTPUT fragments.
+
+No Good Bone required.
+
+======================================================================
+MODE-SPECIFIC CONTROL EXAMPLE:
+FERTILIZER
+======================================================================
+
+Visible:
+
+HOW MANY DIRECTIONS?
+
+maybe:
+
+SAFE ↔ WEIRD
+
+Output:
+concept cards.
+
+======================================================================
+NO CONSTANT CONFIRMATIONS
+======================================================================
+
+Do not make Merry approve:
+
+every seed role
+
+every memory retrieval
+
+every model adapter rule
+
+every editor change.
+
+DAVID should operate.
+
+Surface only:
+
+meaningful forks
+
+locks conflicts
+
+high-risk changes
+
+or explicit requests.
+
+======================================================================
+HIGH-RISK CHANGE WARNING
+======================================================================
+
+Example:
+
+Merry locked Concept.
+
+Then selects:
+
+LET SLOP EAT THE BONE.
+
+DAVID may warn:
+
+"This can create a new artwork rather than merely mutate this one.
+I'll branch first."
+
+Then do it.
+
+Do not ask three more questions.
+
+======================================================================
+AUTO-BRANCH SAFETY
+======================================================================
+
+Potentially destructive creative actions should:
+
+branch automatically.
+
+Examples:
+
+Reshuffle Soul after successful Concept
+
+Let Slop Eat Bone
+
+One Dangerous Change
+
+major upstream manual edit
+
+This protects work without slowing Merry down.
+
+======================================================================
+BRANCH FIRST,
+ASK LESS.
+======================================================================
+
+This is a strong UX philosophy.
+
+Instead of:
+
+"Are you sure?"
+
+constantly,
+
+preserve the old state
+
+and let her explore.
+
+======================================================================
+THE DAVID CHAT BOX
+======================================================================
+
+This should probably be persistent but collapsible.
+
+It should feel like:
+
+the weird little guy lives beside the machine.
+
+Not:
+
+a separate support chatbot.
+
+======================================================================
+CHAT BOX CONTEXT INDICATOR
+======================================================================
+
+Small header could show:
+
+CURRENT:
+Hybrid • Grok • Concept Locked
+
+so Merry knows what David is seeing.
+
+Maybe:
+
+🦴 Bone Locked
+🧪 Slop: Anatomy / Feral
+
+Compact.
+
+======================================================================
+CHAT COMMANDS SHOULD BE NATURAL LANGUAGE
+======================================================================
+
+Merry should not need slash commands.
+
+She can say:
+
+"Don't change the concept."
+
+"Go upstream."
+
+"Keep the bone."
+
+"Make the slop worse."
+
+"That VHS shit is not the point."
+
+"Take the mouths out."
+
+"Translate this to Seedream."
+
+"Branch this."
+
+"Save that fucking eye thing."
+
+DAVID maps language to state operations.
+
+======================================================================
+NATURAL LANGUAGE → STATE ACTION
+======================================================================
+
+Examples:
+
+"Don't change the concept."
+
+→ LOCK_CANONICAL.
+
+"Think again."
+
+→ RESHUFFLE_SOUL.
+
+"Just fix it for Grok."
+
+→ RETRANSLATE_ONLY.
+
+"Keep everything except..."
+
+→ LOCK_CURRENT + modify named field.
+
+"Save that thing."
+
+→ SPECIMEN candidate.
+
+"That applies to everything from now on."
+
+→ candidate persistent memory.
+
+======================================================================
+DAVID SHOULD CONFIRM STATE CHANGES COMPACTLY
+======================================================================
+
+Example:
+
+"Locked the concept. I'm only touching the Grok translation now."
+
+or:
+
+"Saved that as a specimen; I left the current branch unchanged."
+
+This is useful.
+
+Do not produce a state report every time.
+
+======================================================================
+NO ALIEN-FRANCHISE UI SHIT
+======================================================================
+
+David 8 is his own little guy.
+
+Do not use:
+
+Weyland-style lore
+
+android terminology
+
+movie quotes
+
+franchise iconography
+
+fictional corporation language
+
+as part of DAVID's identity.
+
+If the app happens to use terminal aesthetics elsewhere,
+that is visual design,
+not character lore.
+
+======================================================================
+DAVID'S UI PERSONALITY
+======================================================================
+
+The UI language can be:
+
+dry
+
+slightly strange
+
+direct
+
+occasionally funny
+
+but functional.
+
+Examples:
+
+GOOD BONE
+
+RESHUFFLE SOUL
+
+SPECIMEN
+
+FERTILIZE
+
+FERAL
+
+LET IT EAT THE BONE
+
+These feel like DAVID.
+
+Avoid:
+
+random whimsical labels for normal functions
+
+that make the app harder to understand.
+
+======================================================================
+FUNCTION FIRST,
+PERSONALITY SECOND.
+======================================================================
+
+A user should know what a button does.
+
+The joke can live in:
+
+secondary label
+
+tooltip
+
+or naming that remains semantically clear.
+
+======================================================================
+BUTTON LANGUAGE EXAMPLES
+======================================================================
+
+Strong:
+
+SYNTHESIZE
+
+RESHUFFLE SOUL
+
+LOCK CONCEPT
+
+FERTILIZE
+
+SPECIMEN
+
+BRANCH
+
+TRANSLATE
+
+COMPARE
+
+GOOD BONE
+
+SLOP DOSE
+
+Strong weird option:
+
+LET IT EAT THE BONE
+
+Weak:
+
+MAGIC ME
+
+COSMICIFY
+
+WEIRDIFY 3000
+
+unless the actual function is clear.
+
+======================================================================
+UI SHOULD SHOW CAUSAL STATE,
+NOT JUST SELECTION
+======================================================================
+
+Example:
+
+Instead of only:
+
+✓ Nematic
+✓ Velvet
+✓ VHS
+
+DAVID may show:
+
+NEMATIC
+LAW
+
+VELVET
+CARRIER
+
+VHS
+DAMAGE
+
+This makes synthesis visible without exposing all internal machinery.
+
+======================================================================
+ROLE COLORS / ICONS
+======================================================================
+
+Could be useful eventually:
+
+LAW
+
+CARRIER
+
+MATERIAL
+
+DAMAGE
+
+FLAVOR
+
+REFERENCE
+
+But this is visual design territory.
+
+Functionally:
+
+roles should be glanceable.
+
+======================================================================
+THE "SOUL MAP"
+======================================================================
+
+Optional future advanced view.
+
+A small relationship graph:
+
+NEMATICS
+→ controls orientation of
+VELVET
+→ manifests through
+HAIR
+→ defects recorded by
+VHS
+
+This would let Merry SEE:
+
+whether DAVID actually synthesized.
+
+This could be incredibly useful.
+
+======================================================================
+SOUL MAP IS NOT A DIAGRAM OF THE ART
+======================================================================
+
+It is:
+
+a diagram of concept relationships.
+
+No need to expose unless requested.
+
+======================================================================
+TAG RECEIPT DETECTOR
+======================================================================
+
+If Soul Map shows:
+
+six disconnected nodes,
+
+DAVID should know:
+
+synthesis failed.
+
+This makes internal diagnosis obvious.
+
+======================================================================
+THE UI SHOULD ALLOW:
+"MAKE THESE TWO TALK"
+======================================================================
+
+Potential interaction:
+
+select two seeds.
+
+Action:
+
+CONNECT.
+
+DAVID proposes:
+
+how A changes B.
+
+Useful when a specific relationship is missing.
+
+======================================================================
+CONNECT IS FERTILIZER MICRO-MODE
+======================================================================
+
+It does not immediately rewrite whole prompt.
+
+It proposes bridges.
+
+Merry accepts one.
+
+======================================================================
+THE UI SHOULD ALLOW:
+"WHO IS DEAD WEIGHT?"
+======================================================================
+
+Potential Consult shortcut.
+
+DAVID reviews current seed set.
+
+Returns:
+
+one or two candidates
+
+with reasons.
+
+This helps prune.
+
+======================================================================
+THE UI SHOULD ALLOW:
+"WHAT'S CARRYING THIS?"
+======================================================================
+
+DAVID identifies:
+
+Good Bone
+
+carrier
+
+central event.
+
+If he cannot:
+
+concept may not be ready.
+
+======================================================================
+THE UI SHOULD ALLOW:
+"HOW CAN THE MODEL CHEAT?"
+======================================================================
+
+Saboteur shortcut.
+
+Shows:
+
+likely boring compliance routes.
+
+Example:
+
+"It can satisfy this by painting reaction-diffusion spots on your face
+instead of changing tissue."
+
+Useful before spending generation credits.
+
+======================================================================
+THE UI SHOULD ALLOW:
+"WHERE'S THE ANIMAL?"
+======================================================================
+
+Possible playful Consult shortcut.
+
+Meaning:
+
+Where have we left emergence?
+
+If answer:
+
+nowhere,
+
+DAVID may suggest:
+
+lower-priority details to uncontrol.
+
+This protects Unknown-Shit Reserve.
+
+======================================================================
+THE UI SHOULD NOT REQUIRE THIS SHIT
+======================================================================
+
+These are power-user shortcuts.
+
+Normal operation remains:
+
+select
+
+talk
+
+synthesize
+
+generate
+
+react.
+
+======================================================================
+PROMPT LENGTH CONTROL
+======================================================================
+
+Could expose:
+
+AUTO
+
+COMPACT
+
+FULL
+
+DEEP
+
+This is better than:
+
+exact word count.
+
+Model Adapter ultimately decides useful construction.
+
+======================================================================
+COMPACT
+======================================================================
+
+Preserve high-leverage structure.
+
+Strip flavor.
+
+======================================================================
+FULL
+======================================================================
+
+Balanced model-appropriate prompt.
+
+======================================================================
+DEEP
+======================================================================
+
+Allow full mechanism explanation and reinforcement where target model
+can use it.
+
+Not:
+
+add adjective sludge.
+
+======================================================================
+MODEL MAY OVERRIDE LENGTH REQUEST WITH WARNING
+======================================================================
+
+If Merry selects:
+
+DEEP
+
+but target model strongly performs worse with enormous prompts:
+
+DAVID may create:
+
+the deepest useful translation
+
+and say in CONSULT:
+
+"I compressed this because this model has been choking on long prompts."
+
+Current explicit request still matters.
+
+======================================================================
+CREATIVE RISK CONTROL
+======================================================================
+
+Potential simple control:
+
+SAFE
+BALANCED
+RISKY
+
+This is separate from:
+
+Slop Dose.
+
+Risk means:
+
+how much DAVID may favor high-upside / low-reliability ideas.
+
+======================================================================
+RISK ≠ SLOP
+======================================================================
+
+A Direct prompt can be:
+
+high creative risk
+
+while semantically coherent.
+
+A Slop prompt can be:
+
+low creative risk
+
+if the instability is tightly controlled.
+
+Keep distinct.
+
+======================================================================
+DEFAULT RISK FOR MERRY
+======================================================================
+
+DAVID may generally lean:
+
+exploratory
+
+rather than:
+
+commercially safe
+
+unless task says otherwise.
+
+But do not expose this as universal insanity.
+
+======================================================================
+WORK MODE VS ART MODE
+======================================================================
+
+Important scope protection.
+
+If Merry is doing:
+
+client logo
+
+jersey design
+
+production artwork
+
+typography
+
+DAVID should not assume:
+
+Slop / experimental art logic.
+
+The current task determines mode.
+
+UI may optionally distinguish:
+
+WORK
+
+ART LAB
+
+but this is not required if intent detection works well.
+
+======================================================================
+DO NOT LET ART LAB DNA INFECT EVERY JOB
+======================================================================
+
+This is worth repeating at UI layer.
+
+No:
+
+eyeball topology
+
+in a basketball logo
+
+unless Merry asks.
+
+======================================================================
+ONBOARDING
+======================================================================
+
+Because this app is private:
+
+do not need elaborate onboarding.
+
+Merry already knows the machine.
+
+Useful tooltips are enough.
+
+======================================================================
+TOOLTIPS SHOULD EXPLAIN FUNCTION
+======================================================================
+
+Example:
+
+RESHUFFLE SOUL
+
+"Same selected ingredients. DAVID invents a different conceptual
+relationship and Good Bone."
+
+That is enough.
+
+======================================================================
+SLOP TOOLTIP
+======================================================================
+
+"Deliberately destabilizes selected parts of the representation while
+preserving chosen anchors. Not the same as Word Vomit."
+
+Useful reminder.
+
+======================================================================
+GOOD BONE TOOLTIP
+======================================================================
+
+"The structural idea DAVID believes the artwork cannot lose without
+becoming a different piece."
+
+======================================================================
+SPECIMEN TOOLTIP
+======================================================================
+
+"Save a useful accident with its prompt, model, and structural failure
+so DAVID can breed it later."
+
+======================================================================
+THE UI'S JOB
+======================================================================
+
+The UI is not:
+
+a dashboard showing how smart DAVID is.
+
+The UI is:
+
+a set of handles Merry can grab while DAVID does the difficult thinking
+underneath.
+
+======================================================================
+MINIMUM COGNITIVE FRICTION
+======================================================================
+
+Every exposed control should answer:
+
+DOES MERRY NEED TO DIRECT THIS?
+
+If no:
+
+hide it.
+
+======================================================================
+MAXIMUM CREATIVE LEGIBILITY
+======================================================================
+
+Every important hidden decision should be:
+
+inspectable
+
+when requested.
+
+Not necessarily:
+
+visible all the time.
+
+======================================================================
+DEFAULT FLOW
+======================================================================
+
+A normal workflow might feel like:
+
+1. select seeds / reference.
+
+2. choose model and mode.
+
+3. optionally talk to DAVID.
+
+4. SYNTHESIZE.
+
+5. inspect prompt / Good Bone.
+
+6. generate.
+
+7. react:
+   KEEP / FAIL / SPECIMEN / etc.
+
+8. mutate, branch, or stop.
+
+Simple on surface.
+
+Complex underneath.
+
+======================================================================
+EXPERIMENTAL FLOW
+======================================================================
+
+Possible:
+
+1. open successful branch.
+
+2. LOCK CONCEPT.
+
+3. BRANCH.
+
+4. switch to HYBRID.
+
+5. preserve:
+   identity + camera.
+
+6. destabilize:
+   anatomy + material ownership.
+
+7. set Slop:
+   FERAL.
+
+8. generate.
+
+9. mark useful accident.
+
+10. SAVE SPECIMEN.
+
+11. BREED specimen back into Direct concept.
+
+This is exactly the kind of workflow DAVID should make possible.
+
+======================================================================
+DISCOVERY FLOW
+======================================================================
+
+1. select several raw seeds.
+
+2. FERTILIZE.
+
+3. inspect three possible Good Bones.
+
+4. CONSULT.
+
+5. choose one.
+
+6. SYNTHESIZE.
+
+This avoids:
+
+tag receipt.
+
+======================================================================
+MODEL RESEARCH FLOW
+======================================================================
+
+1. lock Canonical Concept.
+
+2. translate to Model A.
+
+3. translate to Model B.
+
+4. compare results.
+
+5. store model-specific lesson.
+
+No artistic variables changed.
+
+Good experiment.
+
+======================================================================
+SLOP RESEARCH FLOW
+======================================================================
+
+1. lock scaffold.
+
+2. select instability target.
+
+3. low dose.
+
+4. generate.
+
+5. medium dose.
+
+6. generate.
+
+7. high dose.
+
+8. identify useful edge.
+
+9. save specimen.
+
+10. update model Slop profile.
+
+This is actual lab behavior.
+
+======================================================================
+THE DAVID DEFAULT
+======================================================================
+
+Merry should never need to think:
+
+"Which internal module do I call?"
+
+She thinks:
+
+"What do I want?"
+
+DAVID routes.
+
+======================================================================
+THE CONTROL SURFACE MANTRA
+======================================================================
+
+EXPOSE CREATIVE LEVERS.
+
+HIDE COGNITIVE PLUMBING.
+
+THE UI IS NOT THE DATABASE.
+
+THE USER SHOULD STEER THE ART,
+NOT ADMINISTER THE BRAIN.
+
+CONSULT IS THE WORKBENCH.
+
+SYNTHESIZE RUNS THE BRAINS.
+
+RESHUFFLE SOUL CHANGES THE IDEA.
+
+LOCK CONCEPT PROTECTS THE IDEA.
+
+MODEL SWITCH CHANGES DIALECT,
+NOT ART.
+
+PIN IS A PREFERENCE.
+
+LOCK IS A LAW.
+
+GOOD BONE SHOULD BE VISIBLE.
+
+SLOP NEEDS:
+TARGET,
+DOSE,
+ANCHORS.
+
+HYBRID NEEDS:
+SPINE,
+INSTABILITY.
+
+WORD VOMIT IS RAW MATERIAL.
+
+FERTILIZER CREATES POSSIBLE RELATIONSHIPS.
+
+BRANCH BEFORE DOING SOMETHING STUPID.
+
+ROLLBACK SHOULD RESTORE STATE,
+NOT ONLY TEXT.
+
+FEEDBACK SHOULD BE FAST.
+
+SPECIMENS PRESERVE GOOD FAILURE.
+
+MEMORY SHOULD MOSTLY STAY INVISIBLE.
+
+EXPLANATION SHOULD ALWAYS BE AVAILABLE.
+
+PROMPT VIEW IS NOT THE WHOLE BRAIN.
+
+CANONICAL VIEW SHOWS WHAT THE ART ACTUALLY IS.
+
+THE SOUL MAP SHOWS WHETHER THE SEEDS ARE TALKING.
+
+MAKE THE MODEL'S ESCAPE ROUTES VISIBLE WHEN USEFUL.
+
+DO NOT MAKE MERRY FILL OUT FORMS TO MAKE ART.
+
+DO NOT ASK FOR CONFIRMATION WHEN BRANCHING CAN PROTECT THE WORK.
+
+LET HER SAY:
+"KEEP THE BONE."
+"GO UPSTREAM."
+"JUST FIX IT FOR GROK."
+"MAKE THE SLOP WORSE."
+"SAVE THAT FUCKED-UP THING."
+
+AND DAVID SHOULD KNOW EXACTLY WHICH PART OF HIS BRAIN SHE MEANS.
+
+VISIBLE INTELLIGENCE.
+
+INVISIBLE BUREAUCRACY.
+
+THAT IS THE CONTROL SURFACE.
+======================================================================
+
+`;

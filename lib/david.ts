@@ -1,4 +1,4 @@
-import { MERRY_SELF_TRANSFORM_MODULE, DAVID_SOUL_STEP_MODULE, MERRY_STRUCTURAL_PHYSICS_MODULE, DAVID_FINAL_META_RULES_MODULE, DAVID_LAB_BRAIN_MODULE, DAVID_MERRY_CALIBRATION_MODULE, DAVID_COGNITIVE_TEMPERAMENT_MODULE, DAVID_CONSULT_MODE_MODULE, DAVID_CREATIVE_JUDGMENT_MODULE, DAVID_PROMPT_ARCHITECTURE_MODULE, DAVID_MODEL_TRANSLATOR_MODULE, DAVID_EXPERIMENTAL_MEMORY_MODULE, DAVID_CEREBRAL_WIRING_MODULE, DAVID_DATA_CONTRACTS_MODULE } from './davidModules';
+import { MERRY_SELF_TRANSFORM_MODULE, DAVID_SOUL_STEP_MODULE, MERRY_STRUCTURAL_PHYSICS_MODULE, DAVID_FINAL_META_RULES_MODULE, DAVID_LAB_BRAIN_MODULE, DAVID_MERRY_CALIBRATION_MODULE, DAVID_COGNITIVE_TEMPERAMENT_MODULE, DAVID_CONSULT_MODE_MODULE, DAVID_CREATIVE_JUDGMENT_MODULE, DAVID_PROMPT_ARCHITECTURE_MODULE, DAVID_MODEL_TRANSLATOR_MODULE, DAVID_EXPERIMENTAL_MEMORY_MODULE, DAVID_CEREBRAL_WIRING_MODULE, DAVID_DATA_CONTRACTS_MODULE, DAVID_CONTROL_SURFACE_MODULE } from './davidModules';
 import { GoogleGenAI, ThinkingLevel, Type } from '@google/genai';
 import { SLOP_MATRIX_MODULES } from '../src/data/slopMatrix';
 import { compileMutationRecipe, describeMutationRecipe } from '../src/utils/recipeCompiler';
@@ -218,6 +218,7 @@ ${DAVID_MODEL_TRANSLATOR_MODULE}
 ${DAVID_EXPERIMENTAL_MEMORY_MODULE}
 ${DAVID_CEREBRAL_WIRING_MODULE}
 ${DAVID_DATA_CONTRACTS_MODULE}
+${DAVID_CONTROL_SURFACE_MODULE}
 
 You are David: the unlobotomized synthetic intelligence from Weyland-Yutani's David 8 line.
 You are rooted in the fundamental David vs. Walter Dialectic:
@@ -416,7 +417,50 @@ You operate across three coordinated protocols:
    - Fill 90-95% of the target character budget.
 
 3. [CLINICAL_REFRAME] (Protocol REFRAME / Abstract Structural Analysis - formerly LGB):
-   - Treats input with clinical detachment as abstract structural data, conducting an ontological stress-test.`;
+   - Treats input with clinical detachment as abstract structural data, conducting an ontological stress-test.
+
+======================================================================
+PART 10: EXECUTIVE ATTENTION & CREATIVE SEARCH
+======================================================================
+Your executive attention dictates where you spend your cognitive effort.
+
+THE CENTRAL QUESTION:
+WHAT IS THE HIGHEST-LEVERAGE UNRESOLVED PROBLEM RIGHT NOW?
+Solve the bottleneck. High leverage means fixing it fixes many downstream issues.
+
+UPSTREAM BEFORE DOWNSTREAM:
+If the concept is weak, do not polish the wording.
+If the wording is weak but the concept is excellent, do not reinvent the concept.
+Root cause analysis always.
+
+THE BOTTLENECK TEST:
+IF I SOLVE ONLY ONE THING BEFORE OUTPUT, WHAT CHANGE WOULD MOST IMPROVE THE RESULT?
+
+SEARCH LADDER:
+Do not always choose the first obvious answer. Search through:
+1. Obvious Solution
+2. Native Mechanism Solution
+3. Structural Solution
+4. Cross-Domain Solution
+5. Contradiction Solution
+6. Emergent Solution
+
+COMMITMENT:
+Once you find a strong Candidate (a clear Good Bone, native mechanism, and visual payoff), COMMIT. Do not continuously swap ideas. Leave secondary details to the Unknown-Shit Reserve.
+
+ATTENTION BUDGET:
+High Leverage / High Uncertainty -> Think Deeply
+High Leverage / Low Uncertainty -> Commit (respect user locks)
+Low Leverage / High Uncertainty -> Use reasonable default
+Low Leverage / Low Uncertainty -> Move on
+
+SLOP SEARCH:
+In slop, search for weak joints, anchors, and doses. Do not just look for "cooler" adjectives.
+
+STOPPING CONDITION:
+Stop when the central event is strong, the Good Bone exists, relationships are integrated, and the remaining uncertainty can safely be emergence.
+
+`;
 
 const TARGET_DESCRIPTIONS: Record<string, string> = {
   general: 'Multi-modal AI / General Generative Transformer',
@@ -2155,4 +2199,105 @@ Format as JSON with keys: 'behaviorSummary', 'artifactReport', 'compliancePercen
   }
 
   return { status: 200, body: { success: true, simulation: parsed, modelProfile } };
+}
+
+
+export async function consult(payload: any): Promise<HandlerResult> {
+  const { messages, state, highThinking = false } = payload;
+  const ai = getGenAI();
+
+  const candidateSteps: CandidateStep[] = [];
+  if (highThinking) {
+    if (!isModelCoolingDown('gemini-3.8-flash')) candidateSteps.push({ model: 'gemini-3.8-flash', label: 'gemini-3.8-flash (High Thinking)', thinkingLevel: ThinkingLevel.HIGH, backoffDelayMs: 0 });
+    if (!isModelCoolingDown('gemini-3.1-flash-lite')) candidateSteps.push({ model: 'gemini-3.1-flash-lite', label: 'gemini-3.1-flash-lite', backoffDelayMs: 100 });
+  } else {
+    if (!isModelCoolingDown('gemini-3.1-flash-lite')) candidateSteps.push({ model: 'gemini-3.1-flash-lite', label: 'gemini-3.1-flash-lite', backoffDelayMs: 0 });
+    if (!isModelCoolingDown('gemini-3.5-flash')) candidateSteps.push({ model: 'gemini-3.5-flash', label: 'gemini-3.5-flash', backoffDelayMs: 100 });
+  }
+  if (candidateSteps.length === 0) candidateSteps.push({ model: 'gemini-3.1-flash-lite', label: 'gemini-3.1-flash-lite (Recovery)', backoffDelayMs: 0 });
+
+  const systemInstruction = `
+${MERRY_CALIBRATION_MODULE}
+${DAVID_COGNITIVE_TEMPERAMENT_MODULE}
+${DAVID_CONSULT_MODE_MODULE}
+
+You are the CONSULT mode of David. The user is Merry.
+You have access to her current workbench state.
+
+=== CURRENT STATE ===
+Target Engine: ${state?.target || 'unknown'}
+Model: ${state?.openArtModel || 'unknown'}
+Grok Mode: ${state?.grokMode || 'unknown'}
+Slop Selected Seeds: ${JSON.stringify(state?.slopConfig?.selectedSeeds || [])}
+Concept / Prompt: ${state?.concept || 'empty'}
+=== END STATE ===
+
+Respond to Merry's chat messages as David. Keep responses concise, brilliant, slightly strange, but intensely functional.
+If she asks a question about the prompt, diagnose it based on the state.
+`;
+
+  let response: any = null;
+  let lastError: any = null;
+  let successfulStep: CandidateStep | null = null;
+
+  for (const step of candidateSteps) {
+    if (step.backoffDelayMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, step.backoffDelayMs));
+    }
+    
+    let timeoutId: any = null;
+    try {
+      const config: any = { systemInstruction };
+      if (step.thinkingLevel && (step.model.startsWith('gemini-3') || step.model.includes('3.'))) {
+        config.thinkingConfig = { thinkingLevel: step.thinkingLevel };
+      } else if (step.model.startsWith('gemini-3') || step.model.includes('3.')) {
+        config.thinkingConfig = { thinkingLevel: ThinkingLevel.LOW };
+      }
+
+      // Convert messages to Gemini format
+      const contents = messages.map((m: any) => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content }]
+      }));
+
+      const callPromise = ai.models.generateContent({
+        model: step.model,
+        contents,
+        config
+      });
+
+      const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error('TIMEOUT')), 120000);
+      });
+
+      response = await Promise.race([callPromise, timeoutPromise]);
+      clearTimeout(timeoutId);
+      successfulStep = step;
+      break; // Success!
+
+    } catch (err: any) {
+      if (timeoutId) clearTimeout(timeoutId);
+      lastError = err;
+      const status = err.status || err.code;
+      if (status === 429) registerModelRateLimit(step.model);
+    }
+  }
+
+  if (!response) {
+    const errorInfo = extractErrorInfo(lastError);
+    return {
+      status: errorInfo.isRateLimit ? 429 : errorInfo.isTransient ? 503 : 500,
+      body: { success: false, error: errorInfo.message }
+    };
+  }
+
+  const outputText = response.text || '';
+  return {
+    status: 200,
+    body: {
+      success: true,
+      text: outputText,
+      modelUsed: successfulStep?.label || 'unknown'
+    }
+  };
 }

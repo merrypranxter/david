@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
-import { MissingApiKeyError, resolveApiKey, simulateTarget, synthesize, extractErrorInfo } from './lib/david';
+import { MissingApiKeyError, resolveApiKey, simulateTarget, synthesize, extractErrorInfo, consult } from './lib/david';
 import { decomposeConcept } from './lib/decompositionBackend';
 
 dotenv.config();
@@ -90,6 +90,23 @@ app.post('/api/simulate-target', async (req, res) => {
       isTransient: info.isTransient,
       retryAfterSeconds: info.retryAfterSeconds,
     });
+  }
+});
+
+
+// Endpoint: Consult David
+app.post('/api/consult', async (req, res) => {
+  try {
+    const result = await consult(req.body);
+    res.status(result.status).json(result.body);
+  } catch (err: any) {
+    console.error('Consult error:', err);
+    if (err instanceof MissingApiKeyError) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+    const info = extractErrorInfo(err);
+    const statusCode = info.isRateLimit ? 429 : info.isTransient ? 503 : 500;
+    res.status(statusCode).json({ success: false, error: info.message });
   }
 });
 
