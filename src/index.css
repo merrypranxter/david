@@ -22,6 +22,18 @@ body.theme-acid-yellow { --phosphor: #EFFF52; }
 body.theme-cryo-cyan { --phosphor: #43F5FF; }
 body.theme-solar-orange { --phosphor: #FF8A3D; }
 
+/* Legacy reskin passes left some ordinary interface text on semantic-green.
+   For an active phosphor theme, semantic green now follows the chosen phosphor
+   so the MAIN TYPE changes with the terminal instead of staying permanently green. */
+body.theme-mother-green,
+body.theme-merry-magenta,
+body.theme-synthetic-violet,
+body.theme-acid-yellow,
+body.theme-cryo-cyan,
+body.theme-solar-orange {
+  --semantic-green: var(--phosphor);
+}
+
 @theme {
   --color-phosphor: var(--phosphor);
   --color-phosphor-bright: var(--phosphor-bright);
