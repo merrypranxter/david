@@ -45,7 +45,7 @@ function patchApp() {
         }}
         highThinking={highThinking}
         onMainPromptUpdate={(text) => setConcept(text)}
-        onSynthesize={() => handleSynthesize()}
+        onSynthesize={(prompt) => handleSynthesize(prompt)}
         onApplySettings={(settings) => {
           if (typeof settings.entropyLevel === 'number') setEntropyLevel(Math.max(1, Math.min(10, settings.entropyLevel)));
           if (typeof settings.targetLength === 'number') setTargetLength(settings.targetLength);
