@@ -1,0 +1,560 @@
+/* DAVID system-directory shell: hides the cockpit until the operator asks for it. */
+body.david-home-active {
+  overflow: hidden;
+}
+
+.wy-home {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  overflow: auto;
+  background: var(--bg-dark);
+  color: var(--phosphor);
+  font-family: var(--font-mono);
+}
+
+.wy-home::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 28%, color-mix(in srgb, var(--phosphor) 5%, transparent), transparent 42%),
+    linear-gradient(90deg, transparent 0 49.85%, color-mix(in srgb, var(--phosphor) 2%, transparent) 50%, transparent 50.15%);
+}
+
+.wy-home-noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .28;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 2px,
+    color-mix(in srgb, var(--phosphor) 3%, transparent) 3px,
+    transparent 4px
+  );
+}
+
+.wy-home-frame {
+  position: relative;
+  min-height: 100%;
+  width: min(1180px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 22px 0 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.wy-corp-header,
+.wy-home-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid color-mix(in srgb, var(--phosphor) 30%, transparent);
+  background: color-mix(in srgb, var(--phosphor) 3%, var(--bg-dark));
+}
+
+.wy-corp-header {
+  padding: 11px 13px;
+}
+
+.wy-corp-id {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.wy-mark {
+  width: 44px;
+  height: 34px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: .09em;
+  box-shadow: inset 0 0 14px color-mix(in srgb, var(--phosphor) 7%, transparent);
+}
+
+.wy-kicker,
+.wy-subkicker,
+.wy-display-readout,
+.wy-system-index,
+.wy-status-row,
+.wy-directory-heading,
+.wy-display-title,
+.wy-display-label,
+.wy-home-footer {
+  text-transform: uppercase;
+  letter-spacing: .15em;
+}
+
+.wy-kicker {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.wy-subkicker {
+  margin-top: 2px;
+  font-size: 9px;
+  opacity: .48;
+}
+
+.wy-display-readout {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 12px;
+  font-size: 9px;
+  opacity: .62;
+}
+
+.wy-signal-line {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin: 13px 2px 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 9px;
+  letter-spacing: .08em;
+  opacity: .27;
+}
+
+.wy-signal-line > span:nth-child(2) {
+  overflow: hidden;
+}
+
+.wy-signal-a { animation: wyBlinkA 2.4s steps(1, end) infinite; }
+.wy-signal-b { animation: wyBlinkB 3.7s steps(1, end) infinite; }
+
+@keyframes wyBlinkA {
+  0%, 72% { opacity: .25; }
+  73%, 82% { opacity: 1; }
+  83%, 100% { opacity: .25; }
+}
+
+@keyframes wyBlinkB {
+  0%, 42% { opacity: .25; }
+  43%, 50% { opacity: 1; }
+  51%, 100% { opacity: .25; }
+}
+
+.wy-home-main {
+  width: min(940px, 100%);
+  margin: auto;
+  padding: 34px 0 38px;
+}
+
+.wy-identity-block {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.wy-system-index {
+  font-size: 10px;
+  opacity: .5;
+}
+
+.wy-david-title {
+  margin-top: 3px;
+  font-family: var(--font-display);
+  font-size: clamp(58px, 10vw, 112px);
+  line-height: .86;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px color-mix(in srgb, var(--phosphor) 20%, transparent);
+}
+
+.wy-david-subtitle {
+  margin-top: 10px;
+  font-family: var(--font-display);
+  font-size: clamp(19px, 3vw, 30px);
+  letter-spacing: .2em;
+  opacity: .72;
+}
+
+.wy-status-row {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 9px;
+  opacity: .6;
+}
+
+.wy-live-dot {
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  box-shadow: 0 0 9px currentColor;
+  animation: wyLive 1.85s ease-in-out infinite;
+}
+
+@keyframes wyLive {
+  0%, 100% { opacity: .22; }
+  50% { opacity: 1; }
+}
+
+.wy-console-entry {
+  margin: 0 auto 28px;
+  width: min(760px, 100%);
+  text-align: center;
+}
+
+.wy-console-button {
+  width: 100%;
+  min-height: 94px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 21px;
+  border: 1px solid var(--phosphor);
+  background: color-mix(in srgb, var(--phosphor) 8%, var(--bg-dark));
+  color: var(--phosphor);
+  text-align: left;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--phosphor) 16%, transparent),
+    inset 0 0 34px color-mix(in srgb, var(--phosphor) 5%, transparent),
+    0 0 24px color-mix(in srgb, var(--phosphor) 9%, transparent);
+  transition: background .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+.wy-console-button:hover {
+  background: color-mix(in srgb, var(--phosphor) 13%, var(--bg-dark));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--phosphor) 28%, transparent),
+    inset 0 0 42px color-mix(in srgb, var(--phosphor) 8%, transparent),
+    0 0 34px color-mix(in srgb, var(--phosphor) 16%, transparent);
+}
+
+.wy-console-button:active { transform: translateY(1px); }
+
+.wy-console-glyph {
+  font-family: var(--font-display);
+  font-size: 36px;
+  opacity: .8;
+}
+
+.wy-console-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.wy-console-copy strong {
+  font-family: var(--font-display);
+  font-size: clamp(25px, 4vw, 40px);
+  font-weight: 400;
+  letter-spacing: .12em;
+}
+
+.wy-console-copy small {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  opacity: .48;
+}
+
+.wy-console-cursor {
+  font-size: 18px;
+  animation: wyCursor 1.05s steps(1, end) infinite;
+}
+
+@keyframes wyCursor {
+  0%, 48% { opacity: 1; }
+  49%, 100% { opacity: 0; }
+}
+
+.wy-console-entry p {
+  margin: 10px auto 0;
+  max-width: 680px;
+  font-size: 10px;
+  line-height: 1.55;
+  letter-spacing: .06em;
+  opacity: .46;
+}
+
+.wy-directory {
+  border: 1px solid color-mix(in srgb, var(--phosphor) 24%, transparent);
+  background: color-mix(in srgb, var(--phosphor) 2.5%, var(--bg-dark));
+}
+
+.wy-directory-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 9px 11px;
+  border-bottom: 1px solid color-mix(in srgb, var(--phosphor) 22%, transparent);
+  font-size: 9px;
+  opacity: .62;
+}
+
+.wy-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.wy-module {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  border-bottom: 1px solid color-mix(in srgb, var(--phosphor) 12%, transparent);
+}
+
+.wy-module:nth-child(odd) {
+  border-right: 1px solid color-mix(in srgb, var(--phosphor) 12%, transparent);
+}
+
+.wy-module-main,
+.wy-help-button {
+  min-height: 49px;
+  background: transparent;
+  color: inherit;
+}
+
+.wy-module-main {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 30px 46px 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 11px;
+  text-align: left;
+  transition: background .14s ease;
+}
+
+.wy-module-main:hover,
+.wy-help-button:hover {
+  background: color-mix(in srgb, var(--phosphor) 8%, transparent);
+}
+
+.wy-module-number {
+  font-size: 9px;
+  opacity: .35;
+}
+
+.wy-module-glyph {
+  font-family: var(--font-display);
+  font-size: 18px;
+  opacity: .75;
+}
+
+.wy-module-label {
+  min-width: 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wy-help-button {
+  width: 42px;
+  border-left: 1px solid color-mix(in srgb, var(--phosphor) 10%, transparent);
+  font-size: 10px;
+  opacity: .42;
+}
+
+.wy-module-help {
+  grid-column: 1 / -1;
+  padding: 7px 11px 9px 95px;
+  border-top: 1px dashed color-mix(in srgb, var(--phosphor) 14%, transparent);
+  font-size: 9px;
+  line-height: 1.5;
+  letter-spacing: .04em;
+  opacity: .56;
+}
+
+.wy-display-panel {
+  padding: 13px;
+  border-top: 1px solid color-mix(in srgb, var(--phosphor) 24%, transparent);
+  background: color-mix(in srgb, var(--phosphor) 4%, var(--bg-dark));
+}
+
+.wy-display-title {
+  margin-bottom: 11px;
+  font-size: 9px;
+  opacity: .5;
+}
+
+.wy-display-group {
+  display: grid;
+  grid-template-columns: 94px 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.wy-display-label {
+  font-size: 9px;
+  opacity: .5;
+}
+
+.wy-display-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wy-display-options button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 52px;
+  padding: 5px 8px;
+  border: 1px solid color-mix(in srgb, var(--phosphor) 18%, transparent);
+  background: var(--bg-dark);
+  color: var(--phosphor);
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+.wy-display-options button:hover,
+.wy-display-options button.is-active {
+  border-color: var(--phosphor);
+  background: color-mix(in srgb, var(--phosphor) 10%, var(--bg-dark));
+}
+
+.wy-swatch {
+  width: 7px;
+  height: 7px;
+  border: 1px solid rgba(255,255,255,.25);
+}
+
+.wy-home-footer {
+  margin-top: auto;
+  padding: 8px 11px;
+  font-size: 8px;
+  opacity: .45;
+}
+
+.wy-footer-center { text-align: center; }
+
+.wy-home-return {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 65;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--phosphor) 38%, transparent);
+  background: color-mix(in srgb, var(--phosphor) 7%, var(--bg-dark));
+  color: var(--phosphor);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .13em;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--phosphor) 7%, transparent);
+}
+
+.wy-home-return:hover {
+  background: color-mix(in srgb, var(--phosphor) 14%, var(--bg-dark));
+}
+
+/* The consult window is the primary interface now. */
+.david-consult-window {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--phosphor) 18%, transparent),
+    0 24px 80px rgba(0,0,0,.72),
+    0 0 42px color-mix(in srgb, var(--phosphor) 8%, transparent);
+}
+
+.david-consult-window.is-expanded {
+  position: fixed;
+  z-index: 95;
+  width: min(900px, calc(100vw - 30px));
+  height: min(720px, calc(100vh - 30px));
+  left: 50%;
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+}
+
+.david-consult-window.is-compact {
+  position: fixed;
+  z-index: 95;
+  width: min(420px, calc(100vw - 24px));
+  height: min(520px, calc(100vh - 24px));
+  right: 12px;
+  bottom: 12px;
+  left: auto;
+  top: auto;
+  transform: none;
+}
+
+@media (max-width: 720px) {
+  .wy-home-frame {
+    width: min(100% - 18px, 1180px);
+    padding-top: 9px;
+  }
+
+  .wy-corp-header {
+    align-items: flex-start;
+  }
+
+  .wy-display-readout {
+    flex-direction: column;
+    gap: 2px;
+    text-align: right;
+  }
+
+  .wy-subkicker { display: none; }
+
+  .wy-home-main {
+    padding: 24px 0 28px;
+  }
+
+  .wy-directory-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wy-module:nth-child(odd) { border-right: none; }
+
+  .wy-directory-heading span:last-child { display: none; }
+
+  .wy-console-button {
+    min-height: 82px;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .wy-console-cursor { display: none; }
+
+  .wy-module-main {
+    grid-template-columns: 26px 42px 1fr;
+  }
+
+  .wy-module-help {
+    padding-left: 12px;
+  }
+
+  .wy-display-group {
+    grid-template-columns: 1fr;
+  }
+
+  .wy-home-footer .wy-footer-center { display: none; }
+
+  .david-consult-window.is-expanded,
+  .david-consult-window.is-compact {
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    transform: none;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+  }
+}
