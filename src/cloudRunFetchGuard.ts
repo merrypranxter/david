@@ -14,6 +14,15 @@ const nativeFetch = window.fetch.bind(window);
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+function safeAbsoluteUrl(rawUrl: string | undefined | null): string | null {
+  if (!rawUrl) return null;
+  try {
+    return new URL(rawUrl, window.location.href).toString();
+  } catch {
+    return null;
+  }
+}
+
 function isSameOriginApiRequest(input: RequestInfo | URL): boolean {
   try {
     const rawUrl =
@@ -30,7 +39,7 @@ function isSameOriginApiRequest(input: RequestInfo | URL): boolean {
 }
 
 async function isCloudRunCookieCheck(response: Response): Promise<boolean> {
-  if (response.url.includes('__cookie_check')) return true;
+  if (response.url && response.url.includes('__cookie_check')) return true;
 
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('text/html')) return false;
@@ -49,6 +58,12 @@ async function isCloudRunCookieCheck(response: Response): Promise<boolean> {
 }
 
 async function executeCookieHandshake(checkUrl: string): Promise<void> {
+  const safeUrl = safeAbsoluteUrl(checkUrl);
+  if (!safeUrl) {
+    console.warn('[DAVID] Cookie-check URL was invalid; skipping iframe handshake and allowing caller retry logic to handle it.');
+    return;
+  }
+
   await new Promise<void>((resolve) => {
     const iframe = document.createElement('iframe');
     let finished = false;
@@ -77,8 +92,17 @@ async function executeCookieHandshake(checkUrl: string): Promise<void> {
     };
     iframe.onerror = finish;
 
-    document.body.appendChild(iframe);
-    iframe.src = checkUrl;
+    try {
+      // Assign src before insertion. Safari/WebKit can throw a DOMException
+      // ("The string did not match the expected pattern") for malformed or
+      // preview-specific redirect strings; keep that from taking DAVID down.
+      iframe.src = safeUrl;
+      document.body.appendChild(iframe);
+    } catch (error) {
+      console.warn('[DAVID] Cookie-check iframe could not be created:', error);
+      finish();
+      return;
+    }
 
     // Never let a broken preview handshake stall DAVID indefinitely.
     window.setTimeout(finish, 4500);
@@ -99,7 +123,13 @@ export const apiFetch = async (input: RequestInfo | URL, init?: RequestInit): Pr
   for (let recovery = 0; recovery < 2; recovery++) {
     if (!(await isCloudRunCookieCheck(response))) break;
 
-    const checkUrl = response.url || new URL('/__cookie_check.html', window.location.href).toString();
+    const fallbackCheckUrl = safeAbsoluteUrl('/__cookie_check.html');
+    const checkUrl = safeAbsoluteUrl(response.url) || fallbackCheckUrl;
+    if (!checkUrl) {
+      console.warn('[DAVID] Could not normalize Cloud Run cookie-check URL; returning original response.');
+      break;
+    }
+
     console.warn('[DAVID] Cloud Run preview cookie handshake intercepted; repairing session and replaying API request.');
 
     await executeCookieHandshake(checkUrl);
