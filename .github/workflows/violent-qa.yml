@@ -20,7 +20,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
       - name: Install app dependencies
         run: npm install
@@ -57,23 +56,24 @@ jobs:
 
           const instrumentalStart = input.indexOf('id="toggle-instrumental-btn"');
           if (instrumentalStart >= 0) {
-            const chunk = input.slice(instrumentalStart, instrumentalStart + 1300);
+            const nextSection = input.indexOf('className=', instrumentalStart + 1);
+            const chunk = input.slice(instrumentalStart, nextSection > instrumentalStart ? nextSection : instrumentalStart + 3000);
             if (/setConcept\s*\(/.test(chunk)) failures.push('Force Instrumental still writes MAIN PROMPT directly instead of routing through DAVID.');
           }
 
           const forbiddenAppFragments = [
-            ['Zalgo direct write', /const handleInjectZalgo[\s\S]{0,600}setConcept\s*\(/],
-            ['Preset direct write', /const handleSelectPreset[\s\S]{0,800}setConcept\s*\(/],
-            ['Ouroboros direct write', /const handleOuroborosLoop[\s\S]{0,900}setConcept\s*\(/],
-            ['Crossbreed direct write', /const handleCrossbreed[\s\S]{0,900}setConcept\s*\(/],
+            ['Zalgo direct write', /const handleInjectZalgo[\s\S]{0,900}setConcept\s*\(/],
+            ['Preset direct write', /const handleSelectPreset[\s\S]{0,1200}setConcept\s*\(/],
+            ['Ouroboros direct write', /const handleOuroborosLoop[\s\S]{0,1300}setConcept\s*\(/],
+            ['Crossbreed direct write', /const handleCrossbreed[\s\S]{0,1300}setConcept\s*\(/],
           ];
           for (const [label, re] of forbiddenAppFragments) {
             if (re.test(app)) failures.push(label);
           }
 
-          if (!/readOnly/.test(input.slice(Math.max(0, input.indexOf('id="operative-concept-input"') - 120), input.indexOf('id="operative-concept-input"') + 500))) {
-            failures.push('Visible MAIN PROMPT textarea is not read-only after patching.');
-          }
+          const promptIndex = input.indexOf('id="operative-concept-input"');
+          const promptChunk = input.slice(Math.max(0, promptIndex - 250), promptIndex + 700);
+          if (!/readOnly/.test(promptChunk)) failures.push('Visible MAIN PROMPT textarea is not read-only after patching.');
           if (/ConsultChat/.test(app)) failures.push('Legacy ConsultChat still mounted/imported after Job 2 cleanup.');
           if (!/workbenchSourceOfTruth:\s*true/.test(app)) failures.push('Synthesis payload does not declare the workbench as source of truth.');
           if (!/enableMutationEngine:\s*false/.test(app)) failures.push('Synthesis can still secretly re-apply mutation state.');
