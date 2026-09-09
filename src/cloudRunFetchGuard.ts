@@ -1,38 +1,26 @@
 /*
- * Google AI Studio / Cloud Run preview can occasionally redirect an API POST
- * to /__cookie_check.html. A normal fetch follows that redirect and receives
- * the cookie-check HTML, but it never executes the page, so retrying the POST
- * simply loops forever.
+ * Minimal Google AI Studio / Cloud Run preview fetch guard.
  *
- * This guard sits underneath DAVID's existing API helper. For same-origin
- * /api/* calls only, it detects the real Cloud Run cookie-check response,
- * loads that page in a hidden iframe so its handshake can execute, then
- * replays the original request with the newly-established preview session.
+ * Previous versions normalized preview redirect URLs with the URL constructor
+ * and replayed the exact response URL into a hidden iframe. In some Studio /
+ * browser combinations that path can throw the DOMException:
+ * "The string did not match the expected pattern".
+ *
+ * This version deliberately avoids URL parsing for same-origin /api/* calls
+ * and never assigns an arbitrary redirect URL to an iframe. If Cloud Run asks
+ * for its cookie check, we execute only the known literal cookie-check path,
+ * then replay the original request once.
  */
 
 const nativeFetch = window.fetch.bind(window);
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-function safeAbsoluteUrl(rawUrl: string | undefined | null): string | null {
-  if (!rawUrl) return null;
+function isLocalApiRequest(input: RequestInfo | URL): boolean {
+  if (typeof input === 'string') return input.startsWith('/api/');
   try {
-    return new URL(rawUrl, window.location.href).toString();
-  } catch {
-    return null;
-  }
-}
-
-function isSameOriginApiRequest(input: RequestInfo | URL): boolean {
-  try {
-    const rawUrl =
-      typeof input === 'string'
-        ? input
-        : input instanceof URL
-          ? input.toString()
-          : input.url;
-    const parsed = new URL(rawUrl, window.location.href);
-    return parsed.origin === window.location.origin && parsed.pathname.startsWith('/api/');
+    const url = input instanceof URL ? input.pathname : new URL(input.url).pathname;
+    return url.startsWith('/api/');
   } catch {
     return false;
   }
@@ -50,20 +38,14 @@ async function isCloudRunCookieCheck(response: Response): Promise<boolean> {
     return (
       head.includes('<title>cookie check</title>') ||
       head.includes('__cookie_check') ||
-      (head.includes('cookie') && head.includes('cloud run') && head.includes('redirect'))
+      (head.includes('cookie') && head.includes('cloud run'))
     );
   } catch {
     return false;
   }
 }
 
-async function executeCookieHandshake(checkUrl: string): Promise<void> {
-  const safeUrl = safeAbsoluteUrl(checkUrl);
-  if (!safeUrl) {
-    console.warn('[DAVID] Cookie-check URL was invalid; skipping iframe handshake and allowing caller retry logic to handle it.');
-    return;
-  }
-
+async function executeCookieHandshake(): Promise<void> {
   await new Promise<void>((resolve) => {
     const iframe = document.createElement('iframe');
     let finished = false;
@@ -71,7 +53,7 @@ async function executeCookieHandshake(checkUrl: string): Promise<void> {
     const finish = () => {
       if (finished) return;
       finished = true;
-      iframe.remove();
+      try { iframe.remove(); } catch {}
       resolve();
     };
 
@@ -84,57 +66,44 @@ async function executeCookieHandshake(checkUrl: string): Promise<void> {
     iframe.style.pointerEvents = 'none';
     iframe.style.left = '-9999px';
     iframe.style.top = '-9999px';
-
-    iframe.onload = () => {
-      // Give any cookie-setting / redirect script in the check page a moment
-      // to finish before removing the frame and replaying the POST.
-      window.setTimeout(finish, 350);
-    };
+    iframe.onload = () => window.setTimeout(finish, 300);
     iframe.onerror = finish;
 
     try {
-      // Assign src before insertion. Safari/WebKit can throw a DOMException
-      // ("The string did not match the expected pattern") for malformed or
-      // preview-specific redirect strings; keep that from taking DAVID down.
-      iframe.src = safeUrl;
+      // Known literal path only. No URL constructor, no response URL replay.
+      iframe.setAttribute('src', '/__cookie_check.html');
       document.body.appendChild(iframe);
     } catch (error) {
-      console.warn('[DAVID] Cookie-check iframe could not be created:', error);
+      console.warn('[DAVID] Studio cookie handshake unavailable; caller will receive the original response.', error);
       finish();
-      return;
     }
 
-    // Never let a broken preview handshake stall DAVID indefinitely.
-    window.setTimeout(finish, 4500);
+    window.setTimeout(finish, 3500);
   });
 
-  await sleep(250);
+  await sleep(150);
 }
 
 export const apiFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-  if (!isSameOriginApiRequest(input)) {
-    return nativeFetch(input, init);
-  }
+  if (!isLocalApiRequest(input)) return nativeFetch(input, init);
 
-  let response = await nativeFetch(input, init);
-
-  // Two internal recoveries are enough; DAVID's higher-level apiPost helper
-  // still owns ordinary network/transient retry behavior.
-  for (let recovery = 0; recovery < 2; recovery++) {
-    if (!(await isCloudRunCookieCheck(response))) break;
-
-    const fallbackCheckUrl = safeAbsoluteUrl('/__cookie_check.html');
-    const checkUrl = safeAbsoluteUrl(response.url) || fallbackCheckUrl;
-    if (!checkUrl) {
-      console.warn('[DAVID] Could not normalize Cloud Run cookie-check URL; returning original response.');
-      break;
-    }
-
-    console.warn('[DAVID] Cloud Run preview cookie handshake intercepted; repairing session and replaying API request.');
-
-    await executeCookieHandshake(checkUrl);
+  let response: Response;
+  try {
     response = await nativeFetch(input, init);
+  } catch (error) {
+    // Preserve the real browser error for the workbench instead of creating a
+    // second DOMException inside preview-repair code.
+    throw error;
   }
 
-  return response;
+  if (!(await isCloudRunCookieCheck(response))) return response;
+
+  console.warn('[DAVID] Studio cookie check detected; executing known handshake and replaying request once.');
+  await executeCookieHandshake();
+
+  try {
+    return await nativeFetch(input, init);
+  } catch {
+    return response;
+  }
 };
