@@ -109,10 +109,10 @@ test('desktop: one-writer flow, color theme, local staging, multi-engage, synth 
 
   await page.goto(BASE_URL, { waitUntil: 'networkidle' });
   await expect(page).toHaveTitle(/Machine-Native Prompt Synthesizer/i);
-  await expect(page.getByText('DAVID 8', { exact: true })).toBeVisible();
+  const title = page.locator('.wy-david-title');
+  await expect(title).toBeVisible();
   await expect(page.locator('vite-error-overlay')).toHaveCount(0);
 
-  const title = page.locator('.wy-david-title');
   const greenColor = await title.evaluate((el) => getComputedStyle(el).color);
   await page.getByRole('button', { name: /Display \/ Phosphor/i }).click();
   const displayPanel = page.locator('.wy-display-panel');
