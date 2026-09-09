@@ -631,11 +631,11 @@ export const DiscoveryLabPanel: React.FC<DiscoveryLabPanelProps> = ({
  onClick={(e) => {
  e.stopPropagation();
  onApplyPromptToInput(currentExperiment.controlVariant.promptText);
- showToast('Applied Control Prompt to Synthesis Input');
+ showToast('Sent Control Prompt to DAVID for reconciliation');
  }}
  className="text-[9px] font-display uppercase tracking-widest font-bold px-2 py-1 bg-phosphor/10 hover:bg-phosphor/20 text-phosphor border terminal-border border-phosphor/40 transition-colors"
  >
- Apply to Input
+ APPLY SECTION → DAVID
  </button>
  )}
  </div>
@@ -760,7 +760,7 @@ export const DiscoveryLabPanel: React.FC<DiscoveryLabPanelProps> = ({
  onClick={(e) => {
  e.stopPropagation();
  onApplyPromptToInput(variant.promptText);
- showToast('Applied Variant Prompt to Synthesis Input');
+ showToast('Sent Variant Prompt to DAVID for reconciliation');
  }}
  className="text-[9px] font-display uppercase tracking-widest font-bold px-2 py-1 bg-phosphor/10 hover:bg-phosphor/20 text-phosphor border terminal-border border-phosphor/40 transition-colors"
  >

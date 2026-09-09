@@ -6,7 +6,11 @@ const workbenchPath = 'src/components/DavidAppWorkbench.tsx';
 function extractFunction(source, name) {
   const start = source.indexOf(`const ${name} =`);
   if (start < 0) return '';
-  const next = source.indexOf('\n const ', start + 8);
+  const lineStart = source.lastIndexOf('\n', start);
+  const indent = lineStart >= 0 ? source.slice(lineStart + 1, start) : '';
+  const nextPattern = new RegExp('\n' + indent + 'const ');
+  const match = source.slice(start + 8).match(nextPattern);
+  const next = match ? start + 8 + match.index : -1;
   return source.slice(start, next > start ? next : Math.min(source.length, start + 12000));
 }
 
@@ -61,7 +65,7 @@ function runGuardrails() {
     if (/if \(recipe\.concept\) setConcept\(recipe\.concept\)/.test(recipe)) {
       failures.push('Saved recipe prompt still bypasses DAVID.');
     }
-    if (!recipe.includes("source: 'saved-recipe'")) {
+    if (!recipe.includes("source: 'saved-recipe'") && !recipe.includes('source: "saved-recipe"')) {
       failures.push('Saved recipe prompt is not routed through DAVID.');
     }
   }

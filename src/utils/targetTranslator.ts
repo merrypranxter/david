@@ -262,9 +262,14 @@ export function translateForTarget(input: TranslateTargetInput): TranslateTarget
   if (target === 'suno') {
     const audioData = translateToAudioPhenotype(recipe, concept, entropyLevel, effectiveInstrumental);
 
+    const sunoStyleSeedMatch = concept.match(/<<<SUNO_STYLE_SEED_START>>>\n?([\s\S]*?)\n?<<<SUNO_STYLE_SEED_END>>>/);
+    const sunoLyricsSeedMatch = concept.match(/<<<SUNO_LYRICS_SEED_START>>>\n?([\s\S]*?)\n?<<<SUNO_LYRICS_SEED_END>>>/);
+    const sunoStyleCore = (sunoStyleSeedMatch?.[1] || baseCore || '').trim();
+    const sunoLyricsCore = (sunoLyricsSeedMatch?.[1] || '').trim();
+
     const styleParts: string[] = [];
     // Base musical intent
-    styleParts.push(baseCore);
+    styleParts.push(sunoStyleCore);
 
     if (audioData.styleElements.length > 0) {
       styleParts.push(audioData.styleElements.join(', '));
@@ -292,11 +297,15 @@ export function translateForTarget(input: TranslateTargetInput): TranslateTarget
       if (audioData.lyricsDirectives.length > 0) {
         lyricsParts.push(audioData.lyricsDirectives.join('\n'));
       }
-      lyricsParts.push('[Verse: Phonetic syllables]');
-      lyricsParts.push('vel-sha tohr khrat-no va-zeem');
-      lyricsParts.push('[Chorus: Rhythmic acoustic drive]');
-      lyricsParts.push('soh-ren khla-vek oom-plih dah-khrr');
-      lyricsParts.push('[Outro: Harmonic dissolution]');
+      if (sunoLyricsCore) {
+        lyricsParts.push(sunoLyricsCore);
+      } else {
+        lyricsParts.push('[Verse: Phonetic syllables]');
+        lyricsParts.push('vel-sha tohr khrat-no va-zeem');
+        lyricsParts.push('[Chorus: Rhythmic acoustic drive]');
+        lyricsParts.push('soh-ren khla-vek oom-plih dah-khrr');
+        lyricsParts.push('[Outro: Harmonic dissolution]');
+      }
     }
 
     let lyricsPrompt = filterMutationJargon(lyricsParts.join('\n'), 'suno');

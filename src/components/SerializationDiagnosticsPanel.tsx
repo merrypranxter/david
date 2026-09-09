@@ -461,7 +461,7 @@ export const SerializationDiagnosticsPanel: React.FC<SerializationDiagnosticsPan
  onClick={() => onApplyMutatedPrompt(mutationResult.serializedExperimentalInput)}
  className="px-2.5 py-0.5 bg-phosphor/10 hover:bg-phosphor/20 border terminal-border border-phosphor/40 text-phosphor text-[9px] font-display uppercase tracking-widest font-bold transition-all shadow-sm"
  >
- Use in Prompt
+ APPLY SECTION → DAVID
  </button>
  )}
  </div>

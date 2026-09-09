@@ -381,7 +381,7 @@ export const ContextDiagnosticsPanel: React.FC<ContextDiagnosticsPanelProps> = (
  className="mt-2 w-full flex items-center justify-center gap-1.5 py-1 px-2 bg-phosphor/10 border border-phosphor/30 terminal-border text-phosphor hover:bg-phosphor/20 transition-colors text-xs"
  >
  <Sparkles className="w-3.5 h-3.5" />
- Apply Rendered Sequence to Main Prompt
+ APPLY SECTION → DAVID
  </button>
  )}
  </div>

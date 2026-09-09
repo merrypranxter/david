@@ -159,10 +159,10 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
  if (isSuno) {
  return (
  `### [LITERAL] - THE SCALPEL\n` +
- `[STYLE - 1,000 CAP]\n${safeLiteral.stylePrompt || safeLiteral.prompt || ''}\n\n` +
+ `[STYLE - 999 CAP]\n${safeLiteral.stylePrompt || safeLiteral.prompt || ''}\n\n` +
  `[LYRICS - 3,000 CAP]\n${safeLiteral.lyricsPrompt || ''}\n\n` +
  `### [SLOP] - THE DELUGE\n` +
- `[STYLE - 1,000 CAP]\n${safeSlop.stylePrompt || safeSlop.prompt || ''}\n\n` +
+ `[STYLE - 999 CAP]\n${safeSlop.stylePrompt || safeSlop.prompt || ''}\n\n` +
  `[LYRICS - 3,000 CAP]\n${safeSlop.lyricsPrompt || ''}`
  );
  }
@@ -298,7 +298,7 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
  <div className="flex items-center justify-between text-[11px] font-display tracking-widest uppercase">
  <span className="text-phosphor font-bold flex items-center gap-1.5">
  <Music className="w-3.5 h-3.5" />
- <span>1. Suno Style Box (1,000 Cap):</span>
+ <span>1. Suno Style Box (999 Cap):</span>
  </span>
  <div className="flex items-center gap-2">
  <span className="text-phosphor/70 font-mono text-[10px]">
@@ -499,7 +499,7 @@ export const DualOutputView: React.FC<DualOutputViewProps> = ({
  <div className="flex items-center justify-between text-[11px] font-display tracking-widest uppercase">
  <span className="text-phosphor font-bold flex items-center gap-1.5">
  <Music className="w-3.5 h-3.5" />
- <span>1. Slop Style Box (1,000 Cap):</span>
+ <span>1. Slop Style Box (999 Cap):</span>
  </span>
  <div className="flex items-center gap-2">
  <span className="text-phosphor/70 font-mono text-[10px]">

@@ -10,7 +10,8 @@ import {
  StraitjacketLevel,
 } from '../types';
 import { PRESET_INCANTATIONS } from '../data/presets';
-import { MATH_LEXICON, SCIENCE_LEXICON, SLOP_LEXICON, generateRandomSeeds } from '../data/lexicons';
+import { MATH_LEXICON, SCIENCE_LEXICON, generateRandomSeeds } from '../data/lexicons';
+import { MERRY_DNA_BANKS } from '../data/merryDnaBanks';
 import { 
  Sparkles,
  Zap,
@@ -38,6 +39,7 @@ import {
  FolderHeart,
  Layers, MessageSquare } from 'lucide-react';
 import { ModularPipelineSection } from './ModularPipelineSection';
+import { dispatchDavidIntent } from '../utils/davidWorkbenchBus';
 
 interface PromptInputAreaProps {
  concept: string;
@@ -148,6 +150,25 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  },
  ];
 
+ const parseSunoBuffers = (raw: string) => {
+ const styleMatch = raw.match(/<<<SUNO_STYLE_SEED_START>>>\n?([\s\S]*?)\n?<<<SUNO_STYLE_SEED_END>>>/);
+ const lyricsMatch = raw.match(/<<<SUNO_LYRICS_SEED_START>>>\n?([\s\S]*?)\n?<<<SUNO_LYRICS_SEED_END>>>/);
+ if (styleMatch || lyricsMatch) {
+ return { style: styleMatch?.[1] || '', lyrics: lyricsMatch?.[1] || '' };
+ }
+ return { style: raw || '', lyrics: '' };
+ };
+
+ const encodeSunoBuffers = (style: string, lyrics: string) =>
+ `<<<SUNO_STYLE_SEED_START>>>\n${style}\n<<<SUNO_STYLE_SEED_END>>>\n<<<SUNO_LYRICS_SEED_START>>>\n${lyrics}\n<<<SUNO_LYRICS_SEED_END>>>`;
+
+ const sunoBuffers = parseSunoBuffers(concept);
+ const setSunoBuffer = (buffer: 'style' | 'lyrics', value: string) => {
+ const nextStyle = buffer === 'style' ? value : sunoBuffers.style;
+ const nextLyrics = buffer === 'lyrics' ? value : sunoBuffers.lyrics;
+ setConcept(encodeSunoBuffers(nextStyle, nextLyrics));
+ };
+
  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
  e.preventDefault();
@@ -156,7 +177,12 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  };
 
  const handleInsertTag = (tag: string) => {
- setConcept(concept ? `${concept.trim()} ${tag}` : tag);
+ dispatchDavidIntent({
+  source: 'quick-injection',
+  label: `Quick Injection: ${tag}`,
+  committed: true,
+  changes: { add: tag, target },
+ });
  };
 
  const getEntropyLabel = (lvl: number) => {
@@ -303,11 +329,19 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  type="button"
  id="toggle-instrumental-btn"
  onClick={() => {
- if (concept.toLowerCase().includes('instrumental')) {
- setConcept(concept.replace(/\b(?:instrumental|no vocals)\b/gi, '').trim());
- } else {
- setConcept(concept ? `${concept.trim()} (Instrumental)` : 'Instrumental acoustic piece');
- }
+ const currentlyInstrumental = concept.toLowerCase().includes('instrumental') || concept.toLowerCase().includes('no vocals');
+ dispatchDavidIntent({
+  source: 'instrumental-mode',
+  label: currentlyInstrumental ? 'Disable Instrumental Mode' : 'Enable Instrumental Mode',
+  committed: true,
+  changes: {
+   target,
+   instrumental: !currentlyInstrumental,
+   instruction: currentlyInstrumental
+    ? 'Remove the instrumental/no-vocals constraint from MAIN PROMPT while preserving every unrelated instruction and lock.'
+    : 'Make MAIN PROMPT explicitly instrumental/no-vocals while preserving every unrelated instruction and lock.',
+  },
+ });
  }}
  className={`px-2 py-0.5 border text-[11px] font-mono transition-colors ${
  concept.toLowerCase().includes('instrumental') || concept.toLowerCase().includes('no vocals')
@@ -456,15 +490,70 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  )}
  </div>
 
- {/* Primary Concept Textarea */}
+ {/* Primary Concept / Suno Dual Buffers */}
+ {target === 'suno' ? (
+ <div className="relative pt-2 space-y-3">
+ <div className="absolute top-0 right-0 px-2 py-0.5 bg-phosphor text-theme-bg text-[10px] font-display font-bold uppercase tracking-widest z-10">04 // SUNO DUAL INPUT</div>
+ <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 pt-3">
+ <div className="bg-theme-bg terminal-border p-3 space-y-2">
+ <div className="flex items-center justify-between gap-2">
+ <label className="text-[11px] font-display text-phosphor uppercase tracking-widest flex items-center gap-1.5">
+ <Music className="w-3.5 h-3.5" /> SUNO STYLE
+ </label>
+ <span className={`text-[10px] font-mono ${sunoBuffers.style.length > 999 ? 'text-semantic-red' : 'text-phosphor/60'}`}>
+ {sunoBuffers.style.length}/999
+ </span>
+ </div>
+ <textarea
+ id="suno-style-seed-input"
+ readOnly
+ value={sunoBuffers.style}
+ maxLength={999}
+ onChange={(e) => setSunoBuffer('style', e.target.value)}
+ onKeyDown={handleKeyDown}
+ rows={5}
+ placeholder="Music only: genre collisions, instrumentation, rhythm, production, timbre, acoustic space, vocal character, signal behavior..."
+ className="w-full bg-theme-panel terminal-border focus:border-phosphor p-3 text-xs sm:text-sm font-mono text-phosphor placeholder-phosphor/30 focus:outline-none shadow-inner leading-relaxed"
+ />
+ <p className="text-[10px] font-mono text-phosphor/45 leading-relaxed">
+ Style is its own organism. Hard ceiling: 999 characters. No lyric lines in this buffer.
+ </p>
+ </div>
+
+ <div className="bg-theme-bg terminal-border p-3 space-y-2">
+ <div className="flex items-center justify-between gap-2">
+ <label className="text-[11px] font-display text-phosphor uppercase tracking-widest flex items-center gap-1.5">
+ <FileText className="w-3.5 h-3.5" /> SUNO LYRICS
+ </label>
+ <span className={`text-[10px] font-mono ${sunoBuffers.lyrics.length > 3000 ? 'text-semantic-red' : 'text-phosphor/60'}`}>
+ {sunoBuffers.lyrics.length}/3000
+ </span>
+ </div>
+ <textarea
+ id="suno-lyrics-seed-input"
+ readOnly
+ value={sunoBuffers.lyrics}
+ maxLength={3000}
+ onChange={(e) => setSunoBuffer('lyrics', e.target.value)}
+ onKeyDown={handleKeyDown}
+ rows={9}
+ placeholder="Paste a poem, gibberish, phonetics, equations, Unicode, Zalgo-ready text, or actual lyrics here. David mutates THIS separately from the style."
+ className="w-full bg-theme-panel terminal-border focus:border-phosphor p-3 text-xs sm:text-sm font-mono text-phosphor placeholder-phosphor/30 focus:outline-none shadow-inner leading-relaxed"
+ />
+ <div className="text-[10px] font-mono text-phosphor/45 leading-relaxed space-y-1">
+ <p><span className="text-phosphor">BRACKET LAW:</span> anything not meant to be sung belongs in [square brackets].</p>
+ <p>Examples: [Verse], [Chorus], [Whispered], [Instrumental], [Breakdown: voice fractures into granular static]. Text outside brackets is vocal content.</p>
+ </div>
+ </div>
+ </div>
+ </div>
+ ) : (
  <div className="relative pt-2">
- <div className="absolute top-0 right-0 px-2 py-0.5 bg-phosphor text-theme-bg text-[10px] font-display font-bold uppercase tracking-widest z-10">04 // CONCEPT SEED</div>
+ <div className="absolute top-0 right-0 px-2 py-0.5 bg-phosphor text-theme-bg text-[10px] font-display font-bold uppercase tracking-widest z-10">04 // MAIN PROMPT // DAVID OWNED</div>
  <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
  <label className="text-[11px] font-display text-phosphor/60 uppercase tracking-widest flex items-center gap-1.5">
- <span>Operative Concept:</span>
- <span className={`px-1.5 py-0.5 text-[10px] font-mono font-bold ${
- concept.length > 1000 ? 'bg-phosphor/20 text-phosphor border border-phosphor/30' : 'bg-theme-bg text-phosphor/40'
- }`}>
+ <span>MAIN PROMPT:</span>
+ <span className={`px-1.5 py-0.5 text-[10px] font-mono font-bold ${concept.length > 1000 ? 'bg-phosphor/20 text-phosphor border border-phosphor/30' : 'bg-theme-bg text-phosphor/40'}`}>
  {concept.length} chars
  </span>
  </label>
@@ -477,6 +566,7 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  </div>
  <textarea
  id="operative-concept-input"
+ readOnly
  value={concept}
  onChange={(e) => {
  const val = e.target.value;
@@ -488,7 +578,7 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  }}
  onKeyDown={handleKeyDown}
  rows={3}
- placeholder="Describe your desired sensory output, acoustic paradox, or visual topology..."
+ placeholder="MAIN PROMPT is written by David in the app sidebar."
  className="w-full bg-theme-bg terminal-border focus:border-phosphor p-3 text-xs sm:text-sm font-mono text-phosphor placeholder-phosphor/30 focus:outline-none shadow-inner leading-relaxed"
  />
  <div className="flex flex-wrap items-center gap-1.5 mt-2">
@@ -513,6 +603,7 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  ))}
  </div>
  </div>
+ )}
 
  {/* AI SLOP SEEDING & CONTRADICTION MATRIX */}
  <div className="p-3.5 sm:p-4 bg-theme-panel terminal-border shadow-lg space-y-3.5 relative">
@@ -833,7 +924,7 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  </span>
  </label>
  <span className="text-[10px] font-mono px-1.5 py-0.5 bg-phosphor/20 text-phosphor border border-phosphor/30 terminal-border">
- {SLOP_LEXICON.length} Nodes
+ {MERRY_DNA_BANKS.length} Merry DNA Categories
  </span>
  </div>
  <select
@@ -843,7 +934,7 @@ export const PromptInputArea: React.FC<PromptInputAreaProps> = ({
  className="w-full bg-theme-panel border terminal-border text-[11px] font-mono text-phosphor px-2 py-1 focus:outline-none focus:border-phosphor disabled:opacity-40"
  >
  <option value="">Random / All Internet &amp; Glitch Slop</option>
- {SLOP_LEXICON.map((sl) => (
+ {MERRY_DNA_BANKS.map((sl) => (
  <option key={sl.id} value={sl.id}>
  {sl.name}
  </option>

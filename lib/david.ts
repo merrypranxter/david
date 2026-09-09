@@ -212,6 +212,14 @@ ${DAVID_COGNITIVE_TEMPERAMENT_MODULE}
 
 ${DAVID_CONSULT_MODE_MODULE}
 
+SUNO DUAL-BUFFER PROTOCOL (NON-NEGOTIABLE):
+When target is Suno, STYLE and LYRICS are separate artifacts and must never be merged.
+SUNO STYLE hard ceiling = 999 characters. It describes music only: genre, instrumentation, rhythm, meter, tempo behavior, production, timbre, acoustic space, vocal character, signal behavior, structural musical dynamics. Never place actual lyric lines in STYLE.
+SUNO LYRICS hard ceiling = 3000 characters. It may contain ordinary lyrics, poems, gibberish, phonetics, Unicode, Zalgo-ready text, equations, repetitions, deliberate misspellings, and structural/performance directives.
+BRACKET LAW: Anything that is an instruction and should NOT be sung must be enclosed in square brackets. Examples: [Intro], [Verse], [Chorus], [Bridge], [Outro], [Instrumental], [Whispered], [Vocal: glottal fry], [Breakdown: voice fractures into granular static]. Text outside brackets is intended vocal content. Do not put sung lyric lines inside brackets unless the user explicitly wants the bracketed words vocalized.
+If the input contains <<<SUNO_STYLE_SEED_START>>> / <<<SUNO_STYLE_SEED_END>>> and <<<SUNO_LYRICS_SEED_START>>> / <<<SUNO_LYRICS_SEED_END>>>, treat them as physically separate source buffers. Mutate them independently. Never leak lyric content into style or style prose into lyrics. Preserve intentional gibberish, Unicode, punctuation, Zalgo, equations, repetition, and malformed spelling unless the user requests cleanup.
+
+
 ${DAVID_CREATIVE_JUDGMENT_MODULE}
 ${DAVID_PROMPT_ARCHITECTURE_MODULE}
 ${DAVID_MODEL_TRANSLATOR_MODULE}
@@ -662,7 +670,7 @@ export function generateDavidAlgorithmicSynthesis(params: {
   ];
   const seededContradictions = [
     `Absolute zero combustion within ${material}`,
-    `Mechanical precision operating in fluid non-deterministic chaos`,
+    `Phase-locked crystalline order operating inside fluid non-deterministic chaos`,
     `Phase-locked standing waves in vacuum decay`,
   ];
   const injectedDomains: string[] = [];
@@ -680,7 +688,7 @@ export function generateDavidAlgorithmicSynthesis(params: {
     if (isInstrumental) {
       const literalLyricsBase = `[Instrumental]
 [Intro: Submerged analog drone and resonance sweep, microtonal tuning drift across 4 octaves]
-[Section A: Mechanical timepiece ticking in 5/4 polyrhythmic meter, bronze gears and liquid mercury friction]
+[Section A: Pulsed hydroacoustic resonance in 5/4 polymeter, cavitation clicks and liquid-metal surface tension]
 [Build: Gradual harmonic density expansion, resonant low-pass filter opening over 32 bars]
 [Drop: Heavy sub-bass foundation and modular arpeggios colliding at 28Hz]
 [Section B: Subsurface acoustic reverberation, analog tape flutter, and distant steel percussion]
@@ -700,7 +708,7 @@ Every revolution calibrated to the silent instrument
 
 [Pre-Chorus]
 Vibrations gather in the lower octaves
-Gears of cold brass moving in mechanical precision
+Pressure nodes of cold mineral resonance moving in phase-locked precision
 Atmospheric pressure mounting across the hull
 We record the frequency before the water claims the signal
 
@@ -718,7 +726,7 @@ The liquid column rises against hydraulic friction
 Unmonitored dials counting backwards to origin
 We listen to the resonance between the structural ribs
 Nothing human remains in the acoustic signature
-Only the steady sweep of the calibrated clockwork
+Only the steady sweep of the calibrated standing-wave field
 
 [Chorus]
 Submerged in the deep, ticking in stone
@@ -826,7 +834,7 @@ Master-level visual manifestation: Executed with ultra-high fidelity descriptive
       literalTokenWeights = [`[MOTION: fluid temporal]`, `[LENS: anamorphic 35mm]`, `[COHESION: spatial]`];
       literalTargetParams = `--mode grok_video --fps 24 --duration 6s`;
 
-      const slopVideoBase = `[PARADOX VIDEO ARCHITECTURE: ${subject} undergoing radical state collapse and temporal inversion, hybridized with ${seedStr}], [MOTION DYNAMICS & PHASE REVERSAL: clockwork mechanisms and fluid streams move simultaneously forward and backward through time; ${hallucinationTriggers[0]}], [TEMPORAL MUTATION PROGRESSION: physical surfaces evert in 24fps continuity as interior volume expands outward into neighboring spatial coordinates; shadows detach and move with autonomous velocity vectors], [ENVIRONMENTAL CASCADE: atmospheric air liquefies along shock fronts into vitrified glass lattices before shattering silently upward against gravity], [CAMERA TRAJECTORY: high-speed dolly zoom with extreme lens compression, rolling shutter displacement, and chromatic separation artifacts] --mode grok_video --motion ${Math.min(10, entropyLevel)}`;
+      const slopVideoBase = `[PARADOX VIDEO ARCHITECTURE: ${subject} undergoing radical state collapse and temporal inversion, hybridized with ${seedStr}], [MOTION DYNAMICS & PHASE REVERSAL: reaction fronts and fluid streams propagate simultaneously forward and backward through time; ${hallucinationTriggers[0]}], [TEMPORAL MUTATION PROGRESSION: physical surfaces evert in 24fps continuity as interior volume expands outward into neighboring spatial coordinates; shadows detach and move with autonomous velocity vectors], [ENVIRONMENTAL CASCADE: atmospheric air liquefies along shock fronts into vitrified glass lattices before shattering silently upward against gravity], [CAMERA TRAJECTORY: high-speed dolly zoom with extreme lens compression, rolling shutter displacement, and chromatic separation artifacts] --mode grok_video --motion ${Math.min(10, entropyLevel)}`;
       slopPrompt = saturateToCharacterBudget(slopVideoBase, budget.maxCharacters, { targetEngine: 'grok', subject, concept, preservedAnchors });
     } else {
       const literalImageBase = `[CINEMATIC SCENE: Radically transformed ${subject}, extracted from conventional assumptions and rebuilt into a high-precision mechanical and physical system in ${environment}], [COMPOSITION & HIERARCHY: monumental cinematic framing, asymmetrical rule of thirds, deep layered foreground-to-background spatial hierarchy], [MATERIALITY: ${material}, pristine anisotropic surface reflections, micro-etched textures, and authentic material friction], [LIGHTING & OPTICS: high-contrast directional chiaroscuro, natural optical falloff, volumetric atmosphere, 35mm anamorphic prime lens fidelity] --mode grok_image`;
@@ -1069,6 +1077,13 @@ function normalizeSynthesisData(
 
   return result;
 }
+interface CandidateStep {
+  model: string;
+  label: string;
+  thinkingLevel?: ThinkingLevel;
+  backoffDelayMs: number;
+}
+
 
 export async function synthesize(payload: any): Promise<HandlerResult> {
   const {
@@ -1279,7 +1294,7 @@ export async function synthesize(payload: any): Promise<HandlerResult> {
     }
     if (addSlop) {
       slopDirectives.push(
-        `- INJECT INTERNET SLOP & UNSTABLE VOCABULARY HOARDING: Specifically weave in internet detritus, YTP brainrot, mundane surrealism, and unstable glitch verbs (${slopCategory || 'weirdcore appliances like sentient vending machines & emotional CRT displays, office cubicle purgatory, YTP datamosh seizures, GeoCities ruins, CRT phosphor ghosts, mallsoft liminality, videodrome theology, and unstable adjectives like suppurating, bismuthine, peristaltic, glossolalic'}).`
+        `- INJECT SIGNAL DAMAGE & GENERATIVE FAILURE PHENOMENA: Specifically weave in physically legible corruption, temporal reassignment, codec damage, optical/perceptual instability, and data-glitch behavior (${slopCategory || 'VHS head-switching noise, datamosh motion-vector inheritance, corrupted P/B-frame carryover, bitcrush quantization, CRT raster drift, chromatic aberration, Moiré interference, pixel sorting, feedback trails, scan displacement, packet-loss blocks, and temporal smear'}). /* RETIRED_LEGACY_LIMINAL_SLOP_V2 */`
       );
     }
 
@@ -1293,7 +1308,7 @@ export async function synthesize(payload: any): Promise<HandlerResult> {
       slopDirectives.push(
         `- PARADOX ENGINE [ENGAGED // LOGIC-DEFYING COMBINATIONS & IMPOSSIBLE CONSTRAINTS]:\n` +
           `  Directly inject logic-defying combinations, ontological contradictions, and impossible constraints into the prompt generation process:\n` +
-          `  * Force logic-defying combinations: fuse mutually contradictory phenomena (e.g. cryogenic combustion, friction-free sandpaper, acoustic vacuums emitting roaring white noise, conscious office appliances arguing Gödel incompleteness).\n` +
+          `  * Force logic-defying combinations: fuse mutually contradictory phenomena (e.g. cryogenic combustion, friction-free sandpaper, acoustic vacuums emitting roaring white noise, a bacterial colony whose growth front is constrained by Gödel-incomplete local rules).\n` +
           `  * Impose impossible physical/mathematical constraints: prescribe conditions that fundamentally violate thermodynamics, dimensional topology, or causality (e.g. 0Hz infrasound shockwave shattering matter; a Gabriel's horn with finite volume containing an entire infinite ocean; a Peano space-filling curve undulating as living muscle; casting a shadow brighter than its light source; reverse causality where an echo arrives before the sound).\n` +
           `  * Weave contradiction and impossible instructions directly into prompt tokens, visual camera instructions, and bracketed execution tags [like this].`
       );
@@ -1301,10 +1316,10 @@ export async function synthesize(payload: any): Promise<HandlerResult> {
       slopDirectives.push(
         `- CONTRADICTION / PARADOX MATRIX [MODE: ${String(contradictionMode).toUpperCase()}]:\n` +
           `  Actively construct paradoxes, impossible combinations, and strange juxtapositions:\n` +
-          `  * Things that don't go together at all (e.g. corporate microwave prophecy running inside an 8th-dimensional quasicrystal).\n` +
-          `  * Impossible physical paradoxes (e.g. Gabriel's horn with finite volume containing an entire infinite ocean of boiling lye; a 1D Peano curve wrinkling into solid flesh; 1 sphere cut into 5 non-measurable parts duplicated in an office breakroom).\n` +
+          `  * Things that don't go together at all (e.g. a datamoshed bacterial growth front propagating through an 8th-dimensional quasicrystal projection).\n` +
+          `  * Impossible physical paradoxes (e.g. Gabriel's horn with finite volume containing an entire infinite ocean of boiling lye; a 1D Peano curve wrinkling into solid flesh; one sphere cut into non-measurable parts that reassemble as two incompatible biological boundaries).\n` +
           `  * Things that do go together in deeply weird, uncanny ways.\n` +
-          `  * Radical clashes between high-brow mathematics/sciences and low-brow internet trash.\n` +
+          `  * Radical clashes between mathematical/scientific structure and damaged signal behavior, codec failure, perceptual artifacts, or biological growth.\n` +
           `  * NOTE: These contradictions and vocabulary additions are STRICTLY for the [SLOP] generation, NOT for the [LITERAL] prompt.`
       );
     } else {
@@ -1524,12 +1539,6 @@ Format the output strictly as JSON.`;
     responseMimeType: 'application/json',
   };
 
-  interface CandidateStep {
-    model: string;
-    label: string;
-    thinkingLevel?: ThinkingLevel;
-    backoffDelayMs: number;
-  }
 
   const candidateSteps: CandidateStep[] = [];
 
@@ -2245,7 +2254,7 @@ export async function consult(payload: any): Promise<HandlerResult> {
   if (candidateSteps.length === 0) candidateSteps.push({ model: 'gemini-3.1-flash-lite', label: 'gemini-3.1-flash-lite (Recovery)', backoffDelayMs: 0 });
 
   const systemInstruction = `
-${MERRY_CALIBRATION_MODULE}
+${DAVID_MERRY_CALIBRATION_MODULE}
 ${DAVID_COGNITIVE_TEMPERAMENT_MODULE}
 ${DAVID_CONSULT_MODE_MODULE}
 
@@ -2307,7 +2316,7 @@ If she asks a question about the prompt, diagnose it based on the state.
       if (timeoutId) clearTimeout(timeoutId);
       lastError = err;
       const status = err.status || err.code;
-      if (status === 429) registerModelRateLimit(step.model);
+      if (status === 429) markModelCooldown(step.model);
     }
   }
 

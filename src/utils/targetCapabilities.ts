@@ -33,7 +33,7 @@ export const TARGET_CAPABILITIES: Record<TargetEngine, TargetCapability> = {
       min: 100,
       default: 3800,
       max: 4000,
-      styleMax: 1000,
+      styleMax: 999,
       lyricsMax: 3000,
     },
     supportsLyrics: true,
@@ -43,7 +43,7 @@ export const TARGET_CAPABILITIES: Record<TargetEngine, TargetCapability> = {
     preferredSyntaxStyle: 'dual_buffer_audio',
     defaultVerbosity: 'dense',
     translationGuidance:
-      'Translate all concepts into timbre, acoustics, rhythm, harmony, frequency behavior, instrumentation, and signal decay. Never use visual camera jargon. Allocate ~900-950 chars to style and ~2,700-2,850 chars to lyrics.',
+      'Translate all concepts into timbre, acoustics, rhythm, harmony, frequency behavior, instrumentation, and signal decay. Never use visual camera jargon. Allocate ~900-950 chars to style (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) (hard ceiling 999) and ~2,700-2,850 chars to lyrics.',
     jargonExclusions: [
       'MutationRecipe',
       'semantic distance',
@@ -221,7 +221,7 @@ export function getTargetCharacterLimits(
       min: 100,
       default: 3800,
       max: 4000,
-      styleMax: 1000,
+      styleMax: 999,
       lyricsMax: 3000,
     };
   }

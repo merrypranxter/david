@@ -1043,7 +1043,7 @@ export const GuidanceGeometryPanel: React.FC<GuidanceGeometryPanelProps> = ({
  className="px-3 py-1 bg-phosphor/10 hover:bg-phosphor/20 text-phosphor text-xs font-mono font-medium flex items-center gap-1.5 transition-colors shadow-sm"
  >
  <Sparkles className="w-3.5 h-3.5" />
- <span>Apply to Prompt Canvas</span>
+ <span>APPLY SECTION → DAVID</span>
  </button>
  </div>
  </div>

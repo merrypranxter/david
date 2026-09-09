@@ -1,3 +1,4 @@
+import { MERRY_DNA_ALL_KEYWORDS } from './merryDnaBanks';
 export interface LexiconEntry {
   id: string;
   name: string;
@@ -685,6 +686,7 @@ export function generateRandomSeeds(options: {
   count?: number;
 }): { seeds: string[]; contradictions: string[] } {
   const { addMaths, addSciences, addSlop, mathCategory, scienceCategory, slopCategory, contradictionMode, count = 4 } = options;
+  void slopCategory;
 
   const activePool: { domain: string; keyword: string; cue: string }[] = [];
 
@@ -703,17 +705,21 @@ export function generateRandomSeeds(options: {
   }
 
   if (addSlop) {
-    const list = slopCategory ? SLOP_LEXICON.filter((l) => l.id === slopCategory) : SLOP_LEXICON;
-    list.forEach((entry) => {
-      entry.keywords.forEach((kw) => activePool.push({ domain: 'slop', keyword: kw, cue: entry.visualCue }));
-    });
+    // The old mascot / appliance / office-liminal pool is retired from active mutation seeding.
+    // Keep the legacy export for old saved recipes, but draw new random seeds from MERRY DNA.
+    MERRY_DNA_ALL_KEYWORDS.forEach((kw) =>
+      activePool.push({ domain: 'slop', keyword: kw, cue: 'Merry DNA mechanism / material / phenomenon seed' })
+    );
   }
 
-  // Fallback if none selected: take from all
+  // Fallback if none selected: maths + sciences + MERRY DNA (never legacy mascot/office slop)
   if (activePool.length === 0) {
-    ALL_LEXICONS.forEach((entry) => {
+    [...MATH_LEXICON, ...SCIENCE_LEXICON].forEach((entry) => {
       entry.keywords.forEach((kw) => activePool.push({ domain: entry.domain, keyword: kw, cue: entry.visualCue }));
     });
+    MERRY_DNA_ALL_KEYWORDS.forEach((kw) =>
+      activePool.push({ domain: 'slop', keyword: kw, cue: 'Merry DNA mechanism / material / phenomenon seed' })
+    );
   }
 
   // Shuffle and pick

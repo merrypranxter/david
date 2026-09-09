@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
  MATH_LEXICON,
  SCIENCE_LEXICON,
- SLOP_LEXICON,
  generateRandomSeeds,
 } from '../data/lexicons';
+import { getMerryDnaLexicon } from '../data/merryDnaBanks';
 import { MUTATION_OPERATORS } from '../data/mutationOperators';
 import { LATENT_ATTRACTORS } from '../data/latentFauna';
 import { CREATIVE_PRESSURES } from '../data/creativePressures';
@@ -16,6 +16,7 @@ import {
 } from '../types';
 import { compileMutationRecipe, describeMutationRecipe } from '../utils/recipeCompiler';
 import { getDormantBranches, dormantBranchToParentGeneration } from '../utils/branchArchive';
+import { dispatchDavidIntent } from '../utils/davidWorkbenchBus';
 import {
  Search,
  X,
@@ -57,22 +58,84 @@ interface SlopVaultModalProps {
 export const SlopVaultModal: React.FC<SlopVaultModalProps> = ({
  isOpen,
  onClose,
- selectedSeeds,
- onToggleSeed,
- onSelectMultipleSeeds,
- slopConfig,
- setSlopConfig,
- onUpdateSlopConfig,
+ selectedSeeds: committedSelectedSeeds,
+ onToggleSeed: commitToggleSeed,
+ onSelectMultipleSeeds: commitSelectMultipleSeeds,
+ slopConfig: committedSlopConfig,
+ setSlopConfig: commitSetSlopConfig,
+ onUpdateSlopConfig: commitUpdateSlopConfig,
  entropyLevel = 7,
  currentConcept = 'A surreal sensory scene',
  targetEngine = 'nano',
  onCrossbreedBranch,
- onApplyConcept,
+ onApplyConcept: commitApplyConcept,
 }) => {
+ // MUTATION LAB STAGING V2
+ // Nothing in this modal touches MAIN PROMPT or committed app state until APPLY LAB.
+ const [slopConfig, setDraftSlopConfig] = useState<SlopSeedingConfig>(committedSlopConfig);
+ const [selectedSeeds, setDraftSelectedSeeds] = useState<string[]>(committedSelectedSeeds);
+ const [stagedPromptFragments, setStagedPromptFragments] = useState<string[]>([]);
+ // JOB2_MUTATION_PENDING_V3
+ const committedFingerprint = JSON.stringify({ ...committedSlopConfig, selectedSeeds: committedSelectedSeeds });
+ const draftFingerprint = JSON.stringify({ ...slopConfig, selectedSeeds });
+ const hasLocalChanges = committedFingerprint !== draftFingerprint || stagedPromptFragments.length > 0;
+
+ useEffect(() => {
+  if (!isOpen) return;
+  setDraftSlopConfig(committedSlopConfig);
+  setDraftSelectedSeeds(committedSelectedSeeds);
+  setStagedPromptFragments([]);
+ }, [isOpen]);
+
+ useEffect(() => {
+  dispatchDavidIntent({
+   source: 'mutation-lab',
+   label: 'Mutation Lab',
+   summary: hasLocalChanges
+    ? `${selectedSeeds.length} DNA · ${slopConfig.selectedOperators?.length || 0} operators · ${slopConfig.selectedAttractors?.length || 0} fauna · ${stagedPromptFragments.length} engaged fragments staged locally.`
+    : 'Mutation Lab has no unapplied local changes.',
+   committed: false,
+   changes: {
+    pending: isOpen && hasLocalChanges,
+    selectedSeedCount: selectedSeeds.length,
+    operatorCount: slopConfig.selectedOperators?.length || 0,
+    faunaCount: slopConfig.selectedAttractors?.length || 0,
+    pressureCount: slopConfig.selectedPressures?.length || 0,
+    fragmentCount: stagedPromptFragments.length,
+   },
+  });
+ }, [isOpen, hasLocalChanges, selectedSeeds.length, slopConfig.selectedOperators?.length, slopConfig.selectedAttractors?.length, slopConfig.selectedPressures?.length, stagedPromptFragments.length]);
+
+ const onToggleSeed = (seed: string) => {
+  setDraftSelectedSeeds((prev) =>
+   prev.includes(seed) ? prev.filter((item) => item !== seed) : [...prev, seed]
+  );
+ };
+
+ const onSelectMultipleSeeds = (seeds: string[]) => {
+  setDraftSelectedSeeds((prev) => Array.from(new Set([...prev, ...seeds])));
+ };
+
+ // Slop Methods used to REPLACE the whole concept. Now they stage one or many
+ // candidate fragments so DAVID can decide how to integrate them on APPLY LAB.
+ const onApplyConcept = (fragment: string, intensity: number = 0.8) => {
+  const clean = fragment.trim();
+  if (!clean) return;
+  const staged = `[IMPLEMENTATION STRENGTH: ${Math.round(intensity * 100)}%] ${clean}`;
+  setStagedPromptFragments((prev) =>
+   prev.includes(staged) ? prev : [...prev, staged]
+  );
+ };
+
+ void commitToggleSeed;
+ void commitApplyConcept;
+
  // Main Navigation: 6 Core Tabs (Job 7 & Slop Methods)
  const [activeMainTab, setActiveMainTab] = useState<'dna' | 'operators' | 'fauna' | 'methods' | 'pressures' | 'branches'>('dna');
  // Content DNA sub-tab
  const [dnaSubTab, setDnaSubTab] = useState<'all' | 'maths' | 'sciences' | 'slop'>('all');
+ // MERRY_DNA_CYCLE_V2
+ const [dnaBank, setDnaBank] = useState<number>(0);
  const [searchTerm, setSearchTerm] = useState<string>('');
  const [newAnchorInput, setNewAnchorInput] = useState<string>('');
  const [showRecipePreview, setShowRecipePreview] = useState<boolean>(false);
@@ -89,9 +152,28 @@ export const SlopVaultModal: React.FC<SlopVaultModalProps> = ({
  return [
  ...MATH_LEXICON.map((e) => ({ ...e, domainLabel: 'Maths' })),
  ...SCIENCE_LEXICON.map((e) => ({ ...e, domainLabel: 'Sciences' })),
- ...SLOP_LEXICON.map((e) => ({ ...e, domainLabel: 'Slop' })),
+ ...getMerryDnaLexicon(dnaBank).map((e) => ({ ...e, domainLabel: 'Merry DNA' })),
  ];
- }, []);
+ }, [dnaBank]);
+
+ // PALETTE_LOCK_BRIDGE_V1
+ const selectedPaletteSeeds = useMemo(() => {
+  const paletteEntry = getMerryDnaLexicon(dnaBank).find((entry) => entry.id === 'color_palettes');
+  const paletteKeywords = new Set(paletteEntry?.keywords || []);
+  return selectedSeeds.filter((seed) => paletteKeywords.has(seed));
+ }, [dnaBank, selectedSeeds]);
+
+ const promoteSelectedPaletteToGlobalLock = () => {
+  if (!selectedPaletteSeeds.length) return;
+  window.dispatchEvent(new CustomEvent('david:set-global-lock', {
+   detail: {
+    key: 'palette',
+    value: selectedPaletteSeeds.join(' + '),
+    enabled: true,
+    source: 'mutation-lab-palette',
+   },
+  }));
+ };
 
  const filteredDnaEntries = useMemo(() => {
  let list = allDnaEntries;
@@ -137,11 +219,8 @@ export const SlopVaultModal: React.FC<SlopVaultModalProps> = ({
  }, [searchTerm, activeMainTab]);
 
  const updateConfig = (updater: (prev: SlopSeedingConfig) => SlopSeedingConfig) => {
- if (onUpdateSlopConfig) {
- onUpdateSlopConfig(updater);
- } else if (setSlopConfig) {
- setSlopConfig(updater);
- }
+ // Local only. Sliders, toggles, DNA, operators, fauna and pressures are staged.
+ setDraftSlopConfig(updater);
  };
 
  // Extinct Dormant Branches
@@ -291,16 +370,64 @@ export const SlopVaultModal: React.FC<SlopVaultModalProps> = ({
  }));
  };
 
- // Clear all mutation selections
+ // Clear all mutation selections (still local until APPLY LAB)
  const handleClearAll = () => {
- onSelectMultipleSeeds([]);
+ setDraftSelectedSeeds([]);
+ setStagedPromptFragments([]);
  updateConfig((prev) => ({
  ...prev,
+ selectedSeeds: [],
  selectedOperators: [],
  selectedAttractors: [],
  selectedPressures: [],
  protectedAnchors: [],
  }));
+ };
+
+ const handleApplyLab = () => {
+  if (!hasLocalChanges) {
+   onClose();
+   return;
+  }
+  const finalizedConfig: SlopSeedingConfig = {
+   ...slopConfig,
+   selectedSeeds: [...selectedSeeds],
+  };
+
+  // Commit app state once, after the user is finished with the lab.
+  if (commitUpdateSlopConfig) {
+   commitUpdateSlopConfig(() => finalizedConfig);
+  } else if (commitSetSlopConfig) {
+   commitSetSlopConfig(finalizedConfig);
+  } else if (commitSelectMultipleSeeds) {
+   commitSelectMultipleSeeds(selectedSeeds);
+  }
+
+  dispatchDavidIntent({
+   source: 'mutation-lab',
+   label: 'Mutation Lab Apply',
+   summary: 'Integrate the finished Mutation Lab configuration into MAIN PROMPT using judgment, not tag dumping.',
+   committed: true,
+   priority: 'standard',
+   changes: {
+    activeSection: activeMainTab,
+    contentDna: selectedSeeds,
+    mutationMode: finalizedConfig.mutationMode,
+    operators: finalizedConfig.selectedOperators || [],
+    latentFauna: finalizedConfig.selectedAttractors || [],
+    pressures: finalizedConfig.selectedPressures || [],
+    protectedAnchors: finalizedConfig.protectedAnchors || [],
+    paradoxEngine: finalizedConfig.enableParadoxEngine,
+    contradictionMode: finalizedConfig.contradictionMode,
+    activePipeline: finalizedConfig.activePipeline || [],
+    stagedPromptFragments,
+    targetEngine,
+    entropyLevel,
+   },
+  });
+
+  setStagedPromptFragments([]);
+  onClose();
  };
 
  return (
@@ -323,7 +450,7 @@ export const SlopVaultModal: React.FC<SlopVaultModalProps> = ({
  </span>
  </div>
  <p className="text-xs font-mono text-phosphor/80 hidden sm:block">
- Content DNA &bull; 18 Mutation Operators &bull; 16 Latent Fauna &bull; 5 Optimization Pressures
+ LOCAL STAGING · DAVID HAS NOT SEEN THESE CHANGES · APPLY LAB WHEN FINISHED
  </p>
  </div>
  </div>
@@ -367,6 +494,24 @@ export const SlopVaultModal: React.FC<SlopVaultModalProps> = ({
  <Dices className="w-4 h-4 text-phosphor" />
  <span className="hidden sm:inline">Roll Mutation</span>
  </button>
+
+ {/* APPLY LAB: the only point where this modal talks to DAVID / committed prompt state */}
+ <button
+ type="button"
+ onClick={handleApplyLab}
+ disabled={!hasLocalChanges}
+ className={`flex items-center gap-1.5 px-3 py-1.5 border text-xs font-mono font-bold transition-opacity ${hasLocalChanges ? 'bg-phosphor text-theme-bg border-phosphor hover:opacity-90' : 'bg-theme-panel text-phosphor/35 border-phosphor/20 cursor-not-allowed'}`}
+ title="Commit this finished Mutation Lab session and let David reconcile it into MAIN PROMPT"
+ >
+ <Check className="w-4 h-4" />
+ <span>{hasLocalChanges ? 'APPLY LAB → DAVID' : 'NO LOCAL CHANGES'}</span>
+ </button>
+
+ {hasLocalChanges && (
+  <span className="text-[10px] font-mono px-2 py-0.5 bg-phosphor/10 text-phosphor border border-phosphor/30 terminal-border">
+   LOCAL STAGED · {selectedSeeds.length} DNA · {slopConfig.selectedOperators?.length || 0} OPS · {slopConfig.selectedAttractors?.length || 0} FAUNA · {stagedPromptFragments.length} FRAGMENTS
+  </span>
+ )}
 
  {/* Close Button */}
  <button
@@ -553,14 +698,32 @@ export const SlopVaultModal: React.FC<SlopVaultModalProps> = ({
  }`}
  >
  {sub === 'all'
- ? 'All DNA'
+ ? `All DNA · Bank ${dnaBank + 1}/4`
  : sub === 'maths'
  ? 'Higher Mathematics'
  : sub === 'sciences'
  ? 'Physical Instabilities'
- : 'Internet & Glitch Slop'}
+ : 'Merry DNA / Damage / Biologics'}
  </button>
  ))}
+ <button
+  type="button"
+  onClick={() => setDnaBank((bank) => (bank + 1) % 4)}
+  className="ml-auto px-3 py-1 bg-phosphor text-theme-bg border border-phosphor text-[11px] font-mono font-bold whitespace-nowrap"
+  title="Cycle every Merry DNA category to its next curated bank without losing selected seeds"
+ >
+  CYCLE BANK {dnaBank + 1}/4 → {((dnaBank + 1) % 4) + 1}/4
+ </button>
+ {selectedPaletteSeeds.length > 0 && (
+  <button
+   type="button"
+   onClick={promoteSelectedPaletteToGlobalLock}
+   className="px-3 py-1 bg-theme-panel text-phosphor border border-phosphor text-[11px] font-mono font-bold whitespace-nowrap"
+   title="Promote the currently selected Color Palette DNA seed(s) into the app-wide Palette lock without calling David yet"
+  >
+   LOCK PALETTE ({selectedPaletteSeeds.length})
+  </button>
+ )}
  </div>
 
  {/* DNA Grid */}
