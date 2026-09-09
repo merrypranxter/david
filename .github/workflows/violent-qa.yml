@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/violent-qa.yml'
       - '.github/qa/violent-qa.spec.ts'
+      - 'netlify.toml'
       - 'package.json'
       - 'patch-job3-one-writer-fixes.cjs'
       - 'patch-job2-ux-v3.cjs'
@@ -32,12 +33,20 @@ jobs:
       - name: Install app dependencies
         run: npm install
 
+      - name: Build patched production bundle
+        id: localbuild
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee local-build.log
+
       - name: Install Playwright for QA only
         run: |
           npm install --no-save @playwright/test@1.55.0
           npx playwright install --with-deps chromium
 
-      - name: Let Netlify settle
+      - name: Let Netlify publish this commit
         run: sleep 25
 
       - name: Browser QA
@@ -48,14 +57,10 @@ jobs:
           set -o pipefail
           npx playwright test .github/qa/violent-qa.spec.ts --reporter=line 2>&1 | tee browser-qa.log
 
-      - name: Build-patch source for one-writer audit
-        id: patchsource
+      - name: Capture patched source
         if: always()
         continue-on-error: true
-        shell: bash
         run: |
-          set -o pipefail
-          npm run prebuild 2>&1 | tee patch-source.log
           cp src/App.tsx qa-patched-App.tsx
           cp src/components/PromptInputArea.tsx qa-patched-PromptInputArea.tsx
           cp src/components/DavidAppWorkbench.tsx qa-patched-DavidAppWorkbench.tsx
@@ -117,8 +122,8 @@ jobs:
         if: always()
         run: |
           {
+            echo "build=${{ steps.localbuild.outcome }}"
             echo "browser=${{ steps.browserqa.outcome }}"
-            echo "patch=${{ steps.patchsource.outcome }}"
             echo "static=${{ steps.staticaudit.outcome }}"
           } | tee qa-outcomes.txt
 
@@ -130,7 +135,7 @@ jobs:
           path: |
             test-results/**/*.png
             browser-qa.log
-            patch-source.log
+            local-build.log
             static-audit.log
             qa-outcomes.txt
             qa-patched-App.tsx
@@ -143,6 +148,6 @@ jobs:
         if: always()
         run: |
           cat qa-outcomes.txt
-          if [ "${{ steps.browserqa.outcome }}" != "success" ] || [ "${{ steps.patchsource.outcome }}" != "success" ] || [ "${{ steps.staticaudit.outcome }}" != "success" ]; then
+          if [ "${{ steps.localbuild.outcome }}" != "success" ] || [ "${{ steps.browserqa.outcome }}" != "success" ] || [ "${{ steps.staticaudit.outcome }}" != "success" ]; then
             exit 1
           fi

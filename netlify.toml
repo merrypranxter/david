@@ -4,11 +4,15 @@
 # are served by the Express app in server.ts, but Netlify only hosts static assets +
 # serverless functions, so /api/* is routed to the Netlify Functions in netlify/functions.
 #
+# IMPORTANT: DAVID's current UI/one-writer architecture is assembled by the prebuild
+# patch chain. Do not bypass npm run prebuild here or production will silently ship the
+# old cockpit/Consult build while CI audits a different source tree.
+#
 # Required environment variable (Site configuration -> Environment variables):
 #   GEMINI_API_KEY
 
 [build]
-  command = "node patch-suno-dual-buffers.cjs && vite build"
+  command = "npm run prebuild && vite build"
   publish = "dist"
   functions = "netlify/functions"
 
