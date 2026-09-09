@@ -114,7 +114,7 @@ test('desktop: one-writer flow, color theme, local staging, multi-engage, synth 
   await expect(page.locator('vite-error-overlay')).toHaveCount(0);
 
   const greenColor = await title.evaluate((el) => getComputedStyle(el).color);
-  await page.getByRole('button', { name: /Display \/ Phosphor/i }).click();
+  await page.getByRole('button', { name: '08 Display / Phosphor', exact: true }).click();
   const displayPanel = page.locator('.wy-display-panel');
   await expect(displayPanel).toBeVisible();
   await displayPanel.getByRole('button', { name: 'MAG', exact: true }).click();
