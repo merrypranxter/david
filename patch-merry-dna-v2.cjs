@@ -3,6 +3,41 @@ const fs = require('fs');
 const vaultPath = 'src/components/SlopVaultModal.tsx';
 const lexPath = 'src/data/lexicons.ts';
 const promptPath = 'src/components/PromptInputArea.tsx';
+const dnaPath = 'src/data/merryDnaBanks.ts';
+
+function patchTongueDnaBank() {
+  let content = fs.readFileSync(dnaPath, 'utf8');
+  if (content.includes("id: 'biologics_tongues'")) {
+    console.log('[merry-dna-v2] tongue/oral morphology bank already present');
+    return;
+  }
+
+  const marker = `  {
+    id: 'morphogenesis',`;
+  const tongueBank = `  {
+    id: 'biologics_tongues',
+    name: 'Biologics / Tongues / Oral Morphology',
+    tagline: 'Human and nonhuman tongue microanatomy, papillae, muscular hydrostats, saliva and deformation',
+    visualCue: 'Tongues behave like real wet muscular hydrostats with papillae, mucosal folds and saliva — never generic rubber tentacles.',
+    banks: [
+      ['filiform papillae field', 'fungiform papillae islands', 'circumvallate papillae ring', 'foliate papillae folds', 'median lingual sulcus', 'lingual frenulum tension', 'mucosal epithelial ridges', 'salivary capillary threads'],
+      ['feline keratinized tongue spines', 'chameleon ballistic tongue projection', 'woodpecker hyoid-wrapped tongue', 'anteater vermiform tongue', 'snake bifid chemosensory tongue', 'nectar-bat brush-tipped tongue', 'frog projectile tongue pad', 'hummingbird lamellar nectar tongue'],
+      ['muscular-hydrostat elongation', 'tongue torsion', 'lateral tongue curling', 'tip bifurcation', 'peristaltic lingual wave', 'radial compression / axial extension', 'tongue folding against palate', 'rapid protrusion-retraction motion'],
+      ['macro-scale papillae topology', 'recursive lingual branching', 'tongue-bud budding field', 'interlocking tongue folds', 'glossy mucosal pleating', 'saliva filament bridges', 'gustatory pore microstructures', 'lingual tissue merging into surrounding anatomy'],
+    ],
+  },
+`;
+
+  if (!content.includes(marker)) {
+    console.error('[merry-dna-v2] morphogenesis marker not found; tongue bank not inserted');
+    process.exitCode = 1;
+    return;
+  }
+
+  content = content.replace(marker, tongueBank + marker);
+  fs.writeFileSync(dnaPath, content, 'utf8');
+  console.log('[merry-dna-v2] added four-bank Tongues / Oral Morphology DNA category');
+}
 
 function patchVault() {
   let content = fs.readFileSync(vaultPath, 'utf8');
@@ -138,6 +173,7 @@ function patchPromptSummary() {
   fs.writeFileSync(promptPath, content, 'utf8');
 }
 
+patchTongueDnaBank();
 patchVault();
 patchRandomSeedPool();
 patchPromptSummary();
