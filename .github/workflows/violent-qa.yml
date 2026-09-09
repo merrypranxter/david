@@ -35,20 +35,28 @@ jobs:
       - name: Browser QA
         id: browserqa
         continue-on-error: true
-        run: npx playwright test .github/qa/violent-qa.spec.ts --reporter=line
+        shell: bash
+        run: |
+          set -o pipefail
+          npx playwright test .github/qa/violent-qa.spec.ts --reporter=line 2>&1 | tee browser-qa.log
 
       - name: Build-patch source for one-writer audit
         id: patchsource
         if: always()
         continue-on-error: true
-        run: npm run prebuild
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run prebuild 2>&1 | tee patch-source.log
 
       - name: Single-writer static audit
         id: staticaudit
         if: always()
         continue-on-error: true
+        shell: bash
         run: |
-          node <<'NODE'
+          set -o pipefail
+          node <<'NODE' 2>&1 | tee static-audit.log
           const fs = require('fs');
           const app = fs.readFileSync('src/App.tsx', 'utf8');
           const input = fs.readFileSync('src/components/PromptInputArea.tsx', 'utf8');
@@ -56,8 +64,8 @@ jobs:
 
           const instrumentalStart = input.indexOf('id="toggle-instrumental-btn"');
           if (instrumentalStart >= 0) {
-            const nextSection = input.indexOf('className=', instrumentalStart + 1);
-            const chunk = input.slice(instrumentalStart, nextSection > instrumentalStart ? nextSection : instrumentalStart + 3000);
+            const nextButton = input.indexOf('</button>', instrumentalStart);
+            const chunk = input.slice(instrumentalStart, nextButton > instrumentalStart ? nextButton : instrumentalStart + 3500);
             if (/setConcept\s*\(/.test(chunk)) failures.push('Force Instrumental still writes MAIN PROMPT directly instead of routing through DAVID.');
           }
 
@@ -72,7 +80,7 @@ jobs:
           }
 
           const promptIndex = input.indexOf('id="operative-concept-input"');
-          const promptChunk = input.slice(Math.max(0, promptIndex - 250), promptIndex + 700);
+          const promptChunk = input.slice(Math.max(0, promptIndex - 250), promptIndex + 900);
           if (!/readOnly/.test(promptChunk)) failures.push('Visible MAIN PROMPT textarea is not read-only after patching.');
           if (/ConsultChat/.test(app)) failures.push('Legacy ConsultChat still mounted/imported after Job 2 cleanup.');
           if (!/workbenchSourceOfTruth:\s*true/.test(app)) failures.push('Synthesis payload does not declare the workbench as source of truth.');
@@ -86,18 +94,32 @@ jobs:
           console.log('DAVID one-writer static audit passed.');
           NODE
 
-      - name: Upload QA screenshots
+      - name: Record raw QA outcomes
+        if: always()
+        run: |
+          {
+            echo "browser=${{ steps.browserqa.outcome }}"
+            echo "patch=${{ steps.patchsource.outcome }}"
+            echo "static=${{ steps.staticaudit.outcome }}"
+          } | tee qa-outcomes.txt
+
+      - name: Upload QA evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: david-violent-qa-screenshots
-          path: test-results/**/*.png
+          name: david-violent-qa-evidence
+          path: |
+            test-results/**/*.png
+            browser-qa.log
+            patch-source.log
+            static-audit.log
+            qa-outcomes.txt
           if-no-files-found: warn
 
       - name: Final QA gate
         if: always()
         run: |
-          echo "browser=${{ steps.browserqa.outcome }} patch=${{ steps.patchsource.outcome }} static=${{ steps.staticaudit.outcome }}"
+          cat qa-outcomes.txt
           if [ "${{ steps.browserqa.outcome }}" != "success" ] || [ "${{ steps.patchsource.outcome }}" != "success" ] || [ "${{ steps.staticaudit.outcome }}" != "success" ]; then
             exit 1
           fi
