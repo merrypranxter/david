@@ -34,6 +34,7 @@ export function DraggableDavidLauncher() {
   const [position, setPosition] = useState<Pos>(() => loadPosition());
   const [dragging, setDragging] = useState(false);
   const pointerRef = useRef<{ id: number; dx: number; dy: number; moved: boolean } | null>(null);
+  const suppressClickRef = useRef(false);
 
   useEffect(() => {
     const handleResize = () => setPosition((p) => clampPosition(p.x, p.y));
@@ -48,6 +49,7 @@ export function DraggableDavidLauncher() {
 
   const onPointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
+    suppressClickRef.current = false;
     pointerRef.current = {
       id: event.pointerId,
       dx: event.clientX - rect.left,
@@ -69,6 +71,7 @@ export function DraggableDavidLauncher() {
   const finishDrag = (event: React.PointerEvent<HTMLButtonElement>) => {
     const drag = pointerRef.current;
     if (!drag || drag.id !== event.pointerId) return;
+    suppressClickRef.current = drag.moved;
     try { event.currentTarget.releasePointerCapture(event.pointerId); } catch {}
     save(position);
     pointerRef.current = null;
@@ -76,7 +79,10 @@ export function DraggableDavidLauncher() {
   };
 
   const onClick = () => {
-    if (pointerRef.current?.moved) return;
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
     window.dispatchEvent(new CustomEvent('david:open-workbench'));
   };
 
@@ -96,7 +102,6 @@ export function DraggableDavidLauncher() {
         top: position.y,
         cursor: dragging ? 'grabbing' : 'grab',
         boxShadow: '0 0 8px rgba(var(--color-phosphor),0.18)',
-        willChange: dragging ? 'transform' : 'auto',
       }}
     >
       <MessageSquare size={16} />
