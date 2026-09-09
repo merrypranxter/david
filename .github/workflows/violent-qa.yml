@@ -5,6 +5,14 @@ on:
   push:
     paths:
       - '.github/workflows/violent-qa.yml'
+      - '.github/qa/violent-qa.spec.ts'
+      - 'package.json'
+      - 'patch-job3-one-writer-fixes.cjs'
+      - 'patch-job2-ux-v3.cjs'
+      - 'patch-workbench-v2.cjs'
+      - 'patch-mutation-staging-v2.cjs'
+      - 'patch-slop-methods-staging-v2.cjs'
+      - 'patch-synthesis-source-of-truth-v2.cjs'
 
 jobs:
   violent-qa:
@@ -67,6 +75,7 @@ jobs:
             const nextButton = input.indexOf('</button>', instrumentalStart);
             const chunk = input.slice(instrumentalStart, nextButton > instrumentalStart ? nextButton : instrumentalStart + 3500);
             if (/setConcept\s*\(/.test(chunk)) failures.push('Force Instrumental still writes MAIN PROMPT directly instead of routing through DAVID.');
+            if (!/dispatchDavidIntent\s*\(/.test(chunk)) failures.push('Force Instrumental does not hand its decision to DAVID.');
           }
 
           const forbiddenAppFragments = [
@@ -82,7 +91,7 @@ jobs:
           const promptIndex = input.indexOf('id="operative-concept-input"');
           const promptChunk = input.slice(Math.max(0, promptIndex - 250), promptIndex + 900);
           if (!/readOnly/.test(promptChunk)) failures.push('Visible MAIN PROMPT textarea is not read-only after patching.');
-          if (/ConsultChat/.test(app)) failures.push('Legacy ConsultChat still mounted/imported after Job 2 cleanup.');
+          if (/import\s+\{\s*ConsultChat\s*\}/.test(app) || /<ConsultChat\b/.test(app)) failures.push('Legacy ConsultChat is still mounted or imported after cleanup.');
           if (!/workbenchSourceOfTruth:\s*true/.test(app)) failures.push('Synthesis payload does not declare the workbench as source of truth.');
           if (!/enableMutationEngine:\s*false/.test(app)) failures.push('Synthesis can still secretly re-apply mutation state.');
 
