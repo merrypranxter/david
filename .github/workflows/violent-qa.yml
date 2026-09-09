@@ -1,0 +1,103 @@
+name: DAVID Violent QA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/violent-qa.yml'
+
+jobs:
+  violent-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DAVID_BASE_URL: https://thedavidapp.netlify.app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install app dependencies
+        run: npm install
+
+      - name: Install Playwright for QA only
+        run: |
+          npm install --no-save @playwright/test@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Let Netlify settle
+        run: sleep 35
+
+      - name: Browser QA
+        id: browserqa
+        continue-on-error: true
+        run: npx playwright test .github/qa/violent-qa.spec.ts --reporter=line
+
+      - name: Build-patch source for one-writer audit
+        id: patchsource
+        if: always()
+        continue-on-error: true
+        run: npm run prebuild
+
+      - name: Single-writer static audit
+        id: staticaudit
+        if: always()
+        continue-on-error: true
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const app = fs.readFileSync('src/App.tsx', 'utf8');
+          const input = fs.readFileSync('src/components/PromptInputArea.tsx', 'utf8');
+          const failures = [];
+
+          const instrumentalStart = input.indexOf('id="toggle-instrumental-btn"');
+          if (instrumentalStart >= 0) {
+            const chunk = input.slice(instrumentalStart, instrumentalStart + 1300);
+            if (/setConcept\s*\(/.test(chunk)) failures.push('Force Instrumental still writes MAIN PROMPT directly instead of routing through DAVID.');
+          }
+
+          const forbiddenAppFragments = [
+            ['Zalgo direct write', /const handleInjectZalgo[\s\S]{0,600}setConcept\s*\(/],
+            ['Preset direct write', /const handleSelectPreset[\s\S]{0,800}setConcept\s*\(/],
+            ['Ouroboros direct write', /const handleOuroborosLoop[\s\S]{0,900}setConcept\s*\(/],
+            ['Crossbreed direct write', /const handleCrossbreed[\s\S]{0,900}setConcept\s*\(/],
+          ];
+          for (const [label, re] of forbiddenAppFragments) {
+            if (re.test(app)) failures.push(label);
+          }
+
+          if (!/readOnly/.test(input.slice(Math.max(0, input.indexOf('id="operative-concept-input"') - 120), input.indexOf('id="operative-concept-input"') + 500))) {
+            failures.push('Visible MAIN PROMPT textarea is not read-only after patching.');
+          }
+          if (/ConsultChat/.test(app)) failures.push('Legacy ConsultChat still mounted/imported after Job 2 cleanup.');
+          if (!/workbenchSourceOfTruth:\s*true/.test(app)) failures.push('Synthesis payload does not declare the workbench as source of truth.');
+          if (!/enableMutationEngine:\s*false/.test(app)) failures.push('Synthesis can still secretly re-apply mutation state.');
+
+          if (failures.length) {
+            console.error('\nDAVID ONE-WRITER AUDIT FAILED:');
+            failures.forEach((f) => console.error(' - ' + f));
+            process.exit(1);
+          }
+          console.log('DAVID one-writer static audit passed.');
+          NODE
+
+      - name: Upload QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: david-violent-qa-screenshots
+          path: test-results/**/*.png
+          if-no-files-found: warn
+
+      - name: Final QA gate
+        if: always()
+        run: |
+          echo "browser=${{ steps.browserqa.outcome }} patch=${{ steps.patchsource.outcome }} static=${{ steps.staticaudit.outcome }}"
+          if [ "${{ steps.browserqa.outcome }}" != "success" ] || [ "${{ steps.patchsource.outcome }}" != "success" ] || [ "${{ steps.staticaudit.outcome }}" != "success" ]; then
+            exit 1
+          fi
