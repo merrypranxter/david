@@ -149,7 +149,6 @@ function patchRandomSeedPool() {
   }`;
   if (content.includes(oldFallback)) content = content.replace(oldFallback, newFallback);
 
-  // slopCategory remains in the function signature for backwards-compatible saved recipes.
   if (!content.includes('void slopCategory;')) {
     content = content.replace(
       `  const { addMaths, addSciences, addSlop, mathCategory, scienceCategory, slopCategory, contradictionMode, count = 4 } = options;`,
@@ -163,14 +162,36 @@ function patchRandomSeedPool() {
 
 function patchPromptSummary() {
   let content = fs.readFileSync(promptPath, 'utf8');
-  if (!content.includes("../data/merryDnaBanks")) {
-    content = content.replace(
-      "import { MATH_LEXICON, SCIENCE_LEXICON, SLOP_LEXICON, generateRandomSeeds } from '../data/lexicons';",
-      "import { MATH_LEXICON, SCIENCE_LEXICON, generateRandomSeeds } from '../data/lexicons';\nimport { MERRY_DNA_BANKS } from '../data/merryDnaBanks';"
-    );
+
+  // PromptInputArea still contains legacy SLOP_LEXICON display references in some
+  // Studio source snapshots. If we remove the import without replacing every
+  // reference, synthesis crashes at runtime with "SLOP_LEXICON is not defined".
+  // Make this repair deliberately broad and idempotent.
+  content = content.replace(
+    "import { MATH_LEXICON, SCIENCE_LEXICON, SLOP_LEXICON, generateRandomSeeds } from '../data/lexicons';",
+    "import { MATH_LEXICON, SCIENCE_LEXICON, generateRandomSeeds } from '../data/lexicons';"
+  );
+
+  if (!content.includes("import { MERRY_DNA_BANKS } from '../data/merryDnaBanks';")) {
+    const lexImport = "import { MATH_LEXICON, SCIENCE_LEXICON, generateRandomSeeds } from '../data/lexicons';";
+    if (content.includes(lexImport)) {
+      content = content.replace(
+        lexImport,
+        `${lexImport}\nimport { MERRY_DNA_BANKS } from '../data/merryDnaBanks';`
+      );
+    }
   }
-  content = content.replace('{SLOP_LEXICON.length} Nodes', '{MERRY_DNA_BANKS.length} Merry DNA Categories');
+
+  content = content.replace(/\{SLOP_LEXICON\.length\}\s*Nodes/g, '{MERRY_DNA_BANKS.length} Merry DNA Categories');
+  content = content.replace(/SLOP_LEXICON\.length/g, 'MERRY_DNA_BANKS.length');
+
+  if (/\bSLOP_LEXICON\b/.test(content)) {
+    console.error('[merry-dna-v2] unresolved SLOP_LEXICON reference remains in PromptInputArea after patch');
+    process.exitCode = 1;
+  }
+
   fs.writeFileSync(promptPath, content, 'utf8');
+  console.log('[merry-dna-v2] PromptInputArea no longer references removed SLOP_LEXICON');
 }
 
 patchTongueDnaBank();
